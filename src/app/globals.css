@@ -975,6 +975,202 @@ body {
   }
 }
 
+/* Share Section - "Share where it actually helps" */
+.share-section {
+  margin-top: 56px;
+  margin-bottom: 48px;
+}
+
+.share-container {
+  max-width: 720px;
+  padding: 0 48px;
+  margin: 0;
+}
+
+@media (max-width: 1279px) {
+  .share-container {
+    max-width: 640px;
+    padding: 0 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  .share-container {
+    padding: 0 16px;
+  }
+  
+  .share-section {
+    margin-top: 48px;
+    margin-bottom: 40px;
+  }
+}
+
+/* Share Header */
+.share-header {
+  margin-bottom: 32px;
+}
+
+.share-title {
+  font-weight: 600;
+  font-size: clamp(28px, 4vw, 34px);
+  letter-spacing: -0.015em;
+  text-align: left;
+  margin-bottom: 16px;
+  color: var(--color-ink);
+  line-height: 1.2;
+}
+
+.share-deck {
+  font-size: clamp(16px, 2vw, 18px);
+  line-height: 1.65;
+  color: #525252;
+  text-align: justify;
+  hyphens: auto;
+  max-width: 64ch;
+  margin: 0;
+}
+
+/* Use Cases Grid - 3 Column Layout */
+.use-cases-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 1023px) {
+  .use-cases-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  .use-cases-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* Use Case Cards */
+.use-case-card {
+  border: 1px solid #E5E5E5;
+  border-radius: 16px;
+  padding: 18px;
+  background: #FFF;
+  animation: fadeUpStagger 240ms ease-out;
+}
+
+.use-case-card:nth-child(2) {
+  animation-delay: 60ms;
+}
+
+.use-case-card:nth-child(3) {
+  animation-delay: 120ms;
+}
+
+.use-case-title {
+  font-weight: 600;
+  font-size: clamp(16px, 2vw, 18px);
+  color: var(--color-ink);
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+.use-case-body {
+  font-size: clamp(14px, 1.5vw, 15px);
+  color: #525252;
+  line-height: 1.5;
+  margin: 0;
+  text-align: left;
+}
+
+/* Sharing Explainer Strip */
+.sharing-explainer {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 16px 0;
+}
+
+@media (max-width: 767px) {
+  .sharing-explainer {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.explainer-item {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #525252;
+  max-width: 20ch;
+}
+
+@media (max-width: 767px) {
+  .explainer-item {
+    max-width: none;
+  }
+}
+
+.explainer-separator {
+  width: 1px;
+  height: 40px;
+  background-color: #E5E5E5;
+  flex-shrink: 0;
+}
+
+@media (max-width: 767px) {
+  .explainer-separator {
+    display: none;
+  }
+}
+
+/* Platform Tagline */
+.platform-tagline {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #525252;
+  text-align: center;
+  max-width: 64ch;
+  margin: 0 auto;
+}
+
+/* Animations for Share Section */
+.share-section {
+  animation: fadeUpShare 260ms ease-out;
+}
+
+@keyframes fadeUpShare {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .share-section,
+  .use-case-card {
+    animation: fadeOpacity 260ms ease-out;
+  }
+  
+  .use-case-card:nth-child(2),
+  .use-case-card:nth-child(3) {
+    animation-delay: 0ms;
+  }
+  
+  @keyframes fadeOpacity {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
 /* Hairline Separators */
 .hairline-separator {
   height: 1px;

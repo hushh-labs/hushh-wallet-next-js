@@ -182,81 +182,62 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* What you'll choose - Chipified Left Layout */}
-            <div className="wyct-chipified">
-              <div className="wyct-chipified-container">
-                {/* Section title - left aligned */}
-                <h3 className="wyct-chipified-title">
-                  What you'll choose today
-                </h3>
-                
-                {/* Chipified rows */}
-                <div className="wyct-chipified-grid">
-                  {/* Food Type row */}
-                  <div className="wyct-chipified-row">
-                    <div className="wyct-chipified-label">Food Type</div>
-                    <div className="wyct-chipified-dash">–</div>
-                    <div className="wyct-chipified-chips">
-                      <span className="chip-pill">Vegetarian</span>
-                      <span className="chip-pill">Non-Vegetarian</span>
-                      <span className="chip-pill">Vegan</span>
-                      <span className="chip-pill">Jain</span>
-                      <span className="chip-pill">Eggetarian</span>
-                      <span className="chip-pill">Other</span>
-                    </div>
-                  </div>
-                  
-                  {/* Spice Level row */}
-                  <div className="wyct-chipified-row wyct-chipified-row-tight">
-                    <div className="wyct-chipified-label">Spice Level</div>
-                    <div className="wyct-chipified-dash">–</div>
-                    <div className="wyct-chipified-chips">
-                      <span className="chip-pill">Mild</span>
-                      <span className="chip-pill">Medium</span>
-                      <span className="chip-pill">Spicy</span>
-                    </div>
-                  </div>
-                  
-                  {/* Plus any three row */}
-                  <div className="wyct-chipified-row">
-                    <div className="wyct-chipified-label">Plus any three</div>
-                    <div className="wyct-chipified-dash">–</div>
-                    <div className="wyct-chipified-chips">
-                      <span className="chip-pill chip-category">Cuisines</span>
-                      <span className="chip-pill chip-category">Food Brands & Places</span>
-                      <span className="chip-pill chip-category">Lifestyle & Diet</span>
-                    </div>
-                  </div>
+            {/* Share where it actually helps */}
+            <div className="share-section">
+              <div className="share-container">
+                {/* Section title & deck */}
+                <div className="share-header">
+                  <h3 className="share-title">
+                    Share where it actually helps
+                  </h3>
+                  <p className="share-deck">
+                    Show your card at the counter or share a link with your booking—staff see your five food signals at a glance. Works with <strong className="text-ink">Apple Wallet</strong> and <strong className="text-ink">Google Wallet</strong>.
+                  </p>
                 </div>
                 
-                {/* Rule card */}
-                <div className="wyct-chipified-rule-card">
-                  <strong className="font-semibold">Exact rule:</strong> choose <span className="font-mono font-semibold">5</span> in total. <strong className="font-semibold">Food Type</strong> and <strong className="font-semibold">Spice Level</strong> are required.
+                {/* 3-column use cases */}
+                <div className="use-cases-grid">
+                  <div className="use-case-card">
+                    <h4 className="use-case-title">Restaurants & cafés</h4>
+                    <p className="use-case-body">
+                      Show at seating or share while booking a table. Servers instantly see: <strong className="text-ink">"Vegetarian · Medium · Italian; Gluten-free"</strong><br />
+                      Less back-and-forth, fewer mistakes, faster orders.
+                    </p>
+                  </div>
+                  
+                  <div className="use-case-card">
+                    <h4 className="use-case-title">Hotels & room service</h4>
+                    <p className="use-case-body">
+                      Attach the link in your reservation notes. Front desk and F&B know your <strong className="text-ink">Food Type</strong>, <strong className="text-ink">Spice</strong>, and <strong className="text-ink">Dietary</strong> before you arrive—breakfast and room-service get it right the first time.
+                    </p>
+                  </div>
+                  
+                  <div className="use-case-card">
+                    <h4 className="use-case-title">Delivery & group orders</h4>
+                    <p className="use-case-body">
+                      Drop the link in the chat. Friends and colleagues know <strong className="text-ink">exactly</strong> what to pick for you—no long threads.
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            {/* Focus Cards */}
-            <div className="focus-cards-section">
-              <div className="focus-cards-container">
-                <div className="focus-cards-grid">
-                  <div className="focus-card">
-                    <div className="focus-card-icon"></div>
-                    <h4 className="focus-card-title">No sign-in</h4>
-                    <p className="focus-card-body">We only need your five picks. No account, no feed, no spam.</p>
+                {/* How sharing works explainer */}
+                <div className="sharing-explainer">
+                  <div className="explainer-item">
+                    <strong className="text-ink">Show in Wallet:</strong> Face is minimal; back lists all five.
                   </div>
-                  
-                  <div className="focus-card">
-                    <div className="focus-card-icon"></div>
-                    <h4 className="focus-card-title">Monochrome by design</h4>
-                    <p className="focus-card-body">Clean type, hairline rules, no shadows. Luxury without noise.</p>
+                  <div className="explainer-separator"></div>
+                  <div className="explainer-item">
+                    <strong className="text-ink">Share a link:</strong> A light, read-only page with your five picks and two buttons: <strong className="text-ink">Add to Apple Wallet</strong> (iOS) and <strong className="text-ink">Save to Google Wallet</strong> (Android).
                   </div>
-                  
-                  <div className="focus-card">
-                    <div className="focus-card-icon"></div>
-                    <h4 className="focus-card-title">Apple Wallet ready</h4>
-                    <p className="focus-card-body">Add in seconds on iPhone. macOS Safari adds to iCloud Wallet.</p>
+                  <div className="explainer-separator"></div>
+                  <div className="explainer-item">
+                    <strong className="text-ink">Privacy:</strong> The link carries only your five food signals—no name, no email. Links expire by default; you can make one public for 24h when needed.
                   </div>
+                </div>
+
+                {/* Bottom tagline */}
+                <div className="platform-tagline">
+                  <strong className="text-ink">Apple & Google, both covered</strong> — iPhone adds to <strong className="text-ink">Apple Wallet</strong>; Android can <strong className="text-ink">Save to Google Wallet</strong> from the same share link.
                 </div>
               </div>
             </div>
