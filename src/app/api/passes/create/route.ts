@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { generateCorrectAppleWalletPass } from '@/lib/correctPassGenerator';
 import { generateRealAppleWalletPass } from '@/lib/realPassGenerator';
 import { generateAppleWalletPass, generateDemoPass } from '@/lib/productionPassGenerator';
 import { generatePassToken } from '@/lib/jwt';
@@ -34,11 +35,11 @@ export async function POST(request: NextRequest) {
     };
 
     try {
-      // Try to generate REAL Apple Wallet pass with certificates
-      console.log('Attempting to generate real Apple Wallet pass...');
-      const passBuffer = await generateRealAppleWalletPass(passData);
+      // Try the CORRECT passkit-generator approach first
+      console.log('Attempting to generate Apple Wallet pass with correct passkit-generator approach...');
+      const passBuffer = await generateCorrectAppleWalletPass(passData);
       
-      console.log('Real pass generated successfully! Returning .pkpass file');
+      console.log('Correct pass generated successfully! Returning .pkpass file');
       
       // Return the actual .pkpass file for download
       return new NextResponse(passBuffer as any, {
@@ -48,12 +49,14 @@ export async function POST(request: NextRequest) {
           'Content-Disposition': `attachment; filename="HushOne-${defaultName.replace(/[^a-zA-Z0-9]/g, '')}.pkpass"`,
         },
       });
-    } catch (realPassError) {
-      console.log('Real pass generation failed, trying fallback method:', realPassError);
+    } catch (correctPassError) {
+      console.log('Correct pass generation failed, trying alternative method:', correctPassError);
       
       try {
-        // Try fallback method
-        const passBuffer = await generateAppleWalletPass(passData);
+        // Try alternative method
+        const passBuffer = await generateRealAppleWalletPass(passData);
+        
+        console.log('Alternative pass generated successfully!');
         
         return new NextResponse(passBuffer as any, {
           status: 200,
@@ -62,20 +65,36 @@ export async function POST(request: NextRequest) {
             'Content-Disposition': `attachment; filename="HushOne-${defaultName.replace(/[^a-zA-Z0-9]/g, '')}.pkpass"`,
           },
         });
-      } catch (fallbackError) {
-        console.log('Both methods failed, falling back to demo mode. Errors:', {
-          realPassError: realPassError instanceof Error ? realPassError.message : String(realPassError),
-          fallbackError: fallbackError instanceof Error ? fallbackError.message : String(fallbackError)
-        });
+      } catch (altPassError) {
+        console.log('Alternative method failed, trying fallback:', altPassError);
         
-        // Last resort: demo response with proper URL
-        const demoData = await generateDemoPass(passData);
-        
-        return NextResponse.json({
-          ...demoData,
-          url: `/api/wallet/${token}`,
-          note: 'Demo mode - certificates not available in production'
-        });
+        try {
+          // Try final fallback method
+          const passBuffer = await generateAppleWalletPass(passData);
+          
+          return new NextResponse(passBuffer as any, {
+            status: 200,
+            headers: {
+              'Content-Type': 'application/vnd.apple.pkpass',
+              'Content-Disposition': `attachment; filename="HushOne-${defaultName.replace(/[^a-zA-Z0-9]/g, '')}.pkpass"`,
+            },
+          });
+        } catch (fallbackError) {
+          console.log('All methods failed, falling back to demo mode. Errors:', {
+            correctPassError: correctPassError instanceof Error ? correctPassError.message : String(correctPassError),
+            altPassError: altPassError instanceof Error ? altPassError.message : String(altPassError),
+            fallbackError: fallbackError instanceof Error ? fallbackError.message : String(fallbackError)
+          });
+          
+          // Last resort: demo response with proper URL
+          const demoData = await generateDemoPass(passData);
+          
+          return NextResponse.json({
+            ...demoData,
+            url: `/api/wallet/${token}`,
+            note: 'Demo mode - certificates not available in production'
+          });
+        }
       }
     }
   } catch (error) {
