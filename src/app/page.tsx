@@ -182,37 +182,44 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* What you'll choose - Editorial Band */}
-            <div className="mt-16 md:mt-20">
-              {/* Top hairline separator */}
-              <div className="w-full h-px bg-gray-200 mb-8"></div>
-              
-              {/* Editorial band */}
-              <div className="bg-white py-8 px-6">
-                <div className="max-w-none mx-auto text-center" style={{maxWidth: '64ch'}}>
-                  {/* Section title */}
-                  <h3 className="text-xl md:text-2xl font-semibold text-ink mb-6 leading-tight" style={{letterSpacing: '-0.015em'}}>
-                    What you'll choose today
-                  </h3>
-                  
-                  {/* Choice descriptions */}
-                  <div className="space-y-4 mb-6 text-base md:text-lg leading-relaxed text-muted" style={{lineHeight: '1.65'}}>
-                    <p><strong className="font-semibold text-ink">Food Type</strong> – Vegetarian, Non-Vegetarian, Vegan, Jain, Eggetarian, or Other.</p>
-                    <p><strong className="font-semibold text-ink">Spice Level</strong> – Mild, Medium, or Spicy.</p>
-                    <p><strong className="font-semibold text-ink">Plus any three</strong> from: <strong className="font-semibold text-ink">Cuisines</strong>, <strong className="font-semibold text-ink">Food Brands & Places</strong>, <strong className="font-semibold text-ink">Lifestyle & Diet</strong>.</p>
+            {/* What you'll choose - Definition Grid Layout */}
+            <div className="wyct-block">
+              {/* Text container with proper constraints */}
+              <div className="wyct-container">
+                {/* Section title */}
+                <h3 className="wyct-title">
+                  What you'll choose today
+                </h3>
+                
+                {/* Definition rows grid */}
+                <div className="wyct-definition-grid">
+                  {/* Food Type row */}
+                  <div className="wyct-row">
+                    <div className="wyct-label">Food Type</div>
+                    <div className="wyct-dash">–</div>
+                    <div className="wyct-values">Vegetarian, Non-Vegetarian, Vegan, Jain, Eggetarian, or Other.</div>
                   </div>
                   
-                  {/* Rule card */}
-                  <div className="inline-block border border-gray-300 rounded-xl px-4 py-3 mb-8">
-                    <p className="text-sm text-ink">
-                      <strong className="font-semibold">Exact rule:</strong> choose <span className="font-mono font-semibold">5</span> in total. <strong className="font-semibold">Food Type</strong> and <strong className="font-semibold">Spice Level</strong> are required.
-                    </p>
+                  {/* Spice Level row */}
+                  <div className="wyct-row wyct-row-tight">
+                    <div className="wyct-label">Spice Level</div>
+                    <div className="wyct-dash">–</div>
+                    <div className="wyct-values">Mild, Medium, or Spicy.</div>
+                  </div>
+                  
+                  {/* Plus any three row */}
+                  <div className="wyct-row">
+                    <div className="wyct-label">Plus any three</div>
+                    <div className="wyct-dash">–</div>
+                    <div className="wyct-values">from: <strong className="font-semibold text-ink">Cuisines</strong>, <strong className="font-semibold text-ink">Food Brands & Places</strong>, <strong className="font-semibold text-ink">Lifestyle & Diet</strong>.</div>
                   </div>
                 </div>
+                
+                {/* Rule card */}
+                <div className="wyct-rule-card">
+                  <strong className="font-semibold">Exact rule:</strong> choose <span className="font-mono font-semibold">5</span> in total. <strong className="font-semibold">Food Type</strong> and <strong className="font-semibold">Spice Level</strong> are required.
+                </div>
               </div>
-              
-              {/* Bottom hairline separator */}
-              <div className="w-full h-px bg-gray-200 mt-8"></div>
             </div>
           </div>
         </div>

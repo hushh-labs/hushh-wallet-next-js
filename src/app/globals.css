@@ -354,18 +354,182 @@ body {
   }
 }
 
-/* Editorial Band Styles */
-.editorial-band {
-  background-color: var(--color-paper);
-  border-top: 1px solid #E5E5E5;
-  border-bottom: 1px solid #E5E5E5;
+/* WYCT Block - Figma-style Definition Grid Layout */
+.wyct-block {
+  margin-top: 32px;
+  margin-bottom: 48px;
 }
 
-.rule-card {
-  border: 1.5px solid #D4D4D4;
-  border-radius: 12px;
-  padding: 12px 16px;
-  display: inline-block;
+.wyct-container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 48px;
+}
+
+@media (max-width: 1279px) {
+  .wyct-container {
+    max-width: 640px;
+    padding: 0 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  .wyct-container {
+    max-width: 640px;
+    padding: 0 16px;
+  }
+  
+  .wyct-block {
+    margin-top: 24px;
+    margin-bottom: 36px;
+  }
+}
+
+/* WYCT Title */
+.wyct-title {
+  font-weight: 600;
+  font-size: clamp(28px, 4vw, 34px);
+  letter-spacing: -0.015em;
+  text-align: center;
+  margin-bottom: 24px;
+  color: var(--color-ink);
+  line-height: 1.2;
+}
+
+/* Definition Grid */
+.wyct-definition-grid {
+  display: grid;
+  grid-template-columns: 3fr 1fr 8fr;
+  gap: 0;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 1279px) {
+  .wyct-definition-grid {
+    grid-template-columns: 2fr 1fr 5fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .wyct-definition-grid {
+    display: block;
+  }
+}
+
+/* Definition Rows */
+.wyct-row {
+  display: contents;
+  margin-bottom: 20px;
+}
+
+.wyct-row-tight {
+  margin-top: 4px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 767px) {
+  .wyct-row {
+    display: block;
+    margin-bottom: 18px;
+  }
+  
+  .wyct-row-tight {
+    margin-top: 3px;
+    margin-bottom: 18px;
+  }
+}
+
+/* Labels */
+.wyct-label {
+  font-weight: 600;
+  font-size: clamp(18px, 2.5vw, 20px);
+  color: var(--color-ink);
+  text-align: left;
+  margin-bottom: 20px;
+  align-self: baseline;
+}
+
+@media (max-width: 767px) {
+  .wyct-label {
+    margin-bottom: 4px;
+    font-size: 18px;
+  }
+}
+
+/* En Dash */
+.wyct-dash {
+  font-size: clamp(18px, 2.5vw, 20px);
+  color: var(--color-ink);
+  text-align: center;
+  margin-bottom: 20px;
+  align-self: baseline;
+}
+
+@media (max-width: 767px) {
+  .wyct-dash {
+    display: none;
+  }
+}
+
+/* Values */
+.wyct-values {
+  font-size: clamp(16px, 2vw, 18px);
+  line-height: 1.65;
+  color: #525252;
+  text-align: left;
+  margin-bottom: 20px;
+  align-self: baseline;
+  max-width: 64ch;
+}
+
+@media (max-width: 767px) {
+  .wyct-values {
+    margin-bottom: 16px;
+    font-size: 16px;
+    margin-left: 0;
+  }
+}
+
+/* Spacing adjustments for tight row */
+.wyct-row-tight .wyct-label,
+.wyct-row-tight .wyct-dash,
+.wyct-row-tight .wyct-values {
+  margin-bottom: 24px;
+}
+
+@media (max-width: 767px) {
+  .wyct-row-tight .wyct-label,
+  .wyct-row-tight .wyct-values {
+    margin-bottom: 18px;
+  }
+}
+
+/* Rule Card */
+.wyct-rule-card {
+  border: 1px solid #D4D4D4;
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-size: 16px;
+  color: var(--color-ink);
+  background: transparent;
+  margin-top: 8px;
+  margin-left: 0;
+  grid-column: 1 / -1;
+  max-width: 100%;
+}
+
+@media (max-width: 1279px) {
+  .wyct-rule-card {
+    padding: 14px 16px;
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 767px) {
+  .wyct-rule-card {
+    margin-top: 6px;
+    font-size: 15px;
+  }
 }
 
 /* Professional Typography */
@@ -383,6 +547,33 @@ body {
 
 .leading-editorial {
   line-height: 1.65;
+}
+
+/* Fade Up Animation for WYCT Block */
+.wyct-block {
+  animation: fadeUpWYCT 260ms ease-out;
+}
+
+@keyframes fadeUpWYCT {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wyct-block {
+    animation: fadeOpacity 260ms ease-out;
+  }
+  
+  @keyframes fadeOpacity {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
 }
 
 /* Hairline Separators */
