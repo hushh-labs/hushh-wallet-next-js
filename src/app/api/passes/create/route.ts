@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { generateRealAppleWalletPass } from '@/lib/realPassGenerator';
 import { generateAppleWalletPass, generateDemoPass } from '@/lib/productionPassGenerator';
 import { generatePassToken } from '@/lib/jwt';
 import { TastePayload } from '@/types';
@@ -33,10 +34,13 @@ export async function POST(request: NextRequest) {
     };
 
     try {
-      // Try to generate actual Apple Wallet pass
-      const passBuffer = await generateAppleWalletPass(passData);
+      // Try to generate REAL Apple Wallet pass with certificates
+      console.log('Attempting to generate real Apple Wallet pass...');
+      const passBuffer = await generateRealAppleWalletPass(passData);
       
-      // If successful, return the pass as a downloadable file
+      console.log('Real pass generated successfully! Returning .pkpass file');
+      
+      // Return the actual .pkpass file for download
       return new NextResponse(passBuffer as any, {
         status: 200,
         headers: {
@@ -44,17 +48,35 @@ export async function POST(request: NextRequest) {
           'Content-Disposition': `attachment; filename="HushOne-${defaultName.replace(/[^a-zA-Z0-9]/g, '')}.pkpass"`,
         },
       });
-    } catch (passError) {
-      console.log('Pass generation failed, falling back to demo mode:', passError);
+    } catch (realPassError) {
+      console.log('Real pass generation failed, trying fallback method:', realPassError);
       
-      // Fall back to demo response with a proper URL for demo
-      const demoData = await generateDemoPass(passData);
-      
-      // Return demo data with a wallet URL that redirects to pass
-      return NextResponse.json({
-        ...demoData,
-        url: `/api/wallet/${token}`
-      });
+      try {
+        // Try fallback method
+        const passBuffer = await generateAppleWalletPass(passData);
+        
+        return new NextResponse(passBuffer as any, {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/vnd.apple.pkpass',
+            'Content-Disposition': `attachment; filename="HushOne-${defaultName.replace(/[^a-zA-Z0-9]/g, '')}.pkpass"`,
+          },
+        });
+      } catch (fallbackError) {
+        console.log('Both methods failed, falling back to demo mode. Errors:', {
+          realPassError: realPassError instanceof Error ? realPassError.message : String(realPassError),
+          fallbackError: fallbackError instanceof Error ? fallbackError.message : String(fallbackError)
+        });
+        
+        // Last resort: demo response with proper URL
+        const demoData = await generateDemoPass(passData);
+        
+        return NextResponse.json({
+          ...demoData,
+          url: `/api/wallet/${token}`,
+          note: 'Demo mode - certificates not available in production'
+        });
+      }
     }
   } catch (error) {
     console.error('Error creating pass:', error);
