@@ -26,7 +26,7 @@ export async function generateCorrectAppleWalletPass(passData: PassData): Promis
         wwdr,
         signerCert,
         signerKey,
-        signerKeyPassphrase: '' // Empty passphrase for this certificate
+        signerKeyPassphrase: undefined // Use undefined for unencrypted keys
       }
     }, {
       // Override pass.json data with user preferences
