@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyPassToken } from '@/lib/jwt';
-import { generateSimplePass } from '@/lib/simplePassGenerator';
+import { generateAppleWalletPass, generateDemoPass } from '@/lib/productionPassGenerator';
 
 export async function GET(
   request: Request,
@@ -18,20 +18,48 @@ export async function GET(
       );
     }
 
-    // Generate pass (demo version)
-    const passContent = generateSimplePass(claim.serial, claim.prefs);
-    
-    // Return pass data with correct headers for demo
-    return new NextResponse(passContent, {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Disposition': `attachment; filename="${claim.serial}-demo.json"`,
-        'Cache-Control': 'no-store, no-cache, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'
-      }
-    });
+    // Create user-friendly preferences list
+    const preferencesList = [
+      claim.prefs.foodType,
+      claim.prefs.spice,
+      ...claim.prefs.cuisines,
+      ...claim.prefs.brands,
+      ...claim.prefs.lifestyle
+    ].filter(Boolean);
+
+    // Generate default name based on preferences
+    const defaultName = `${claim.prefs.foodType} ${claim.prefs.spice} Lover`;
+
+    const passData = {
+      name: defaultName,
+      preferences: preferencesList
+    };
+
+    try {
+      // Try to generate actual Apple Wallet pass
+      const passBuffer = await generateAppleWalletPass(passData);
+      
+      // If successful, return the pass as a downloadable file
+      return new NextResponse(passBuffer as any, {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.apple.pkpass',
+          'Content-Disposition': `attachment; filename="HushOne-${defaultName.replace(/[^a-zA-Z0-9]/g, '')}.pkpass"`,
+        },
+      });
+    } catch (passError) {
+      console.log('Pass generation failed, showing demo info:', passError);
+      
+      // Fall back to demo JSON response
+      const demoData = await generateDemoPass(passData);
+      
+      return NextResponse.json(demoData, {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+    }
 
   } catch (error) {
     console.error('Wallet route error:', error);
