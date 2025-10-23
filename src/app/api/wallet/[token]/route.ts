@@ -18,15 +18,15 @@ export async function GET(
       );
     }
 
-    // Generate pass
-    const passBuffer = generateSimplePass(claim.serial, claim.prefs);
+    // Generate pass (demo version)
+    const passContent = generateSimplePass(claim.serial, claim.prefs);
     
-    // Return pass with correct headers
-    return new NextResponse(passBuffer as any, {
+    // Return pass data with correct headers for demo
+    return new NextResponse(passContent, {
       status: 200,
       headers: {
-        'Content-Type': 'application/vnd.apple.pkpass',
-        'Content-Disposition': `attachment; filename="${claim.serial}.pkpass"`,
+        'Content-Type': 'application/json',
+        'Content-Disposition': `attachment; filename="${claim.serial}-demo.json"`,
         'Cache-Control': 'no-store, no-cache, must-revalidate',
         'Pragma': 'no-cache',
         'Expires': '0'
