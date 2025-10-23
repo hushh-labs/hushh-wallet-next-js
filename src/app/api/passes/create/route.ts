@@ -22,8 +22,8 @@ export async function POST(request: NextRequest) {
       body.foodType,
       body.spice,
       ...body.cuisines,
-      ...body.brands,
-      ...body.lifestyle
+      ...body.dishTypes,
+      ...body.dietary
     ].filter(Boolean);
 
     // Generate default name based on preferences

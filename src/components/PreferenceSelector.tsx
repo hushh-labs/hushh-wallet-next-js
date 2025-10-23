@@ -14,8 +14,8 @@ export function PreferenceSelector({ onGenerate, isGenerating }: PreferenceSelec
     foodType: [],
     spice: [],
     cuisines: [],
-    brands: [],
-    lifestyle: []
+    dishTypes: [],
+    dietary: []
   });
 
   const [totalSelected, setTotalSelected] = useState(0);
@@ -112,8 +112,8 @@ export function PreferenceSelector({ onGenerate, isGenerating }: PreferenceSelec
       foodType: preferences.foodType[0] as TastePayload['foodType'],
       spice: preferences.spice[0] as TastePayload['spice'],
       cuisines: preferences.cuisines,
-      brands: preferences.brands,
-      lifestyle: preferences.lifestyle
+      dishTypes: preferences.dishTypes,
+      dietary: preferences.dietary
     };
 
     onGenerate(payload);
@@ -144,66 +144,89 @@ export function PreferenceSelector({ onGenerate, isGenerating }: PreferenceSelec
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-12">
-      {/* Counter */}
-      <div className="text-center">
-        <div className="text-3xl md:text-4xl font-black text-ink mb-2">
-          {totalSelected}/5 selected
-        </div>
-        <p className={`text-body ${isValid ? 'text-green-600 font-medium' : 'text-muted'}`}>
-          {getValidationMessage()}
-        </p>
-      </div>
-
-      {/* Preference Groups */}
-      <div className="space-y-12">
-        {PREFERENCE_GROUPS.map((group) => (
-          <div key={group.id} className="space-y-6">
-            <div className="text-center space-y-2">
-              <h3 className="text-xl md:text-2xl font-bold text-ink">
-                {group.label}
-                {group.required && <span className="text-red-500 ml-1">*</span>}
-              </h3>
-              <div className="text-sm text-muted font-medium">
-                {preferences[group.id]?.length || 0} / {group.maxSelections}
-              </div>
-            </div>
-            
-            <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
-              {group.options.map((option) => {
-                const isSelected = preferences[group.id]?.includes(option) || false;
-                const currentCount = preferences[group.id]?.length || 0;
-                const isDisabled = !isSelected && currentCount >= group.maxSelections;
-                
-                return (
-                  <PreferenceChip
-                    key={`${group.id}-${option}`}
-                    label={option}
-                    selected={isSelected}
-                    onToggle={() => handlePreferenceToggle(group.id, option)}
-                    disabled={isDisabled}
-                  />
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Generate Button */}
-      <div className="text-center pt-12">
-        <button
-          type="button"
-          className={`btn-primary hover-lift text-lg px-12 py-4 ${!isValid || isGenerating ? 'opacity-50 cursor-not-allowed' : ''}`}
-          onClick={handleGenerate}
-          disabled={!isValid || isGenerating}
-        >
-          {isGenerating ? 'Generating Your Card...' : 'Add to Apple Wallet'}
-        </button>
+    <div className="w-full">
+      {/* Left-justified container with 720px max-width */}
+      <div className="food-preferences-container">
         
-        <p className="text-sm text-muted mt-4">
-          Works on iPhone with Apple Wallet.
-        </p>
+        {/* Counter & Rule Line */}
+        <div className="preferences-counter-section">
+          <div className="counter-display">
+            {totalSelected}/5 selected
+          </div>
+          <div className="rule-line">
+            Pick exactly 5 preferences (Food Type + Spice required)
+          </div>
+        </div>
+
+        {/* Preference Groups */}
+        <div className="preferences-groups">
+          {PREFERENCE_GROUPS.map((group) => (
+            <div key={group.id} className="preference-group">
+              
+              {/* Group Header with Cap Counter */}
+              <div className="group-header">
+                <h3 className="group-title">
+                  {group.label}
+                  {group.required && <span className="required-mark">*</span>}
+                </h3>
+                <div className="cap-counter">
+                  {preferences[group.id]?.length || 0} / {group.maxSelections}
+                </div>
+              </div>
+              
+              {/* Chips Grid */}
+              <div className="chips-grid">
+                {group.options.map((option) => {
+                  const isSelected = preferences[group.id]?.includes(option) || false;
+                  const currentCount = preferences[group.id]?.length || 0;
+                  const isDisabled = !isSelected && currentCount >= group.maxSelections;
+                  
+                  return (
+                    <button
+                      key={`${group.id}-${option}`}
+                      type="button"
+                      className={`outline-chip ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}`}
+                      onClick={() => handlePreferenceToggle(group.id, option)}
+                      disabled={isDisabled}
+                    >
+                      {option}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Error Messages */}
+              {!isValid && (
+                <div className="error-message">
+                  {preferences.foodType.length === 0 && group.id === 'foodType' && "Choose one Food Type."}
+                  {preferences.spice.length === 0 && group.id === 'spice' && "Choose one Spice Level."}
+                  {totalSelected !== 5 && group.id === 'dietary' && `Pick exactly five (you have ${totalSelected}).`}
+                  {(preferences[group.id]?.length || 0) >= group.maxSelections && "You've reached the limit for this group."}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* CTA Block */}
+        <div className="cta-block">
+          <div className="micro-hint">
+            {isValid ? "Ready — 5/5 selected." : "Select Food Type & Spice, then complete 5 picks to continue."}
+          </div>
+          
+          <button
+            type="button"
+            className={`primary-cta ${!isValid || isGenerating ? 'disabled' : 'enabled'}`}
+            onClick={handleGenerate}
+            disabled={!isValid || isGenerating}
+          >
+            {isGenerating ? 'Generating Your Card...' : 'Add to Apple Wallet'}
+          </button>
+          
+          <p className="helper-text">
+            Works on iPhone with Apple Wallet.
+          </p>
+        </div>
       </div>
     </div>
   );

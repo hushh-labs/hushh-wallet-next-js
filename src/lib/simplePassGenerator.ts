@@ -34,7 +34,7 @@ export function generateSimplePass(serial: string, prefs: TastePayload): any {
         {
           key: "brand",
           label: "Brand", 
-          value: prefs.brands.length > 0 ? prefs.brands[0] : "—"
+          value: prefs.dishTypes.length > 0 ? prefs.dishTypes[0] : "—"
         },
         {
           key: "issued",
@@ -50,8 +50,8 @@ export function generateSimplePass(serial: string, prefs: TastePayload): any {
             `Food: ${prefs.foodType}`,
             `Spice: ${prefs.spice}`,
             ...(prefs.cuisines.length > 0 ? [`Cuisines: ${prefs.cuisines.join(", ")}`] : []),
-            ...(prefs.brands.length > 0 ? [`Brands: ${prefs.brands.join(", ")}`] : []),
-            ...(prefs.lifestyle.length > 0 ? [`Lifestyle: ${prefs.lifestyle.join(", ")}`] : [])
+            ...(prefs.dishTypes.length > 0 ? [`Dish Types: ${prefs.dishTypes.join(", ")}`] : []),
+            ...(prefs.dietary.length > 0 ? [`Dietary: ${prefs.dietary.join(", ")}`] : [])
           ].join("; ")
         },
         {

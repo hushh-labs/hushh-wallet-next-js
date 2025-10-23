@@ -716,6 +716,265 @@ body {
   line-height: 1.65;
 }
 
+/* Food Preferences - Left-Justified 720px Layout */
+.food-preferences-container {
+  max-width: 720px;
+  padding: 0 48px;
+  margin: 0;
+}
+
+@media (max-width: 1279px) {
+  .food-preferences-container {
+    max-width: 640px;
+    padding: 0 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  .food-preferences-container {
+    padding: 0 16px;
+  }
+}
+
+/* Counter & Rule Section */
+.preferences-counter-section {
+  margin-bottom: 20px;
+}
+
+.counter-display {
+  font-size: clamp(14px, 2vw, 15px);
+  color: var(--color-ink);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.rule-line {
+  font-size: 14px;
+  color: #525252;
+  text-align: justify;
+  hyphens: auto;
+  max-width: 64ch;
+}
+
+/* Preference Groups */
+.preferences-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 767px) {
+  .preferences-groups {
+    gap: 24px;
+  }
+}
+
+/* Individual Group */
+.preference-group {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Group Header with Cap Counter */
+.group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.group-title {
+  font-size: clamp(18px, 2.5vw, 20px);
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.required-mark {
+  color: #DC2626;
+  margin-left: 4px;
+}
+
+.cap-counter {
+  font-size: 14px;
+  color: #525252;
+  font-weight: 500;
+}
+
+/* Chips Grid */
+.chips-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+/* Outline Chips */
+.outline-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  height: auto;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #D4D4D4;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--color-ink);
+  text-decoration: none;
+  transition: all 0.2s;
+  cursor: pointer;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.outline-chip:hover:not(.disabled) {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.outline-chip:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-ink);
+}
+
+.outline-chip.selected {
+  border-color: var(--color-ink);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.outline-chip.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Error Messages */
+.error-message {
+  font-size: 13px;
+  color: #DC2626;
+  margin-top: 8px;
+  min-height: 16px;
+}
+
+/* CTA Block */
+.cta-block {
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.micro-hint {
+  font-size: 14px;
+  color: #525252;
+  margin-bottom: 4px;
+}
+
+.primary-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 24px;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  border-radius: 9999px;
+  transition: all 0.2s;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+}
+
+.primary-cta.disabled {
+  border: 1.5px solid var(--color-ink);
+  background: transparent;
+  color: var(--color-ink);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.primary-cta.enabled {
+  background: var(--color-ink);
+  color: var(--color-paper);
+  border: 1.5px solid var(--color-ink);
+}
+
+.primary-cta.enabled:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.primary-cta.enabled:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-ink);
+}
+
+.helper-text {
+  font-size: 13px;
+  color: #525252;
+  margin: 0;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 767px) {
+  .preferences-counter-section {
+    margin-bottom: 16px;
+  }
+  
+  .group-title {
+    font-size: 18px;
+  }
+  
+  .outline-chip {
+    min-height: 40px;
+    padding: 6px 14px;
+    font-size: 13px;
+  }
+  
+  .cta-block {
+    padding-top: 20px;
+    gap: 14px;
+  }
+  
+  .primary-cta {
+    height: 40px;
+    font-size: 15px;
+  }
+}
+
+/* Animations */
+.food-preferences-container {
+  animation: fadeUpFood 260ms ease-out;
+}
+
+@keyframes fadeUpFood {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .food-preferences-container {
+    animation: fadeOpacity 260ms ease-out;
+  }
+  
+  @keyframes fadeOpacity {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
 /* Hairline Separators */
 .hairline-separator {
   height: 1px;

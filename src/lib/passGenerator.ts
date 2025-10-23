@@ -19,13 +19,13 @@ export function formatPreferencesForPass(prefs: TastePayload): {
     cuisinesValue: prefs.cuisines.length > 0 
       ? prefs.cuisines.slice(0, 2).join(", ") + (prefs.cuisines.length > 2 ? "..." : "")
       : "—",
-    brandValue: prefs.brands.length > 0 ? prefs.brands[0] : "—",
+    brandValue: prefs.dishTypes.length > 0 ? prefs.dishTypes[0] : "—",
     backFieldValue: [
       `Food: ${prefs.foodType}`,
       `Spice: ${prefs.spice}`,
       ...(prefs.cuisines.length > 0 ? [`Cuisines: ${prefs.cuisines.join(", ")}`] : []),
-      ...(prefs.brands.length > 0 ? [`Brands: ${prefs.brands.join(", ")}`] : []),
-      ...(prefs.lifestyle.length > 0 ? [`Lifestyle: ${prefs.lifestyle.join(", ")}`] : [])
+      ...(prefs.dishTypes.length > 0 ? [`Dish Types: ${prefs.dishTypes.join(", ")}`] : []),
+      ...(prefs.dietary.length > 0 ? [`Dietary: ${prefs.dietary.join(", ")}`] : [])
     ].join("; ")
   };
 }

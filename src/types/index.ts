@@ -1,9 +1,9 @@
 export type TastePayload = {
-  foodType: "Vegetarian" | "Non-Vegetarian" | "Vegan" | "Jain" | "Eggetarian" | "Other";
-  spice: "Mild" | "Medium" | "Spicy";
-  cuisines: string[];  // len 0..3
-  brands: string[];    // len 0..3
-  lifestyle: string[]; // len 0..3
+  foodType: "Omnivore" | "Pescatarian" | "Vegetarian" | "Vegan" | "Flexitarian";
+  spice: "No Spice" | "Mild" | "Medium" | "Hot" | "Extra Hot";
+  cuisines: string[];    // len 0..3
+  dishTypes: string[];   // len 0..3
+  dietary: string[];     // len 0..2
 };
 
 export type PreferenceGroup = {
@@ -31,8 +31,8 @@ export type PreferenceState = {
   foodType: string[];
   spice: string[];
   cuisines: string[];
-  brands: string[];
-  lifestyle: string[];
+  dishTypes: string[];
+  dietary: string[];
 };
 
 export const PREFERENCE_GROUPS: PreferenceGroup[] = [
@@ -41,34 +41,47 @@ export const PREFERENCE_GROUPS: PreferenceGroup[] = [
     label: "Food Type",
     required: true,
     maxSelections: 1,
-    options: ["Vegetarian", "Non-Vegetarian", "Vegan", "Jain", "Eggetarian", "Other"]
+    options: ["Omnivore", "Pescatarian", "Vegetarian", "Vegan", "Flexitarian"]
   },
   {
     id: "spice",
-    label: "Spice",
+    label: "Spice Level",
     required: true,
     maxSelections: 1,
-    options: ["Mild", "Medium", "Spicy"]
+    options: ["No Spice", "Mild", "Medium", "Hot", "Extra Hot"]
   },
   {
     id: "cuisines",
-    label: "Cuisines",
+    label: "World Cuisines",
     required: false,
     maxSelections: 3,
-    options: ["North Indian", "South Indian", "Chinese", "Italian", "Mexican", "Thai", "Japanese", "American", "Mediterranean", "Continental"]
+    options: [
+      "African", "American", "Brazilian", "Mexican", "Peruvian", 
+      "British/Irish", "French", "Greek", "Italian", "Spanish", "Turkish",
+      "Middle Eastern/Levantine", "Mediterranean", "Indian (pan-regional)", 
+      "Pakistani", "Sri Lankan", "Chinese", "Japanese", "Korean", 
+      "Thai", "Vietnamese", "Indonesian", "Malaysian"
+    ]
   },
   {
-    id: "brands",
-    label: "Brands",
+    id: "dishTypes",
+    label: "Dish Types",
     required: false,
     maxSelections: 3,
-    options: ["Myntra", "Zara", "H&M", "Nike", "Adidas", "Puma", "Starbucks", "McDonald's", "KFC", "Domino's"]
+    options: [
+      "BBQ/Grill", "Curry/Stew", "Dumplings", "Noodles", "Pasta", "Pizza",
+      "Rice Dishes", "Salad", "Sandwich/Wrap", "Seafood", "Soup", "Sushi",
+      "Tacos/Burritos", "Tapas/Small Plates"
+    ]
   },
   {
-    id: "lifestyle",
-    label: "Lifestyle",
+    id: "dietary",
+    label: "Dietary & Restrictions",
     required: false,
-    maxSelections: 3,
-    options: ["Fitness", "Travel", "Tech", "Fashion", "Food", "Music", "Sports", "Reading", "Gaming", "Art"]
+    maxSelections: 2,
+    options: [
+      "Dairy-free", "Egg-free", "Gluten-free", "Halal", "High-protein",
+      "Kosher", "Low-carb", "Low-sugar", "Nut-free"
+    ]
   }
 ];
