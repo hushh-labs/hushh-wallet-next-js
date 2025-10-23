@@ -175,49 +175,88 @@ export default function HomePage() {
 
             {/* Value Proposition */}
             <div className="mt-20 pt-16 border-t border-subtle">
-              <div className="prose text-center max-w-4xl mx-auto">
-                <p className="text-body text-muted leading-relaxed">
+              <div className="prose max-w-4xl mx-auto">
+                <p className="text-body text-muted text-justified">
                   Your taste is simple, personal, and doesn't need a profile. In one minute, select five food signals—what you eat, how spicy you like it, and a few favourites—and we'll mint a minimal, monochrome card you can keep in <strong className="text-ink">Apple Wallet</strong>. No feeds, no clutter—just a clean, verifiable summary of your preferences that's always one tap away.
                 </p>
               </div>
             </div>
 
-            {/* What you'll choose - Definition Grid Layout */}
-            <div className="wyct-block">
-              {/* Text container with proper constraints */}
-              <div className="wyct-container">
-                {/* Section title */}
-                <h3 className="wyct-title">
+            {/* What you'll choose - Chipified Left Layout */}
+            <div className="wyct-chipified">
+              <div className="wyct-chipified-container">
+                {/* Section title - left aligned */}
+                <h3 className="wyct-chipified-title">
                   What you'll choose today
                 </h3>
                 
-                {/* Definition rows grid */}
-                <div className="wyct-definition-grid">
+                {/* Chipified rows */}
+                <div className="wyct-chipified-grid">
                   {/* Food Type row */}
-                  <div className="wyct-row">
-                    <div className="wyct-label">Food Type</div>
-                    <div className="wyct-dash">–</div>
-                    <div className="wyct-values">Vegetarian, Non-Vegetarian, Vegan, Jain, Eggetarian, or Other.</div>
+                  <div className="wyct-chipified-row">
+                    <div className="wyct-chipified-label">Food Type</div>
+                    <div className="wyct-chipified-dash">–</div>
+                    <div className="wyct-chipified-chips">
+                      <span className="chip-pill">Vegetarian</span>
+                      <span className="chip-pill">Non-Vegetarian</span>
+                      <span className="chip-pill">Vegan</span>
+                      <span className="chip-pill">Jain</span>
+                      <span className="chip-pill">Eggetarian</span>
+                      <span className="chip-pill">Other</span>
+                    </div>
                   </div>
                   
                   {/* Spice Level row */}
-                  <div className="wyct-row wyct-row-tight">
-                    <div className="wyct-label">Spice Level</div>
-                    <div className="wyct-dash">–</div>
-                    <div className="wyct-values">Mild, Medium, or Spicy.</div>
+                  <div className="wyct-chipified-row wyct-chipified-row-tight">
+                    <div className="wyct-chipified-label">Spice Level</div>
+                    <div className="wyct-chipified-dash">–</div>
+                    <div className="wyct-chipified-chips">
+                      <span className="chip-pill">Mild</span>
+                      <span className="chip-pill">Medium</span>
+                      <span className="chip-pill">Spicy</span>
+                    </div>
                   </div>
                   
                   {/* Plus any three row */}
-                  <div className="wyct-row">
-                    <div className="wyct-label">Plus any three</div>
-                    <div className="wyct-dash">–</div>
-                    <div className="wyct-values">from: <strong className="font-semibold text-ink">Cuisines</strong>, <strong className="font-semibold text-ink">Food Brands & Places</strong>, <strong className="font-semibold text-ink">Lifestyle & Diet</strong>.</div>
+                  <div className="wyct-chipified-row">
+                    <div className="wyct-chipified-label">Plus any three</div>
+                    <div className="wyct-chipified-dash">–</div>
+                    <div className="wyct-chipified-chips">
+                      <span className="chip-pill chip-category">Cuisines</span>
+                      <span className="chip-pill chip-category">Food Brands & Places</span>
+                      <span className="chip-pill chip-category">Lifestyle & Diet</span>
+                    </div>
                   </div>
                 </div>
                 
                 {/* Rule card */}
-                <div className="wyct-rule-card">
+                <div className="wyct-chipified-rule-card">
                   <strong className="font-semibold">Exact rule:</strong> choose <span className="font-mono font-semibold">5</span> in total. <strong className="font-semibold">Food Type</strong> and <strong className="font-semibold">Spice Level</strong> are required.
+                </div>
+              </div>
+            </div>
+
+            {/* Focus Cards */}
+            <div className="focus-cards-section">
+              <div className="focus-cards-container">
+                <div className="focus-cards-grid">
+                  <div className="focus-card">
+                    <div className="focus-card-icon"></div>
+                    <h4 className="focus-card-title">No sign-in</h4>
+                    <p className="focus-card-body">We only need your five picks. No account, no feed, no spam.</p>
+                  </div>
+                  
+                  <div className="focus-card">
+                    <div className="focus-card-icon"></div>
+                    <h4 className="focus-card-title">Monochrome by design</h4>
+                    <p className="focus-card-body">Clean type, hairline rules, no shadows. Luxury without noise.</p>
+                  </div>
+                  
+                  <div className="focus-card">
+                    <div className="focus-card-icon"></div>
+                    <h4 className="focus-card-title">Apple Wallet ready</h4>
+                    <p className="focus-card-body">Add in seconds on iPhone. macOS Safari adds to iCloud Wallet.</p>
+                  </div>
                 </div>
               </div>
             </div>
