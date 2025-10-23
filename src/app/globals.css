@@ -98,75 +98,175 @@ body {
 
 /* Button Styles */
 .btn-primary {
-  @apply inline-flex items-center justify-center px-8 py-3 text-base font-medium rounded-full transition-all duration-200;
-  @apply bg-ink text-paper hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  transition: all 0.2s;
+  background-color: var(--color-ink);
+  color: var(--color-paper);
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-primary:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-ink), 0 0 0 4px var(--color-paper);
 }
 
 .btn-secondary {
-  @apply inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium rounded-full transition-all duration-200;
-  @apply bg-transparent text-ink border border-subtle hover:bg-hover focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  transition: all 0.2s;
+  background-color: transparent;
+  color: var(--color-ink);
+  border: 1px solid var(--color-border);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-hover);
+}
+
+.btn-secondary:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-ink), 0 0 0 4px var(--color-paper);
 }
 
 /* Typography Scale */
 .text-eyebrow {
-  @apply text-sm font-medium tracking-wide uppercase text-muted;
+  font-size: 0.875rem;
+  font-weight: 500;
   letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-muted);
 }
 
 .text-hero {
-  @apply text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tight;
+  font-size: 2.25rem;
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+
+@media (min-width: 768px) {
+  .text-hero {
+    font-size: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-hero {
+    font-size: 3.75rem;
+  }
 }
 
 .text-deck {
-  @apply text-lg md:text-xl leading-relaxed;
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+@media (min-width: 768px) {
+  .text-deck {
+    font-size: 1.25rem;
+  }
 }
 
 .text-body {
-  @apply text-base leading-relaxed;
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
 /* Preference Chip Styles */
 .preference-chip {
-  @apply inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium rounded-full border transition-all duration-200;
-  @apply bg-paper text-ink border-subtle hover:bg-hover cursor-pointer;
-  @apply focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-2;
-}
-
-.preference-chip.selected {
-  @apply bg-ink text-paper border-ink;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  border: 1px solid var(--color-border);
+  transition: all 0.2s;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  cursor: pointer;
+  text-decoration: none;
 }
 
 .preference-chip:hover {
-  @apply border-ink;
+  border-color: var(--color-ink);
+  background-color: var(--color-hover);
+}
+
+.preference-chip.selected {
+  background-color: var(--color-ink);
+  color: var(--color-paper);
+  border-color: var(--color-ink);
+}
+
+.preference-chip:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-ink), 0 0 0 4px var(--color-paper);
 }
 
 /* Layout Components */
 .container-narrow {
-  @apply max-w-4xl mx-auto px-6;
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 0 1.5rem;
 }
 
 .container-wide {
-  @apply max-w-6xl mx-auto px-6;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0 1.5rem;
 }
 
 .section-padding {
-  @apply py-16 md:py-20 lg:py-24;
+  padding: 4rem 0;
+}
+
+@media (min-width: 768px) {
+  .section-padding {
+    padding: 5rem 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-padding {
+    padding: 6rem 0;
+  }
 }
 
 /* Responsive Typography */
 @media (max-width: 640px) {
   .text-hero {
-    @apply text-3xl;
+    font-size: 1.875rem;
   }
   
   .text-deck {
-    @apply text-base;
+    font-size: 1rem;
   }
 }
 
 /* Smooth transitions */
 * {
-  @apply transition-colors duration-200;
+  transition: color 0.2s;
 }
 
 /* Focus styles for accessibility */
@@ -177,7 +277,8 @@ body {
 
 /* Loading state */
 .loading {
-  @apply opacity-75 pointer-events-none;
+  opacity: 0.75;
+  pointer-events: none;
 }
 
 /* Animation classes */
@@ -198,32 +299,59 @@ body {
 
 /* Hover states */
 .hover-lift {
-  @apply transition-transform duration-200;
+  transition: transform 0.2s;
 }
 
 .hover-lift:hover {
-  @apply transform -translate-y-1;
+  transform: translateY(-4px);
 }
 
 /* Editorial spacing */
 .prose {
-  @apply max-w-none;
+  max-width: none;
 }
 
 .prose p {
-  @apply mb-4 leading-relaxed;
+  margin-bottom: 1rem;
+  line-height: 1.6;
 }
 
 .prose h1 {
-  @apply text-hero font-black mb-6;
+  font-size: 2.25rem;
+  font-weight: 900;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .prose h1 {
+    font-size: 3rem;
+  }
 }
 
 .prose h2 {
-  @apply text-2xl md:text-3xl font-bold mb-4 mt-8;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 768px) {
+  .prose h2 {
+    font-size: 1.875rem;
+  }
 }
 
 .prose h3 {
-  @apply text-xl md:text-2xl font-semibold mb-3 mt-6;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .prose h3 {
+    font-size: 1.5rem;
+  }
 }
 
 /* Selection styles */
