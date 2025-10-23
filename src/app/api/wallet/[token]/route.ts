@@ -3,11 +3,11 @@ import { verifyPassToken } from '@/lib/jwt';
 import { generateSimplePass } from '@/lib/simplePassGenerator';
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { token: string } }
+  request: Request,
+  { params }: { params: Promise<{ token: string }> }
 ) {
   try {
-    const { token } = params;
+    const { token } = await params;
     
     // Verify token
     const claim = verifyPassToken(token);
