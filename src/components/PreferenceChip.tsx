@@ -15,7 +15,7 @@ export function PreferenceChip({ label, selected, onToggle, disabled = false }: 
   return (
     <button
       type="button"
-      className={`chip ${selected ? 'selected' : ''}`}
+      className={`preference-chip ${selected ? 'selected' : ''} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
       onClick={onToggle}
       disabled={disabled}
       onFocus={() => setIsFocused(true)}

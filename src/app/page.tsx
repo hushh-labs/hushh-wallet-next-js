@@ -145,32 +145,58 @@ export default function HomePage() {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       {appState === AppState.HERO && (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="w-full max-w-4xl mx-auto px-6">
-            <div className="bg-ink text-paper rounded-2xl p-12 text-center space-y-6">
-              <div className="space-y-2">
-                <p className="text-sm font-medium opacity-80">Taste, simplified</p>
-                <h1 className="text-4xl md:text-5xl font-bold">
-                  Build your <span className="font-black">Hushh Taste Card</span>
+        <div className="min-h-screen flex items-center justify-center bg-paper">
+          <div className="container-narrow">
+            <div className="text-center space-y-8 fade-in">
+              <div className="space-y-6">
+                <p className="text-eyebrow">Food, simplified</p>
+                <h1 className="text-hero text-ink">
+                  Build your <span className="font-black">Hushh Food Preference Card</span>
                 </h1>
               </div>
               
-              <p className="text-lg opacity-90 max-w-2xl mx-auto">
-                Pick five preferences and add a clean, luxury card to <strong>Apple Wallet</strong>.
+              <p className="text-deck text-muted max-w-3xl mx-auto">
+                Pick five food preferences and add a clean, luxury card to <strong className="text-ink">Apple Wallet</strong>.
               </p>
 
-              <div className="pt-4">
+              <div className="pt-6">
                 <button
                   onClick={handleGetStarted}
-                  className="bg-paper text-ink px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+                  className="btn-primary hover-lift"
                 >
                   Get Started
                 </button>
               </div>
 
-              <p className="text-xs opacity-70">
+              <p className="text-sm text-muted">
                 Works on iPhone with Apple Wallet.
               </p>
+            </div>
+
+            {/* Value Proposition */}
+            <div className="mt-20 pt-16 border-t border-subtle">
+              <div className="prose text-center max-w-4xl mx-auto">
+                <p className="text-body text-muted leading-relaxed">
+                  Your taste is simple, personal, and doesn't need a profile. In one minute, select five food signals—what you eat, how spicy you like it, and a few favourites—and we'll mint a minimal, monochrome card you can keep in <strong className="text-ink">Apple Wallet</strong>. No feeds, no clutter—just a clean, verifiable summary of your preferences that's always one tap away.
+                </p>
+              </div>
+            </div>
+
+            {/* What you'll choose */}
+            <div className="mt-16 text-center">
+              <h2 className="text-2xl md:text-3xl font-bold text-ink mb-6">What you'll choose today</h2>
+              <div className="max-w-2xl mx-auto space-y-4">
+                <div className="text-body text-muted">
+                  <p className="mb-4"><strong className="text-ink">Food Type</strong> — Vegetarian, Non-Vegetarian, Vegan, Jain, Eggetarian, or Other.</p>
+                  <p className="mb-4"><strong className="text-ink">Spice Level</strong> — Mild, Medium, or Spicy.</p>
+                  <p className="mb-6"><strong className="text-ink">Plus any three</strong> from: <strong className="text-ink">Cuisines</strong>, <strong className="text-ink">Food Brands & Places</strong>, <strong className="text-ink">Lifestyle & Diet</strong>.</p>
+                </div>
+                <div className="bg-hover rounded-2xl p-6 inline-block">
+                  <p className="text-sm font-medium text-ink">
+                    <strong>Exact rule:</strong> choose <strong>5</strong> in total. <strong>Food Type</strong> and <strong>Spice Level</strong> are required.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -178,27 +204,30 @@ export default function HomePage() {
 
       {/* Preferences Section */}
       {(appState === AppState.PREFERENCES || appState === AppState.GENERATING) && (
-        <div className="min-h-screen py-12">
-          <div className="max-w-6xl mx-auto px-6">
+        <div className="min-h-screen section-padding bg-paper">
+          <div className="container-wide">
             {/* Header */}
-            <div className="text-center mb-12 space-y-4">
-              <h1 className="text-3xl md:text-4xl font-bold text-ink">
-                Choose Your Preferences
+            <div className="text-center mb-16 space-y-6 fade-in">
+              <p className="text-eyebrow">Choose Your Preferences</p>
+              <h1 className="text-hero text-ink">
+                Pick exactly <span className="font-black">5 preferences</span>
               </h1>
-              <p className="text-muted max-w-2xl mx-auto">
-                Select exactly 5 preferences to create your personalized taste card.
-                Food type and spice level are required.
+              <p className="text-deck text-muted max-w-3xl mx-auto">
+                Select exactly 5 preferences to create your personalized food preference card. 
+                <strong className="text-ink">Food type</strong> and <strong className="text-ink">spice level</strong> are required.
               </p>
             </div>
 
             {/* Preference Selector */}
-            <PreferenceSelector 
-              onGenerate={handleGenerate}
-              isGenerating={appState === AppState.GENERATING}
-            />
+            <div className={`${appState === AppState.GENERATING ? 'loading' : ''}`}>
+              <PreferenceSelector 
+                onGenerate={handleGenerate}
+                isGenerating={appState === AppState.GENERATING}
+              />
+            </div>
 
             {/* Back Link */}
-            <div className="text-center mt-8">
+            <div className="text-center mt-12">
               <button
                 onClick={handleReset}
                 className="btn-secondary"

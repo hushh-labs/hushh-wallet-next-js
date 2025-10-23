@@ -144,32 +144,32 @@ export function PreferenceSelector({ onGenerate, isGenerating }: PreferenceSelec
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-8">
+    <div className="w-full max-w-5xl mx-auto space-y-12">
       {/* Counter */}
       <div className="text-center">
-        <div className="text-2xl font-bold text-ink">
+        <div className="text-3xl md:text-4xl font-black text-ink mb-2">
           {totalSelected}/5 selected
         </div>
-        <p className={`text-sm mt-2 ${isValid ? 'text-green-600' : 'text-muted'}`}>
+        <p className={`text-body ${isValid ? 'text-green-600 font-medium' : 'text-muted'}`}>
           {getValidationMessage()}
         </p>
       </div>
 
       {/* Preference Groups */}
-      <div className="space-y-8">
+      <div className="space-y-12">
         {PREFERENCE_GROUPS.map((group) => (
-          <div key={group.id} className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-ink">
+          <div key={group.id} className="space-y-6">
+            <div className="text-center space-y-2">
+              <h3 className="text-xl md:text-2xl font-bold text-ink">
                 {group.label}
                 {group.required && <span className="text-red-500 ml-1">*</span>}
               </h3>
-              <div className="text-sm text-muted">
+              <div className="text-sm text-muted font-medium">
                 {preferences[group.id]?.length || 0} / {group.maxSelections}
               </div>
             </div>
             
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
               {group.options.map((option) => {
                 const isSelected = preferences[group.id]?.includes(option) || false;
                 const currentCount = preferences[group.id]?.length || 0;
@@ -191,17 +191,17 @@ export function PreferenceSelector({ onGenerate, isGenerating }: PreferenceSelec
       </div>
 
       {/* Generate Button */}
-      <div className="text-center pt-8">
+      <div className="text-center pt-12">
         <button
           type="button"
-          className="btn-primary"
+          className={`btn-primary hover-lift text-lg px-12 py-4 ${!isValid || isGenerating ? 'opacity-50 cursor-not-allowed' : ''}`}
           onClick={handleGenerate}
           disabled={!isValid || isGenerating}
         >
-          {isGenerating ? 'Generating...' : 'Add to Apple Wallet'}
+          {isGenerating ? 'Generating Your Card...' : 'Add to Apple Wallet'}
         </button>
         
-        <p className="text-xs text-muted mt-3">
+        <p className="text-sm text-muted mt-4">
           Works on iPhone with Apple Wallet.
         </p>
       </div>
