@@ -50,32 +50,76 @@ export default function HomePage() {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to generate pass');
+        // Handle error response
+        try {
+          const error = await response.json();
+          throw new Error(error.error || 'Failed to generate pass');
+        } catch {
+          throw new Error('Failed to generate pass');
+        }
       }
 
-      const data = await response.json();
-      setGeneratedURL(data.url);
+      // Check if the response is a .pkpass file (binary)
+      const contentType = response.headers.get('content-type');
+      if (contentType === 'application/vnd.apple.pkpass') {
+        // Handle binary .pkpass file download
+        const blob = await response.blob();
+        const filename = response.headers.get('content-disposition')?.match(/filename="(.+)"/)?.[1] || 'HushOne-TasteCard.pkpass';
+        
+        // Create download link
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
 
-      // Analytics: pkpass_issued
-      if (typeof window !== 'undefined' && (window as any).gtag) {
-        (window as any).gtag('event', 'pkpass_issued', {
-          event_category: 'pass_generation'
-        });
-      }
-
-      // For iOS, redirect to the wallet URL
-      if (isIOS) {
-        // Analytics: wallet_open_attempt
+        // Analytics: pkpass_issued
         if (typeof window !== 'undefined' && (window as any).gtag) {
-          (window as any).gtag('event', 'wallet_open_attempt', {
+          (window as any).gtag('event', 'pkpass_issued', {
             event_category: 'pass_generation'
           });
         }
+
+        // For iOS, show success
+        if (isIOS) {
+          // Analytics: wallet_open_attempt
+          if (typeof window !== 'undefined' && (window as any).gtag) {
+            (window as any).gtag('event', 'wallet_open_attempt', {
+              event_category: 'pass_generation'
+            });
+          }
+        }
         
-        window.location.href = data.url;
-      } else {
         setAppState(AppState.SUCCESS);
+        setGeneratedURL(''); // No URL needed for direct download
+      } else {
+        // Handle JSON response (fallback/demo mode)
+        const data = await response.json();
+        setGeneratedURL(data.url);
+
+        // Analytics: pkpass_issued
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          (window as any).gtag('event', 'pkpass_issued', {
+            event_category: 'pass_generation'
+          });
+        }
+
+        // For iOS, redirect to the wallet URL
+        if (isIOS) {
+          // Analytics: wallet_open_attempt
+          if (typeof window !== 'undefined' && (window as any).gtag) {
+            (window as any).gtag('event', 'wallet_open_attempt', {
+              event_category: 'pass_generation'
+            });
+          }
+          
+          window.location.href = data.url;
+        } else {
+          setAppState(AppState.SUCCESS);
+        }
       }
 
     } catch (error) {
