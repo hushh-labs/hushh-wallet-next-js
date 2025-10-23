@@ -354,6 +354,65 @@ body {
   }
 }
 
+/* Editorial Band Styles */
+.editorial-band {
+  background-color: var(--color-paper);
+  border-top: 1px solid #E5E5E5;
+  border-bottom: 1px solid #E5E5E5;
+}
+
+.rule-card {
+  border: 1.5px solid #D4D4D4;
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: inline-block;
+}
+
+/* Professional Typography */
+.text-64ch {
+  max-width: 64ch;
+}
+
+.text-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.text-tight-spacing {
+  letter-spacing: -0.015em;
+}
+
+.leading-editorial {
+  line-height: 1.65;
+}
+
+/* Hairline Separators */
+.hairline-separator {
+  height: 1px;
+  background-color: #E5E5E5;
+  width: 100%;
+}
+
+/* Enhanced Button Styles */
+.btn-primary {
+  letter-spacing: 0.02em;
+}
+
+.btn-primary:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  opacity: 1;
+}
+
+.btn-primary:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-ink);
+}
+
+.btn-secondary:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
 /* Selection styles */
 ::selection {
   background-color: var(--color-ink);

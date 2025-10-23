@@ -182,21 +182,37 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* What you'll choose */}
-            <div className="mt-16 text-center">
-              <h2 className="text-2xl md:text-3xl font-bold text-ink mb-6">What you'll choose today</h2>
-              <div className="max-w-2xl mx-auto space-y-4">
-                <div className="text-body text-muted">
-                  <p className="mb-4"><strong className="text-ink">Food Type</strong> — Vegetarian, Non-Vegetarian, Vegan, Jain, Eggetarian, or Other.</p>
-                  <p className="mb-4"><strong className="text-ink">Spice Level</strong> — Mild, Medium, or Spicy.</p>
-                  <p className="mb-6"><strong className="text-ink">Plus any three</strong> from: <strong className="text-ink">Cuisines</strong>, <strong className="text-ink">Food Brands & Places</strong>, <strong className="text-ink">Lifestyle & Diet</strong>.</p>
-                </div>
-                <div className="bg-hover rounded-2xl p-6 inline-block">
-                  <p className="text-sm font-medium text-ink">
-                    <strong>Exact rule:</strong> choose <strong>5</strong> in total. <strong>Food Type</strong> and <strong>Spice Level</strong> are required.
-                  </p>
+            {/* What you'll choose - Editorial Band */}
+            <div className="mt-16 md:mt-20">
+              {/* Top hairline separator */}
+              <div className="w-full h-px bg-gray-200 mb-8"></div>
+              
+              {/* Editorial band */}
+              <div className="bg-white py-8 px-6">
+                <div className="max-w-none mx-auto text-center" style={{maxWidth: '64ch'}}>
+                  {/* Section title */}
+                  <h3 className="text-xl md:text-2xl font-semibold text-ink mb-6 leading-tight" style={{letterSpacing: '-0.015em'}}>
+                    What you'll choose today
+                  </h3>
+                  
+                  {/* Choice descriptions */}
+                  <div className="space-y-4 mb-6 text-base md:text-lg leading-relaxed text-muted" style={{lineHeight: '1.65'}}>
+                    <p><strong className="font-semibold text-ink">Food Type</strong> – Vegetarian, Non-Vegetarian, Vegan, Jain, Eggetarian, or Other.</p>
+                    <p><strong className="font-semibold text-ink">Spice Level</strong> – Mild, Medium, or Spicy.</p>
+                    <p><strong className="font-semibold text-ink">Plus any three</strong> from: <strong className="font-semibold text-ink">Cuisines</strong>, <strong className="font-semibold text-ink">Food Brands & Places</strong>, <strong className="font-semibold text-ink">Lifestyle & Diet</strong>.</p>
+                  </div>
+                  
+                  {/* Rule card */}
+                  <div className="inline-block border border-gray-300 rounded-xl px-4 py-3 mb-8">
+                    <p className="text-sm text-ink">
+                      <strong className="font-semibold">Exact rule:</strong> choose <span className="font-mono font-semibold">5</span> in total. <strong className="font-semibold">Food Type</strong> and <strong className="font-semibold">Spice Level</strong> are required.
+                    </p>
+                  </div>
                 </div>
               </div>
+              
+              {/* Bottom hairline separator */}
+              <div className="w-full h-px bg-gray-200 mt-8"></div>
             </div>
           </div>
         </div>
