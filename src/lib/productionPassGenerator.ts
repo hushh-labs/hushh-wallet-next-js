@@ -63,23 +63,29 @@ export async function generateAppleWalletPass(passData: PassData): Promise<Buffe
       }
     );
     
-    // Customize the pass with user data
+    // Customize the pass with improved food-focused structure
     pass.primaryFields.push({
-      key: 'name',
-      label: 'Name',
-      value: passData.name
+      key: 'foodProfile',
+      label: 'Food Profile',
+      value: `${passData.preferences[0]} · ${passData.preferences[1]} Spice`
     });
     
     pass.secondaryFields.push({
-      key: 'preferences',
-      label: 'Taste Preferences',
-      value: passData.preferences.join(', ')
+      key: 'topCuisines',
+      label: 'Top Cuisines',
+      value: passData.preferences.slice(2, 4).join(' • ') || 'None selected'
     });
     
     pass.auxiliaryFields.push({
-      key: 'member',
-      label: 'Member Since',
-      value: new Date().toLocaleDateString()
+      key: 'created',
+      label: 'Created',
+      value: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    });
+    
+    pass.auxiliaryFields.push({
+      key: 'dietary',
+      label: 'Dietary',
+      value: passData.preferences[4] || 'None'
     });
     
     // Set unique serial number using pass properties

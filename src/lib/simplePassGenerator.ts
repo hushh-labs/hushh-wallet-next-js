@@ -12,52 +12,73 @@ export function generateSimplePass(serial: string, prefs: TastePayload): any {
     description: "Hushh Taste Card",
     serialNumber: serial,
     logoText: "Hushh",
-    foregroundColor: "rgb(255, 255, 255)",
-    backgroundColor: "rgb(0, 0, 0)",
-    labelColor: "rgb(255, 255, 255)",
+    foregroundColor: "rgb(255, 250, 245)",
+    backgroundColor: "rgb(20, 25, 30)",
+    labelColor: "rgb(180, 175, 170)",
     generic: {
       primaryFields: [
         {
-          key: "taste",
-          label: "Taste",
-          value: `${prefs.foodType} · ${prefs.spice}`
+          key: "foodProfile",
+          label: "Food Profile",
+          value: `${prefs.foodType} · ${prefs.spice} Spice`
+        }
+      ],
+      secondaryFields: [
+        {
+          key: "topCuisines",
+          label: "Top Cuisines",
+          value: prefs.cuisines.length > 0 
+            ? prefs.cuisines.slice(0, 2).join(" • ") + (prefs.cuisines.length > 2 ? " • +" + (prefs.cuisines.length - 2) : "")
+            : "None selected"
         }
       ],
       auxiliaryFields: [
         {
-          key: "cuisines",
-          label: "Cuisines",
-          value: prefs.cuisines.length > 0 
-            ? prefs.cuisines.slice(0, 2).join(", ") + (prefs.cuisines.length > 2 ? "..." : "")
-            : "—"
+          key: "dishPrefs",
+          label: "Dish Types", 
+          value: prefs.dishTypes.length > 0 ? prefs.dishTypes.slice(0, 2).join(" • ") : "Any"
         },
         {
-          key: "brand",
-          label: "Brand", 
-          value: prefs.dishTypes.length > 0 ? prefs.dishTypes[0] : "—"
+          key: "dietary",
+          label: "Dietary",
+          value: prefs.dietary.length > 0 ? prefs.dietary.slice(0, 2).join(" • ") : "None"
         },
         {
           key: "issued",
-          label: "Issued",
-          value: new Date().toISOString().split('T')[0]
+          label: "Created",
+          value: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
         }
       ],
       backFields: [
         {
-          key: "preferences",
-          label: "Preferences (5)",
-          value: [
-            `Food: ${prefs.foodType}`,
-            `Spice: ${prefs.spice}`,
-            ...(prefs.cuisines.length > 0 ? [`Cuisines: ${prefs.cuisines.join(", ")}`] : []),
-            ...(prefs.dishTypes.length > 0 ? [`Dish Types: ${prefs.dishTypes.join(", ")}`] : []),
-            ...(prefs.dietary.length > 0 ? [`Dietary: ${prefs.dietary.join(", ")}`] : [])
-          ].join("; ")
+          key: "fullProfile",
+          label: "Complete Food Profile",
+          value: `${prefs.foodType} • ${prefs.spice} Spice Level`
+        },
+        {
+          key: "allCuisines",
+          label: "Preferred Cuisines",
+          value: prefs.cuisines.length > 0 ? prefs.cuisines.join(" • ") : "No specific preferences"
+        },
+        {
+          key: "allDishTypes",
+          label: "Favorite Dish Types",
+          value: prefs.dishTypes.length > 0 ? prefs.dishTypes.join(" • ") : "Open to all types"
+        },
+        {
+          key: "allDietary",
+          label: "Dietary Requirements",
+          value: prefs.dietary.length > 0 ? prefs.dietary.join(" • ") : "No restrictions"
+        },
+        {
+          key: "cardInfo",
+          label: "About This Card",
+          value: "Show this card to restaurants, hotels, or share the link for personalized food recommendations based on your 5 preferences."
         },
         {
           key: "support",
           label: "Support",
-          value: "Visit hushh.ai for help with your taste card"
+          value: "Visit hushh.ai for help • Card ID: " + serial.slice(-8)
         }
       ]
     }

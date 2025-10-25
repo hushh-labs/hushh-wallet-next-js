@@ -1,12 +1,18 @@
 {
   "formatVersion": 1,
-  "description": "HushOne Taste Card",
+  "description": "HushOne Food Preference Card",
   "organizationName": "HushOne, Inc.",
   "passTypeIdentifier": "pass.com.hushh.wallet",
   "teamIdentifier": "WVDK9JW99C",
   "sharingProhibited": false,
-  "backgroundColor": "rgb(12,12,12)",
-  "foregroundColor": "rgb(255,255,255)",
-  "labelColor": "rgb(190,190,190)",
-  "storeCard": { "primaryFields": [], "secondaryFields": [] }
+  "backgroundColor": "rgb(20,25,30)",
+  "foregroundColor": "rgb(255,250,245)",
+  "labelColor": "rgb(180,175,170)",
+  "logoText": "Hushh",
+  "storeCard": { 
+    "primaryFields": [], 
+    "secondaryFields": [],
+    "auxiliaryFields": [],
+    "backFields": []
+  }
 }
