@@ -23,8 +23,8 @@ export async function GET(
       claim.prefs.foodType,
       claim.prefs.spice,
       ...claim.prefs.cuisines,
-      ...claim.prefs.dishTypes,
-      ...claim.prefs.dietary
+      ...claim.prefs.dishes,
+      ...claim.prefs.exclusions
     ].filter(Boolean);
 
     // Generate default name based on preferences
