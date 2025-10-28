@@ -50,8 +50,27 @@ export default function AllergyCardPage() {
     }
   };
 
-  // Form validation
-  const validateCurrentScreen = (): boolean => {
+  // Form validation (pure function without state updates)
+  const isCurrentScreenValid = (): boolean => {
+    const config = ALLERGY_SCREEN_CONFIGS[currentScreen - 1];
+
+    if (config.required) {
+      if (config.id === 'allergens') {
+        return !!(formData.allergens && formData.allergens.length > 0);
+      } else if (config.id === 'severity') {
+        return !!formData.severity;
+      } else if (config.id === 'xcontam') {
+        return !!formData.xcontam;
+      } else if (config.id === 'frontConsent') {
+        return !!formData.frontConsent;
+      }
+    }
+
+    return true;
+  };
+
+  // Validation with error setting (only called on user action)
+  const validateAndSetErrors = (): boolean => {
     const config = ALLERGY_SCREEN_CONFIGS[currentScreen - 1];
     setErrors(prev => ({ ...prev, [config.id]: '' }));
 
@@ -78,7 +97,7 @@ export default function AllergyCardPage() {
 
   // Check if we can proceed or generate
   const canProceed = (): boolean => {
-    return validateCurrentScreen();
+    return isCurrentScreenValid();
   };
 
   const canGenerate = (): boolean => {
