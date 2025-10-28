@@ -74,7 +74,21 @@ export default function BrandCardPage() {
 
   // Check if we can proceed or generate
   const canProceed = (): boolean => {
-    return validateCurrentScreen();
+    const config = BRAND_SCREEN_CONFIGS[currentScreen - 1];
+    
+    if (config.required) {
+      if (config.id === 'styles') {
+        if (!formData.styles || formData.styles.length === 0) {
+          return false;
+        }
+      } else if (config.id === 'budgetBand') {
+        if (!formData.budgetBand) {
+          return false;
+        }
+      }
+    }
+
+    return true;
   };
 
   const canGenerate = (): boolean => {

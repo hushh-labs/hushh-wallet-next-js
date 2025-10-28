@@ -97,7 +97,46 @@ export default function PersonalCardPage() {
 
   // Check if we can proceed to next screen or generate
   const canProceed = (): boolean => {
-    return validateCurrentScreen();
+    const config = PERSONAL_SCREEN_CONFIGS[currentScreen - 1];
+    const value = formData[config.id as keyof PersonalPayload];
+    
+    if (config.required && (!value || value.toString().trim() === '')) {
+      return false;
+    }
+
+    // Additional validation based on field type
+    if (config.validation && value) {
+      const val = value.toString();
+      
+      if (config.validation.min && val.length < config.validation.min) {
+        return false;
+      }
+      
+      if (config.validation.max && val.length > config.validation.max) {
+        return false;
+      }
+    }
+
+    // Phone validation
+    if (config.id === 'phone' && value) {
+      const phoneRegex = /^\+[1-9]\d{1,14}$/;
+      if (!phoneRegex.test(value.toString())) {
+        return false;
+      }
+    }
+
+    // Date validation
+    if (config.id === 'dob' && value) {
+      const birthDate = new Date(value.toString());
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      
+      if (age < 1 || age > 120 || birthDate > today) {
+        return false;
+      }
+    }
+
+    return true;
   };
 
   // Check if all required fields are filled for final generation
