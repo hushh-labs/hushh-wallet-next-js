@@ -36,12 +36,12 @@ export function generateSimplePass(serial: string, prefs: TastePayload): any {
         {
           key: "dishPrefs",
           label: "Dish Types", 
-          value: prefs.dishTypes.length > 0 ? prefs.dishTypes.slice(0, 2).join(" • ") : "Any"
+          value: prefs.dishes.length > 0 ? prefs.dishes.slice(0, 2).join(" • ") : "Any"
         },
         {
           key: "dietary",
           label: "Dietary",
-          value: prefs.dietary.length > 0 ? prefs.dietary.slice(0, 2).join(" • ") : "None"
+          value: prefs.exclusions.length > 0 ? prefs.exclusions.slice(0, 2).join(" • ") : "None"
         },
         {
           key: "issued",
@@ -63,12 +63,12 @@ export function generateSimplePass(serial: string, prefs: TastePayload): any {
         {
           key: "allDishTypes",
           label: "Favorite Dish Types",
-          value: prefs.dishTypes.length > 0 ? prefs.dishTypes.join(" • ") : "Open to all types"
+          value: prefs.dishes.length > 0 ? prefs.dishes.join(" • ") : "Open to all types"
         },
         {
           key: "allDietary",
           label: "Dietary Requirements",
-          value: prefs.dietary.length > 0 ? prefs.dietary.join(" • ") : "No restrictions"
+          value: prefs.exclusions.length > 0 ? prefs.exclusions.join(" • ") : "No restrictions"
         },
         {
           key: "cardInfo",
