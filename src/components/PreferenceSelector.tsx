@@ -14,8 +14,8 @@ export function PreferenceSelector({ onGenerate, isGenerating }: PreferenceSelec
     foodType: [],
     spice: [],
     cuisines: [],
-    dishTypes: [],
-    dietary: []
+    dishes: [],
+    exclusions: []
   });
 
   const [totalSelected, setTotalSelected] = useState(0);
@@ -112,8 +112,8 @@ export function PreferenceSelector({ onGenerate, isGenerating }: PreferenceSelec
       foodType: preferences.foodType[0] as TastePayload['foodType'],
       spice: preferences.spice[0] as TastePayload['spice'],
       cuisines: preferences.cuisines,
-      dishTypes: preferences.dishTypes,
-      dietary: preferences.dietary
+      dishes: preferences.dishes,
+      exclusions: preferences.exclusions
     };
 
     onGenerate(payload);
