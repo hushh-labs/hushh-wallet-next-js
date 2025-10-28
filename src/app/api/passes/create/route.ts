@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       body.foodType,
       body.spice,
       ...body.cuisines,
-      ...body.dishTypes,
+      ...body.dishes,
       ...body.dietary
     ].filter(Boolean);
 
