@@ -1,0 +1,12 @@
+{
+  "headers": [
+    {
+      "source": "/(.*)\\.pkpass",
+      "headers": [
+        { "key": "Content-Type", "value": "application/vnd.apple.pkpass" },
+        { "key": "Content-Disposition", "value": "attachment" },
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" }
+      ]
+    }
+  ]
+}

@@ -71,12 +71,16 @@ export async function POST(request: NextRequest) {
       const safeName = body.preferredName.replace(/[^a-zA-Z0-9]/g, '');
       const filename = `HushOne-Personal-${safeName}.pkpass`;
       
-      // Return the actual .pkpass file for download
+      // Return the actual .pkpass file for download with proper headers for iPhone
       return new NextResponse(passBuffer as any, {
         status: 200,
         headers: {
           'Content-Type': 'application/vnd.apple.pkpass',
           'Content-Disposition': `attachment; filename="${filename}"`,
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+          'X-Content-Type-Options': 'nosniff',
         },
       });
     } catch (passError) {

@@ -1,5 +1,6 @@
-import path from 'path';
-import fs from 'fs';
+import { PKPass } from 'passkit-generator';
+import * as fs from 'fs';
+import * as path from 'path';
 
 interface PersonalPassData {
   preferredName: string;
@@ -13,26 +14,106 @@ interface PersonalPassData {
 }
 
 export async function generatePersonalAppleWalletPass(passData: PersonalPassData): Promise<Buffer> {
-  // Try to use the existing pass generation infrastructure
   try {
-    // Import the existing pass generation functions
-    const { generateCorrectAppleWalletPass } = await import('./correctPassGenerator');
+    const projectRoot = process.cwd();
     
-    console.log('Attempting to generate Personal Data Card pass...');
-    
-    // Create pass data in the format expected by the existing generator
-    const personalPassStructure = {
-      name: passData.preferredName,
-      preferences: [], // Personal cards don't have preferences like food cards
-      personalData: passData
-    };
+    // Read the properly extracted PEM certificates
+    const signerCert = fs.readFileSync(path.join(projectRoot, 'signerCert.pem'), 'utf8');
+    const signerKey = fs.readFileSync(path.join(projectRoot, 'signerKey.pem'), 'utf8');
+    const wwdr = fs.readFileSync(path.join(projectRoot, 'wwdr.pem'), 'utf8');
 
-    // Use the existing infrastructure but we'll need to customize it for personal data
-    return await generatePersonalPassWithCustomTemplate(passData);
+    console.log('Certificates loaded successfully for Personal Pass');
+
+    // Use PKPass.from() with the personal pass model
+    const pass = await PKPass.from({
+      model: path.join(projectRoot, 'passModels', 'personal.pass'),
+      certificates: {
+        wwdr,
+        signerCert,
+        signerKey,
+        signerKeyPassphrase: undefined // Use undefined for unencrypted keys
+      }
+    }, {
+      // Override pass.json data with personal information
+      serialNumber: generateSerialNumber(),
+      description: `${passData.preferredName}'s Personal Data Card`
+    });
+
+    const serialNumber = generateSerialNumber();
+
+    // Add personal fields using the proper passkit-generator API
+    pass.primaryFields.push({
+      key: 'preferredName',
+      label: 'Name',
+      value: passData.preferredName
+    });
+
+    pass.secondaryFields.push({
+      key: 'age',
+      label: 'Age',
+      value: `${passData.age} years old`
+    });
+
+    // Add auxiliary fields
+    pass.auxiliaryFields.push({
+      key: 'issued',
+      label: 'Issued',
+      value: new Date(passData.issueDate).toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric', 
+        year: 'numeric' 
+      })
+    });
+
+    // Add back fields with full information
+    pass.backFields.push(
+      {
+        key: 'fullName',
+        label: 'Legal Name',
+        value: passData.legalName
+      },
+      {
+        key: 'contact',
+        label: 'Phone',
+        value: passData.maskedPhone
+      },
+      {
+        key: 'birthDate',
+        label: 'Date of Birth',
+        value: new Date(passData.dob).toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        })
+      },
+      {
+        key: 'cardInfo',
+        label: 'About This Card',
+        value: 'Your personal identity card for convenient, privacy-focused identification. Show this card when personal details are needed.'
+      },
+      {
+        key: 'privacy',
+        label: 'Privacy Notice',
+        value: 'Your personal information is stored securely and only essential details are shown on the card face. Full details remain private on the back.'
+      },
+      {
+        key: 'support',
+        label: 'Support',
+        value: `Visit hushh.ai for help • Card ID: ${serialNumber.slice(-8)}`
+      }
+    );
+
+    console.log('Personal PKPass created successfully using PKPass.from()');
+
+    // Generate the pass buffer
+    const passBuffer = pass.getAsBuffer();
+    console.log('Personal pass buffer generated, size:', passBuffer.length);
+    
+    return passBuffer;
     
   } catch (error) {
-    console.log('Could not use existing pass generator, trying fallback approach:', error);
-    throw new Error('Personal pass generation not yet fully implemented');
+    console.error('Error generating personal Apple Wallet pass:', error);
+    throw error;
   }
 }
 
