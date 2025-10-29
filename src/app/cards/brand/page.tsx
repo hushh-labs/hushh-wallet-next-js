@@ -324,7 +324,7 @@ export default function BrandCardPage() {
               <h2 className="success-title">Brand Card Generated!</h2>
               <p className="success-subtitle">Your style preference card is ready.</p>
               <button 
-                onClick={() => window.location.href = '/dashboard'}
+                onClick={() => window.location.href = '/'}
                 className="btn-primary"
               >
                 Back to Dashboard
@@ -346,7 +346,7 @@ export default function BrandCardPage() {
                   Try Again
                 </button>
                 <button 
-                  onClick={() => window.location.href = '/dashboard'}
+                  onClick={() => window.location.href = '/'}
                   className="btn-secondary"
                 >
                   Back to Dashboard

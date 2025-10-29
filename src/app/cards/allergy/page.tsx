@@ -312,7 +312,7 @@ export default function AllergyCardPage() {
               <h2 className="success-title">Allergy Safety Card Generated!</h2>
               <p className="success-subtitle">Your critical safety information is now available in Apple Wallet.</p>
               <button 
-                onClick={() => window.location.href = '/dashboard'}
+                onClick={() => window.location.href = '/'}
                 className="btn-primary"
               >
                 Back to Dashboard
@@ -334,7 +334,7 @@ export default function AllergyCardPage() {
                   Try Again
                 </button>
                 <button 
-                  onClick={() => window.location.href = '/dashboard'}
+                  onClick={() => window.location.href = '/'}
                   className="btn-secondary"
                 >
                   Back to Dashboard

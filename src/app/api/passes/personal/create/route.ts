@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate phone format
-    const phoneRegex = /^\+[1-9]\d{1,14}$/;
+    const phoneRegex = /^\+[1-9]\d{8,14}$/;
     if (!phoneRegex.test(body.phone)) {
       return NextResponse.json({ 
         error: 'Invalid phone number format. Use E.164 format (e.g., +91xxxxxxxxxx)' 
@@ -22,13 +22,22 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate date of birth
+    console.log('Raw DOB from request:', body.dob, typeof body.dob);
     const birthDate = new Date(body.dob);
+    console.log('Parsed birthDate:', birthDate, 'IsValid:', !isNaN(birthDate.getTime()));
     const today = new Date();
     const age = today.getFullYear() - birthDate.getFullYear();
     
-    if (age < 1 || age > 120 || birthDate > today) {
+    if (isNaN(birthDate.getTime()) || age < 1 || age > 120 || birthDate > today) {
+      console.log('Date validation failed:', {
+        isNaN: isNaN(birthDate.getTime()),
+        age,
+        birthDate,
+        today,
+        futureDate: birthDate > today
+      });
       return NextResponse.json({ 
-        error: 'Invalid date of birth' 
+        error: `Invalid date of birth. Received: ${body.dob}, Parsed: ${birthDate}` 
       }, { status: 400 });
     }
 

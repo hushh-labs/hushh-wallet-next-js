@@ -73,8 +73,8 @@ export default function PersonalCardPage() {
 
     // Phone validation
     if (config.id === 'phone' && value) {
-      const phoneRegex = /^\+[1-9]\d{1,14}$/;
-      if (!phoneRegex.test(value.toString())) {
+      const phoneRegex = /^\+[1-9]\d{8,14}$/;
+      if (!phoneRegex.test(value.toString().trim())) {
         setErrors(prev => ({ ...prev, [config.id]: config.errorMessage || 'Please enter a valid phone number with country code' }));
         return false;
       }
@@ -119,8 +119,8 @@ export default function PersonalCardPage() {
 
     // Phone validation
     if (config.id === 'phone' && value) {
-      const phoneRegex = /^\+[1-9]\d{1,14}$/;
-      if (!phoneRegex.test(value.toString())) {
+      const phoneRegex = /^\+[1-9]\d{8,14}$/;
+      if (!phoneRegex.test(value.toString().trim())) {
         return false;
       }
     }
@@ -153,6 +153,25 @@ export default function PersonalCardPage() {
 
   // Handle form field updates
   const updateFormData = (field: string, value: string) => {
+    // Special handling for date fields
+    if (field === 'dob') {
+      console.log('Date input received:', value, typeof value);
+      // Only accept complete dates in YYYY-MM-DD format
+      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+      if (value && !dateRegex.test(value)) {
+        console.warn('Ignoring incomplete date:', value);
+        return; // Don't update if format is invalid or incomplete
+      }
+      // Additional validation for realistic date
+      if (value) {
+        const testDate = new Date(value);
+        if (isNaN(testDate.getTime()) || testDate.getFullYear() < 1900 || testDate.getFullYear() > new Date().getFullYear()) {
+          console.warn('Ignoring unrealistic date:', value);
+          return;
+        }
+      }
+    }
+    
     setFormData(prev => ({ ...prev, [field]: value }));
     
     // Auto-fill preferred name from legal name
@@ -347,7 +366,7 @@ export default function PersonalCardPage() {
               <h2 className="success-title">Personal Card Generated!</h2>
               <p className="success-subtitle">Your card has been downloaded and can be added to Apple Wallet.</p>
               <button 
-                onClick={() => window.location.href = '/dashboard'}
+                onClick={() => window.location.href = '/'}
                 className="btn-primary"
               >
                 Back to Dashboard
@@ -369,7 +388,7 @@ export default function PersonalCardPage() {
                   Try Again
                 </button>
                 <button 
-                  onClick={() => window.location.href = '/dashboard'}
+                  onClick={() => window.location.href = '/'}
                   className="btn-secondary"
                 >
                   Back to Dashboard

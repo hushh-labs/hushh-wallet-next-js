@@ -31,8 +31,10 @@ const MOCK_CARD_DATA: Record<CardType, CardData> = {
   },
   FOOD: {
     type: 'FOOD',
-    status: 'NOT_CREATED',
+    status: 'ACTIVE',
     answers: {} as any,
+    lastSerial: 'H-FOOD-12345',
+    lastIssued: new Date(),
     version: 1
   }
 };
@@ -101,7 +103,7 @@ function CardTile({ type, title, description, status, lastIssued, onClick }: Car
   );
 }
 
-export default function HomePage() {
+export default function DashboardLandingPage() {
   const [cards, setCards] = useState<Record<CardType, CardData>>(MOCK_CARD_DATA);
   const [user] = useState(MOCK_USER);
 
