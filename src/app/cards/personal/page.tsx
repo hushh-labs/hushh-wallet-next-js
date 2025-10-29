@@ -156,20 +156,33 @@ export default function PersonalCardPage() {
     // Special handling for date fields
     if (field === 'dob') {
       console.log('Date input received:', value, typeof value);
+      
+      // If value is empty, clear the field
+      if (!value || value.trim() === '') {
+        setFormData(prev => ({ ...prev, [field]: '' }));
+        return;
+      }
+      
       // Only accept complete dates in YYYY-MM-DD format
       const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-      if (value && !dateRegex.test(value)) {
+      if (!dateRegex.test(value)) {
         console.warn('Ignoring incomplete date:', value);
         return; // Don't update if format is invalid or incomplete
       }
+      
       // Additional validation for realistic date
-      if (value) {
-        const testDate = new Date(value);
-        if (isNaN(testDate.getTime()) || testDate.getFullYear() < 1900 || testDate.getFullYear() > new Date().getFullYear()) {
-          console.warn('Ignoring unrealistic date:', value);
-          return;
-        }
+      const testDate = new Date(value);
+      const currentYear = new Date().getFullYear();
+      
+      if (isNaN(testDate.getTime()) || 
+          testDate.getFullYear() < 1900 || 
+          testDate.getFullYear() > currentYear ||
+          testDate > new Date()) {
+        console.warn('Ignoring unrealistic date:', value);
+        return;
       }
+      
+      console.log('Valid date accepted:', value);
     }
     
     setFormData(prev => ({ ...prev, [field]: value }));
