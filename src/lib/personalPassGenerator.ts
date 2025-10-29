@@ -17,16 +17,16 @@ export async function generatePersonalAppleWalletPass(passData: PersonalPassData
   try {
     const projectRoot = process.cwd();
     
-    // Read the properly extracted PEM certificates
+    // Read the properly extracted PEM certificates - same as working food card
     const signerCert = fs.readFileSync(path.join(projectRoot, 'signerCert.pem'), 'utf8');
     const signerKey = fs.readFileSync(path.join(projectRoot, 'signerKey.pem'), 'utf8');
     const wwdr = fs.readFileSync(path.join(projectRoot, 'wwdr.pem'), 'utf8');
 
     console.log('Certificates loaded successfully for Personal Pass');
 
-    // Use PKPass.from() with the personal pass model
+    // Use the SAME working model as food preference card (luxury.pass)
     const pass = await PKPass.from({
-      model: path.join(projectRoot, 'passModels', 'personal.pass'),
+      model: path.join(projectRoot, 'passModels', 'luxury.pass'),
       certificates: {
         wwdr,
         signerCert,
@@ -35,11 +35,11 @@ export async function generatePersonalAppleWalletPass(passData: PersonalPassData
       }
     }, {
       // Override pass.json data with personal information
-      serialNumber: generateSerialNumber(),
+      serialNumber: `HUSHH-PERSONAL-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       description: `${passData.preferredName}'s Personal Data Card`
     });
 
-    const serialNumber = generateSerialNumber();
+    const serialNumber = `HUSHH-PERSONAL-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
     // Add personal fields using the proper passkit-generator API
     pass.primaryFields.push({
