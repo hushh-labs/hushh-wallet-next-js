@@ -294,6 +294,8 @@ export default function PersonalCardPage() {
               type="date"
               value={value}
               onChange={(e) => updateFormData(config.id, e.target.value)}
+              max={new Date().toISOString().split('T')[0]} // Today's date as max
+              min="1900-01-01" // Minimum realistic birth year
               className={`text-input ${error ? 'error' : ''}`}
               autoFocus
             />
