@@ -3,10 +3,6 @@
 import { useState, useEffect } from 'react';
 import { CardType, CardStatus, CardData } from '@/types';
 
-// Force dynamic rendering - no cache
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
 // Mock data for now - will be replaced with real auth/database
 const MOCK_USER = {
   id: '1',
