@@ -1996,3 +1996,173 @@ body {
 .sticky-action-bar {
   padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
 }
+
+/* ===== PERSONAL DATA SELECTOR FORM STYLES ===== */
+
+/* Form Group */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Form Label */
+.form-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  margin-bottom: 0.5rem;
+}
+
+/* Form Input */
+.form-input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  font-size: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--color-ink);
+  box-shadow: 0 0 0 3px rgba(10, 10, 10, 0.1);
+}
+
+.form-input.error {
+  border-color: #DC2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.form-input::placeholder {
+  color: var(--color-muted);
+}
+
+/* Form Helper Text */
+.form-helper {
+  font-size: 0.875rem;
+  color: var(--color-muted);
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+}
+
+/* Field Error (specific to forms) */
+.form-group .field-error {
+  font-size: 0.875rem;
+  color: #DC2626;
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+}
+
+/* Radio Group for Forms */
+.form-group .radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.form-group .radio-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--color-paper);
+}
+
+.form-group .radio-option:hover {
+  border-color: var(--color-ink);
+  background: var(--color-hover);
+}
+
+.form-group .radio-option:has(.radio-input:checked) {
+  border-color: var(--color-ink);
+  background: var(--color-hover);
+}
+
+.form-group .radio-input {
+  width: 1.125rem;
+  height: 1.125rem;
+  accent-color: var(--color-ink);
+  margin: 0;
+}
+
+.form-group .radio-label {
+  font-size: 1rem;
+  color: var(--color-ink);
+  font-weight: 500;
+  margin: 0;
+  flex: 1;
+}
+
+/* Form Button Overrides */
+.form-group .btn-primary {
+  font-size: 1rem;
+  padding: 0.875rem 2rem;
+  margin-top: 0.5rem;
+}
+
+.form-group .btn-primary.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: var(--color-border);
+  color: var(--color-muted);
+  border-color: var(--color-border);
+}
+
+.form-group .btn-primary.disabled:hover {
+  text-decoration: none;
+  opacity: 0.6;
+  transform: none;
+}
+
+/* Responsive Form Styles */
+@media (max-width: 640px) {
+  .form-input {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.9375rem;
+  }
+  
+  .form-group .radio-option {
+    padding: 0.75rem 0.875rem;
+  }
+  
+  .form-group .radio-input {
+    width: 1rem;
+    height: 1rem;
+  }
+  
+  .form-group .radio-label {
+    font-size: 0.9375rem;
+  }
+}
+
+/* Form Focus Improvements */
+.form-group .radio-option:focus-within {
+  border-color: var(--color-ink);
+  box-shadow: 0 0 0 3px rgba(10, 10, 10, 0.1);
+}
+
+/* Form Animation */
+.form-group {
+  animation: fadeInForm 0.3s ease-out;
+}
+
+@keyframes fadeInForm {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

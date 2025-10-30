@@ -1,215 +1,49 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { PersonalPayload, PERSONAL_SCREEN_CONFIGS } from '@/types';
+import { PersonalDataSelector } from '@/components/PersonalDataSelector';
+import { PersonalPayload } from '@/types';
 
-enum PersonalFlowState {
-  SCREEN_1 = 'screen_1', // Gender
-  SCREEN_2 = 'screen_2', // Legal Name
-  SCREEN_3 = 'screen_3', // Preferred Name
-  SCREEN_4 = 'screen_4', // Phone
-  SCREEN_5 = 'screen_5', // Date of Birth
+enum AppState {
+  HERO = 'hero',
+  FORM = 'form',
   GENERATING = 'generating',
   SUCCESS = 'success',
   ERROR = 'error'
 }
 
-const TOTAL_SCREENS = 5;
-
 export default function PersonalCardPage() {
-  const [flowState, setFlowState] = useState<PersonalFlowState>(PersonalFlowState.SCREEN_1);
-  const [currentScreen, setCurrentScreen] = useState(1);
-  const [formData, setFormData] = useState<Partial<PersonalPayload>>({});
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [appState, setAppState] = useState<AppState>(AppState.HERO);
+  const [isIOS, setIsIOS] = useState<boolean | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [generatedURL, setGeneratedURL] = useState<string>('');
 
-  // Progress calculation
-  const progress = (currentScreen / TOTAL_SCREENS) * 100;
+  // Device detection (same as food card)
+  useEffect(() => {
+    const userAgent = navigator.userAgent.toLowerCase();
+    const isIOSDevice = /iphone|ipad|ipod/.test(userAgent);
+    setIsIOS(isIOSDevice);
 
-  // Navigation functions
-  const goToNextScreen = () => {
-    if (currentScreen < TOTAL_SCREENS) {
-      const nextScreen = currentScreen + 1;
-      setCurrentScreen(nextScreen);
-      setFlowState(`screen_${nextScreen}` as PersonalFlowState);
+    // Analytics: device detection
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', isIOSDevice ? 'ios_detected' : 'android_detected', {
+        event_category: 'device_detection'
+      });
     }
+  }, []);
+
+  const handleGetStarted = () => {
+    setAppState(AppState.FORM);
   };
 
-  const goToPrevScreen = () => {
-    if (currentScreen > 1) {
-      const prevScreen = currentScreen - 1;
-      setCurrentScreen(prevScreen);
-      setFlowState(`screen_${prevScreen}` as PersonalFlowState);
-    }
-  };
-
-  // Form validation
-  const validateCurrentScreen = (): boolean => {
-    const config = PERSONAL_SCREEN_CONFIGS[currentScreen - 1];
-    const value = formData[config.id as keyof PersonalPayload];
-    
-    setErrors(prev => ({ ...prev, [config.id]: '' }));
-
-    if (config.required && (!value || value.toString().trim() === '')) {
-      setErrors(prev => ({ ...prev, [config.id]: config.errorMessage || 'This field is required' }));
-      return false;
-    }
-
-    // Additional validation based on field type
-    if (config.validation && value) {
-      const val = value.toString();
-      
-      if (config.validation.min && val.length < config.validation.min) {
-        setErrors(prev => ({ ...prev, [config.id]: config.errorMessage || `Minimum ${config.validation?.min} characters required` }));
-        return false;
-      }
-      
-      if (config.validation.max && val.length > config.validation.max) {
-        setErrors(prev => ({ ...prev, [config.id]: config.errorMessage || `Maximum ${config.validation?.max} characters allowed` }));
-        return false;
-      }
-    }
-
-    // Phone validation
-    if (config.id === 'phone' && value) {
-      const phoneRegex = /^\+[1-9]\d{8,14}$/;
-      if (!phoneRegex.test(value.toString().trim())) {
-        setErrors(prev => ({ ...prev, [config.id]: config.errorMessage || 'Please enter a valid phone number with country code' }));
-        return false;
-      }
-    }
-
-    // Date validation
-    if (config.id === 'dob' && value) {
-      const birthDate = new Date(value.toString());
-      const today = new Date();
-      const age = today.getFullYear() - birthDate.getFullYear();
-      
-      if (age < 1 || age > 120 || birthDate > today) {
-        setErrors(prev => ({ ...prev, [config.id]: config.errorMessage || 'Please enter a valid date of birth' }));
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  // Check if we can proceed to next screen or generate
-  const canProceed = (): boolean => {
-    const config = PERSONAL_SCREEN_CONFIGS[currentScreen - 1];
-    const value = formData[config.id as keyof PersonalPayload];
-    
-    if (config.required && (!value || value.toString().trim() === '')) {
-      return false;
-    }
-
-    // Additional validation based on field type
-    if (config.validation && value) {
-      const val = value.toString();
-      
-      if (config.validation.min && val.length < config.validation.min) {
-        return false;
-      }
-      
-      if (config.validation.max && val.length > config.validation.max) {
-        return false;
-      }
-    }
-
-    // Phone validation
-    if (config.id === 'phone' && value) {
-      const phoneRegex = /^\+[1-9]\d{8,14}$/;
-      if (!phoneRegex.test(value.toString().trim())) {
-        return false;
-      }
-    }
-
-    // Date validation
-    if (config.id === 'dob' && value) {
-      const birthDate = new Date(value.toString());
-      const today = new Date();
-      const age = today.getFullYear() - birthDate.getFullYear();
-      
-      if (age < 1 || age > 120 || birthDate > today) {
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  // Check if all required fields are filled for final generation
-  const canGenerate = (): boolean => {
-    const requiredFields = PERSONAL_SCREEN_CONFIGS
-      .filter(config => config.required)
-      .map(config => config.id);
-    
-    return requiredFields.every(field => {
-      const value = formData[field as keyof PersonalPayload];
-      return value && value.toString().trim() !== '';
-    });
-  };
-
-  // Handle form field updates
-  const updateFormData = (field: string, value: string) => {
-    // Special handling for date fields
-    if (field === 'dob') {
-      console.log('Date input received:', value, typeof value);
-      
-      // If value is empty, clear the field
-      if (!value || value.trim() === '') {
-        setFormData(prev => ({ ...prev, [field]: '' }));
-        return;
-      }
-      
-      // Only accept complete dates in YYYY-MM-DD format
-      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-      if (!dateRegex.test(value)) {
-        console.warn('Ignoring incomplete date:', value);
-        return; // Don't update if format is invalid or incomplete
-      }
-      
-      // Additional validation for realistic date
-      const testDate = new Date(value);
-      const currentYear = new Date().getFullYear();
-      
-      if (isNaN(testDate.getTime()) || 
-          testDate.getFullYear() < 1900 || 
-          testDate.getFullYear() > currentYear ||
-          testDate > new Date()) {
-        console.warn('Ignoring unrealistic date:', value);
-        return;
-      }
-      
-      console.log('Valid date accepted:', value);
-    }
-    
-    setFormData(prev => ({ ...prev, [field]: value }));
-    
-    // Auto-fill preferred name from legal name
-    if (field === 'legalName' && !formData.preferredName) {
-      const firstName = value.split(' ')[0];
-      setFormData(prev => ({ ...prev, preferredName: firstName }));
-    }
-    
-    // Clear errors when user starts typing
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
-  };
-
-  // Handle card generation
-  const handleGenerate = async () => {
-    if (!canGenerate()) return;
-
-    setIsGenerating(true);
-    setFlowState(PersonalFlowState.GENERATING);
+  const handleGenerate = async (personalData: PersonalPayload) => {
+    setAppState(AppState.GENERATING);
+    setErrorMessage('');
 
     try {
       // Convert personal data to food card format for working API
       const foodCardFormat = {
-        foodType: formData.preferredName || 'Personal',
+        foodType: personalData.preferredName || 'Personal',
         spice: 'Medium',
         cuisines: [],
         dishes: [],
@@ -218,21 +52,30 @@ export default function PersonalCardPage() {
 
       const response = await fetch('/api/passes/create', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(foodCardFormat),
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to generate card');
+        // Handle error response
+        try {
+          const error = await response.json();
+          throw new Error(error.error || 'Failed to generate pass');
+        } catch {
+          throw new Error('Failed to generate pass');
+        }
       }
 
-      // Check if response is binary .pkpass file
+      // Check if the response is a .pkpass file (binary)
       const contentType = response.headers.get('content-type');
       if (contentType === 'application/vnd.apple.pkpass') {
+        // Handle binary .pkpass file download
         const blob = await response.blob();
         const filename = response.headers.get('content-disposition')?.match(/filename="(.+)"/)?.[1] || 'HushOne-PersonalCard.pkpass';
         
+        // Create download link
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -242,236 +85,238 @@ export default function PersonalCardPage() {
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
 
-        setFlowState(PersonalFlowState.SUCCESS);
+        // Analytics: pkpass_issued
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          (window as any).gtag('event', 'pkpass_issued', {
+            event_category: 'pass_generation'
+          });
+        }
+
+        // For iOS, show success
+        if (isIOS) {
+          // Analytics: wallet_open_attempt
+          if (typeof window !== 'undefined' && (window as any).gtag) {
+            (window as any).gtag('event', 'wallet_open_attempt', {
+              event_category: 'pass_generation'
+            });
+          }
+        }
+        
+        setAppState(AppState.SUCCESS);
+        setGeneratedURL(''); // No URL needed for direct download
       } else {
-        const data = await response.json();
         // Handle JSON response (fallback/demo mode)
-        setFlowState(PersonalFlowState.SUCCESS);
+        const data = await response.json();
+        setGeneratedURL(data.url);
+
+        // Analytics: pkpass_issued
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          (window as any).gtag('event', 'pkpass_issued', {
+            event_category: 'pass_generation'
+          });
+        }
+
+        // For iOS, redirect to the wallet URL
+        if (isIOS) {
+          // Analytics: wallet_open_attempt
+          if (typeof window !== 'undefined' && (window as any).gtag) {
+            (window as any).gtag('event', 'wallet_open_attempt', {
+              event_category: 'pass_generation'
+            });
+          }
+          
+          window.location.href = data.url;
+        } else {
+          setAppState(AppState.SUCCESS);
+        }
       }
+
     } catch (error) {
       console.error('Generation error:', error);
-      setErrorMessage(error instanceof Error ? error.message : 'Failed to generate card');
-      setFlowState(PersonalFlowState.ERROR);
-    } finally {
-      setIsGenerating(false);
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to generate pass');
+      setAppState(AppState.ERROR);
     }
   };
 
-  // Render current screen
-  const renderCurrentScreen = () => {
-    const config = PERSONAL_SCREEN_CONFIGS[currentScreen - 1];
-    const value = formData[config.id as keyof PersonalPayload] || '';
-    const error = errors[config.id];
+  const handleReset = () => {
+    setAppState(AppState.HERO);
+    setErrorMessage('');
+    setGeneratedURL('');
+  };
 
-    return (
-      <div className="screen-container">
-        <div className="screen-header">
-          <h1 className="screen-title">{config.title}</h1>
-          <p className="screen-helper">{config.helper}</p>
-        </div>
+  const handleEmailLink = () => {
+    const subject = encodeURIComponent('Your Hushh Personal Card');
+    const body = encodeURIComponent(`Here's your Hushh Personal Card: ${generatedURL}`);
+    window.open(`mailto:?subject=${subject}&body=${body}`);
+  };
 
-        <div className="screen-content">
-          {config.type === 'radio' && (
-            <div className="radio-group">
-              {config.options?.map((option) => (
-                <label key={option} className="radio-option">
-                  <input
-                    type="radio"
-                    name={config.id}
-                    value={option}
-                    checked={value === option}
-                    onChange={(e) => updateFormData(config.id, e.target.value)}
-                    className="radio-input"
-                  />
-                  <span className="radio-label">{option.replace('_', ' ')}</span>
-                </label>
-              ))}
-            </div>
-          )}
-
-          {config.type === 'text' && (
-            <input
-              type="text"
-              value={value}
-              onChange={(e) => updateFormData(config.id, e.target.value)}
-              placeholder={config.id === 'legalName' ? 'e.g., Anita Sharma' : config.id === 'preferredName' ? 'Anita' : ''}
-              className={`text-input ${error ? 'error' : ''}`}
-              autoFocus
-            />
-          )}
-
-          {config.type === 'phone' && (
-            <input
-              type="tel"
-              value={value}
-              onChange={(e) => updateFormData(config.id, e.target.value)}
-              placeholder="+91 98••• 1234"
-              className={`text-input ${error ? 'error' : ''}`}
-              autoFocus
-            />
-          )}
-
-          {config.type === 'date' && (
-            <input
-              type="date"
-              value={value}
-              onChange={(e) => updateFormData(config.id, e.target.value)}
-              max={new Date().toISOString().split('T')[0]} // Today's date as max
-              min="1900-01-01" // Minimum realistic birth year
-              className={`text-input ${error ? 'error' : ''}`}
-              autoFocus
-            />
-          )}
-
-          {error && <div className="field-error">{error}</div>}
-        </div>
-      </div>
-    );
+  const handleBackToDashboard = () => {
+    window.location.href = '/';
   };
 
   return (
-    <div className="min-h-screen bg-[#14191E]">
-      {/* Progress Bar */}
-      <div className="progress-bar-container">
-        <div className="progress-bar">
-          <div 
-            className="progress-fill"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-        <div className="progress-text">
-          {currentScreen}/{TOTAL_SCREENS}
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="card-flow-content">
-        <div className="container-narrow">
-          
-          {/* Header */}
-          <div className="flow-header">
-            <div className="flow-breadcrumb">
-              <button 
-                onClick={() => window.history.back()}
-                className="breadcrumb-link"
-              >
-                ← Dashboard
-              </button>
-              <span className="breadcrumb-separator">/</span>
-              <span className="breadcrumb-current">Personal Data Card</span>
-            </div>
-            
-            <div className="flow-title-section">
-              <h1 className="flow-title">
-                Build your <span className="font-black">Personal Data Card</span>
-              </h1>
-              <p className="flow-subtitle">
-                Your identity, elegantly minimal. Complete all 5 steps to generate your card.
-              </p>
-            </div>
-          </div>
-
-          {/* Screen Content */}
-          {flowState.startsWith('screen_') && renderCurrentScreen()}
-
-          {/* Generating State */}
-          {flowState === PersonalFlowState.GENERATING && (
-            <div className="generating-state">
-              <div className="generating-spinner"></div>
-              <h2 className="generating-title">Generating Your Personal Card...</h2>
-              <p className="generating-subtitle">Creating your Apple Wallet pass</p>
-            </div>
-          )}
-
-          {/* Success State */}
-          {flowState === PersonalFlowState.SUCCESS && (
-            <div className="success-state">
-              <div className="success-icon">✓</div>
-              <h2 className="success-title">Personal Card Generated!</h2>
-              <p className="success-subtitle">Your card has been downloaded and can be added to Apple Wallet.</p>
-              <button 
-                onClick={() => window.location.href = '/'}
-                className="btn-primary"
-              >
-                Back to Dashboard
-              </button>
-            </div>
-          )}
-
-          {/* Error State */}
-          {flowState === PersonalFlowState.ERROR && (
-            <div className="error-state">
-              <div className="error-icon">✕</div>
-              <h2 className="error-title">Generation Failed</h2>
-              <p className="error-subtitle">{errorMessage}</p>
-              <div className="error-actions">
-                <button 
-                  onClick={() => setFlowState(`screen_${currentScreen}` as PersonalFlowState)}
-                  className="btn-primary"
-                >
-                  Try Again
-                </button>
-                <button 
-                  onClick={() => window.location.href = '/'}
-                  className="btn-secondary"
-                >
-                  Back to Dashboard
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Sticky Action Bar */}
-      {flowState.startsWith('screen_') && (
-        <div className="sticky-action-bar">
+    <div className="min-h-screen bg-white">
+      {/* Hero Section */}
+      {appState === AppState.HERO && (
+        <div className="min-h-screen flex items-center justify-center bg-paper">
           <div className="container-narrow">
-            <div className="action-bar-content">
-              <div className="action-bar-info">
-                {currentScreen < TOTAL_SCREENS && (
-                  <span className="action-hint">
-                    {canProceed() ? 'Ready to continue' : 'Complete this step to continue'}
-                  </span>
-                )}
-                {currentScreen === TOTAL_SCREENS && (
-                  <span className="action-hint">
-                    {canGenerate() ? 'Ready to generate your card' : 'Complete all required fields'}
-                  </span>
-                )}
+            <div className="text-center space-y-8 fade-in">
+              <div className="space-y-6">
+                <p className="text-eyebrow">Identity, simplified</p>
+                <h1 className="text-hero text-ink">
+                  Build your <span className="font-black">Hushh Personal Data Card</span>
+                </h1>
               </div>
               
-              <div className="action-bar-buttons">
-                {currentScreen > 1 && (
-                  <button 
-                    onClick={goToPrevScreen}
+              <p className="text-deck text-muted max-w-3xl mx-auto">
+                Your essential personal information in a clean, luxury card for <strong className="text-ink">Apple Wallet</strong>.
+              </p>
+
+              <div className="pt-6">
+                <button
+                  onClick={handleGetStarted}
+                  className="btn-primary hover-lift"
+                >
+                  Get Started
+                </button>
+              </div>
+
+              <p className="text-sm text-muted">
+                Works on iPhone with Apple Wallet.
+              </p>
+            </div>
+
+            {/* Back to Dashboard */}
+            <div className="text-center mt-12">
+              <button
+                onClick={handleBackToDashboard}
+                className="btn-secondary"
+              >
+                ← Back to Dashboard
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Form Section */}
+      {(appState === AppState.FORM || appState === AppState.GENERATING) && (
+        <div className="min-h-screen section-padding bg-paper">
+          <div className="container-wide">
+            {/* Header */}
+            <div className="text-center mb-16 space-y-6 fade-in">
+              <p className="text-eyebrow">Enter Your Details</p>
+              <h1 className="text-hero text-ink">
+                Fill your <span className="font-black">personal information</span>
+              </h1>
+              <p className="text-deck text-muted max-w-3xl mx-auto">
+                Complete all fields to create your personalized identity card. 
+                <strong className="text-ink">All fields</strong> are required for a complete card.
+              </p>
+            </div>
+
+            {/* Personal Data Selector */}
+            <div className={`${appState === AppState.GENERATING ? 'loading' : ''}`}>
+              <PersonalDataSelector 
+                onGenerate={handleGenerate}
+                isGenerating={appState === AppState.GENERATING}
+              />
+            </div>
+
+            {/* Back Link */}
+            <div className="text-center mt-12">
+              <button
+                onClick={handleReset}
+                className="btn-secondary"
+                disabled={appState === AppState.GENERATING}
+              >
+                ← Back to Card Info
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success State (Non-iOS) */}
+      {appState === AppState.SUCCESS && (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="w-full max-w-md mx-auto px-6 text-center space-y-6">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold text-ink">Card Generated!</h2>
+              <p className="text-muted">
+                {isIOS === false 
+                  ? "Apple Wallet is iPhone-only. Email the link to yourself to open on your iPhone."
+                  : "Your personal card is ready."
+                }
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              {generatedURL && (
+                <div className="space-y-3">
+                  <a
+                    href={generatedURL}
+                    className="btn-primary w-full"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open Card
+                  </a>
+                  
+                  <button
+                    onClick={handleEmailLink}
                     className="btn-secondary"
                   >
-                    Back
+                    Email me the link
                   </button>
-                )}
-                
-                {currentScreen < TOTAL_SCREENS && (
-                  <button 
-                    onClick={goToNextScreen}
-                    disabled={!canProceed()}
-                    className={`btn-primary ${!canProceed() ? 'disabled' : ''}`}
-                  >
-                    Next
-                  </button>
-                )}
-                
-                {currentScreen === TOTAL_SCREENS && (
-                  <button 
-                    onClick={handleGenerate}
-                    disabled={!canGenerate() || isGenerating}
-                    className={`btn-primary ${!canGenerate() || isGenerating ? 'disabled' : ''}`}
-                  >
-                    {isGenerating ? 'Generating...' : 'Add to Apple Wallet'}
-                  </button>
-                )}
-              </div>
+                </div>
+              )}
             </div>
+
+            <button
+              onClick={handleBackToDashboard}
+              className="btn-secondary"
+            >
+              Back to Dashboard
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Error State */}
+      {appState === AppState.ERROR && (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="w-full max-w-md mx-auto px-6 text-center space-y-6">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
+              <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+            
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold text-ink">Something went wrong</h2>
+              <p className="text-muted">{errorMessage}</p>
+            </div>
+
+            <button
+              onClick={() => setAppState(AppState.FORM)}
+              className="btn-primary"
+            >
+              Try Again
+            </button>
+
+            <button
+              onClick={handleBackToDashboard}
+              className="btn-secondary"
+            >
+              Back to Dashboard
+            </button>
           </div>
         </div>
       )}
