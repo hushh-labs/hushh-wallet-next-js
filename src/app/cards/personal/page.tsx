@@ -1,5 +1,5 @@
 'use client';
-
+// Force cache refresh for new single-page flow
 import { useState, useEffect } from 'react';
 import { PersonalDataSelector } from '@/components/PersonalDataSelector';
 import { PersonalPayload } from '@/types';
