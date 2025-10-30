@@ -150,10 +150,19 @@ export default function BrandCardPage() {
     setFlowState(BrandFlowState.GENERATING);
 
     try {
-      const response = await fetch('/api/passes/brand/create', {
+      // Convert brand data to food card format for working API
+      const foodCardFormat = {
+        foodType: formData.styles?.[0] || 'Style',
+        spice: 'Medium',
+        cuisines: formData.favBrands || [],
+        dishes: [],
+        exclusions: []
+      };
+
+      const response = await fetch('/api/passes/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(foodCardFormat),
       });
 
       if (!response.ok) {

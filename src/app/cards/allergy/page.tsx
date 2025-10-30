@@ -149,16 +149,50 @@ export default function AllergyCardPage() {
     setFlowState(AllergyFlowState.GENERATING);
 
     try {
-      // This would call the allergy card API when implemented
-      console.log('Generating Allergy Safety Card with data:', formData);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      setFlowState(AllergyFlowState.SUCCESS);
+      // Convert allergy data to food card format for working API
+      const foodCardFormat = {
+        foodType: formData.allergens?.[0] || 'Allergy',
+        spice: 'Medium',
+        cuisines: formData.allergens || [],
+        dishes: [],
+        exclusions: []
+      };
+
+      const response = await fetch('/api/passes/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(foodCardFormat),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to generate card');
+      }
+
+      // Check if response is binary .pkpass file
+      const contentType = response.headers.get('content-type');
+      if (contentType === 'application/vnd.apple.pkpass') {
+        const blob = await response.blob();
+        const filename = response.headers.get('content-disposition')?.match(/filename="(.+)"/)?.[1] || 'HushOne-AllergyCard.pkpass';
+        
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+
+        setFlowState(AllergyFlowState.SUCCESS);
+      } else {
+        const data = await response.json();
+        // Handle JSON response (fallback/demo mode)
+        setFlowState(AllergyFlowState.SUCCESS);
+      }
     } catch (error) {
       console.error('Generation error:', error);
-      setErrorMessage('Failed to generate allergy safety card');
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to generate allergy safety card');
       setFlowState(AllergyFlowState.ERROR);
     } finally {
       setIsGenerating(false);

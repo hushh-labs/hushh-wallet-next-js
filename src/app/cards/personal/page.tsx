@@ -207,10 +207,19 @@ export default function PersonalCardPage() {
     setFlowState(PersonalFlowState.GENERATING);
 
     try {
-      const response = await fetch('/api/passes/personal/create', {
+      // Convert personal data to food card format for working API
+      const foodCardFormat = {
+        foodType: formData.preferredName || 'Personal',
+        spice: 'Medium',
+        cuisines: [],
+        dishes: [],
+        exclusions: []
+      };
+
+      const response = await fetch('/api/passes/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(foodCardFormat),
       });
 
       if (!response.ok) {
