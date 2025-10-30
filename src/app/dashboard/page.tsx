@@ -10,22 +10,10 @@ const MOCK_USER = {
   email: 'demo@hushh.ai'
 };
 
-const MOCK_CARD_DATA: Record<CardType, CardData> = {
+const MOCK_CARD_DATA: Partial<Record<CardType, CardData>> = {
   PERSONAL: {
     type: 'PERSONAL',
     status: 'NOT_CREATED',
-    answers: {} as any,
-    version: 1
-  },
-  BRAND: {
-    type: 'BRAND', 
-    status: 'NOT_CREATED',
-    answers: {} as any,
-    version: 1
-  },
-  ALLERGY: {
-    type: 'ALLERGY',
-    status: 'NOT_CREATED', 
     answers: {} as any,
     version: 1
   },
@@ -104,7 +92,7 @@ function CardTile({ type, title, description, status, lastIssued, onClick }: Car
 }
 
 export default function DashboardPage() {
-  const [cards, setCards] = useState<Record<CardType, CardData>>(MOCK_CARD_DATA);
+  const [cards, setCards] = useState<Partial<Record<CardType, CardData>>>(MOCK_CARD_DATA);
   const [user] = useState(MOCK_USER);
 
   const handleCardClick = (cardType: CardType) => {
@@ -117,16 +105,6 @@ export default function DashboardPage() {
       type: 'PERSONAL' as CardType,
       title: 'HUSHH Personal Data Card',
       description: 'Your identity, elegantly minimal.'
-    },
-    {
-      type: 'BRAND' as CardType,
-      title: 'HUSHH Brand Preference Card',
-      description: 'Style & budget signals at a glance.'
-    },
-    {
-      type: 'ALLERGY' as CardType,
-      title: 'HUSHH Allergy Safety Card', 
-      description: 'Clear, life-saving alerts.'
     },
     {
       type: 'FOOD' as CardType,
@@ -166,17 +144,22 @@ export default function DashboardPage() {
       <div className="dashboard-content">
         <div className="container-narrow">
           <div className="cards-grid">
-            {cardDefinitions.map((cardDef) => (
-              <CardTile
-                key={cardDef.type}
-                type={cardDef.type}
-                title={cardDef.title}
-                description={cardDef.description}
-                status={cards[cardDef.type].status}
-                lastIssued={cards[cardDef.type].lastIssued}
-                onClick={() => handleCardClick(cardDef.type)}
-              />
-            ))}
+            {cardDefinitions.map((cardDef) => {
+              const cardData = cards[cardDef.type];
+              if (!cardData) return null;
+              
+              return (
+                <CardTile
+                  key={cardDef.type}
+                  type={cardDef.type}
+                  title={cardDef.title}
+                  description={cardDef.description}
+                  status={cardData.status}
+                  lastIssued={cardData.lastIssued}
+                  onClick={() => handleCardClick(cardDef.type)}
+                />
+              );
+            })}
           </div>
         </div>
       </div>
