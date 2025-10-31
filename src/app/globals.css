@@ -1237,39 +1237,105 @@ body {
   --ring: var(--n900);
 }
 
-/* White Canvas with Visible Grid */
+/* White Canvas with Sophisticated Grid Falloff */
 .min-h-screen {
   background: var(--canvas);
-  /* Major grid - 24px lines at 6-8% opacity */
-  background-image: 
-    linear-gradient(rgba(229, 229, 229, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(229, 229, 229, 0.06) 1px, transparent 1px);
-  background-size: 24px 24px;
   position: relative;
 }
 
-/* Optional micro grid for desktop only */
-@media (min-width: 1024px) {
+/* Sophisticated grid with center-to-edge falloff */
+.min-h-screen::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  
+  /* Base 24px grid at center opacity (10-12%) */
+  background-image: 
+    linear-gradient(rgba(229, 229, 229, 0.11) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(229, 229, 229, 0.11) 1px, transparent 1px);
+  background-size: 24px 24px;
+  
+  /* Sophisticated opacity mask: center strong, edges fade */
+  mask: 
+    /* Top fade: 12-16vh */
+    linear-gradient(to bottom, 
+      rgba(0,0,0,0) 0%, 
+      rgba(0,0,0,0.3) 12vh, 
+      rgba(0,0,0,1) 20vh, 
+      rgba(0,0,0,1) calc(100vh - 20vh), 
+      rgba(0,0,0,0.3) calc(100vh - 16vh), 
+      rgba(0,0,0,0) 100%),
+    /* Left/right fade: 5-8% width each side */
+    linear-gradient(to right, 
+      rgba(0,0,0,0.3) 0%, 
+      rgba(0,0,0,0.7) 8%, 
+      rgba(0,0,0,1) 15%, 
+      rgba(0,0,0,1) 85%, 
+      rgba(0,0,0,0.7) 92%, 
+      rgba(0,0,0,0.3) 100%);
+  mask-composite: intersect;
+  -webkit-mask: 
+    linear-gradient(to bottom, 
+      rgba(0,0,0,0) 0%, 
+      rgba(0,0,0,0.3) 12vh, 
+      rgba(0,0,0,1) 20vh, 
+      rgba(0,0,0,1) calc(100vh - 20vh), 
+      rgba(0,0,0,0.3) calc(100vh - 16vh), 
+      rgba(0,0,0,0) 100%),
+    linear-gradient(to right, 
+      rgba(0,0,0,0.3) 0%, 
+      rgba(0,0,0,0.7) 8%, 
+      rgba(0,0,0,1) 15%, 
+      rgba(0,0,0,1) 85%, 
+      rgba(0,0,0,0.7) 92%, 
+      rgba(0,0,0,0.3) 100%);
+  -webkit-mask-composite: source-in;
+}
+
+/* Mobile: Very light grid or off */
+@media (max-width: 767px) {
   .min-h-screen::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    /* Reduce overall opacity to 3-4% for mobile */
     background-image: 
-      linear-gradient(rgba(229, 229, 229, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(229, 229, 229, 0.03) 1px, transparent 1px);
-    background-size: 8px 8px;
-    pointer-events: none;
-    z-index: 0;
+      linear-gradient(rgba(229, 229, 229, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(229, 229, 229, 0.035) 1px, transparent 1px);
+    /* Simpler fade on mobile */
+    mask: 
+      linear-gradient(to bottom, 
+        rgba(0,0,0,0) 0%, 
+        rgba(0,0,0,0.5) 8vh, 
+        rgba(0,0,0,1) 16vh, 
+        rgba(0,0,0,1) calc(100vh - 16vh), 
+        rgba(0,0,0,0.5) calc(100vh - 8vh), 
+        rgba(0,0,0,0) 100%);
+    -webkit-mask: 
+      linear-gradient(to bottom, 
+        rgba(0,0,0,0) 0%, 
+        rgba(0,0,0,0.5) 8vh, 
+        rgba(0,0,0,1) 16vh, 
+        rgba(0,0,0,1) calc(100vh - 16vh), 
+        rgba(0,0,0,0.5) calc(100vh - 8vh), 
+        rgba(0,0,0,0) 100%);
   }
 }
 
-/* Ensure content is above grid */
+/* Ensure content is above grid and grid never shows through cards */
 .min-h-screen > * {
   position: relative;
   z-index: 1;
+  background: transparent; /* Never reduce content opacity */
+}
+
+/* Cards naturally mask grid with white background */
+.card-tile {
+  background: var(--card-surface); /* Solid white masks grid */
+  position: relative;
+  z-index: 2;
 }
 
 /* Left-locked text rail container (720px max) */
