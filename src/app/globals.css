@@ -4744,3 +4744,52 @@ body {
 
 /* ---------- 4) Tiny polish: keep chip inside card edge on all sizes ---------- */
 .status-chip { transform: translateX(0); }   /* guard against any earlier overlap rules */
+
+/* ===== FINAL LAYOUT CENTERING FIXES ===== */
+
+/* 1) Page should never scroll sideways because of shadows/rims */
+.min-h-screen { overflow-x: clip; }
+
+/* 2) Center the content rail (was left-locked earlier) */
+.container-narrow{
+  max-width: 720px;
+  margin-inline: auto !important;                      /* center */
+  padding-inline: clamp(16px, 4vw, 24px) !important;   /* equal L/R */
+  box-sizing: border-box;
+}
+
+/* 3) Cards grid: no extra side padding, fill rail width */
+.cards-grid{
+  width: 100%;
+  padding-inline: 0 !important;        /* remove earlier padding that nudged right */
+  margin-inline: 0;                     /* rely on container centering */
+  display: grid !important;
+  grid-template-columns: 1fr;
+  gap: clamp(12px, 3vw, 24px);
+}
+
+/* 4) Two-up only when there is room (still centered) */
+@media (min-width: 900px){
+  .cards-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+
+/* 5) Card: equal internal padding + natural height on phones */
+@media (max-width: 767px){
+  .card-tile{
+    padding: clamp(16px, 4vw, 22px) !important;
+    aspect-ratio: auto;
+    max-height: none; min-height: 0;
+  }
+}
+
+/* 6) Chip negative margins were pulling the layout — neutralize */
+.status-chip{ margin-right: 0 !important; margin-top: 0 !important; }
+
+/* 7) Light mode: darker text + visible boundary on white */
+.card-tile-title{ color: var(--ink) !important; }      /* #111 */
+.card-tile-description{ color: var(--muted) !important; }  /* #525 */
+.card-tile{
+  box-shadow:
+    0 16px 48px rgba(0,0,0,.08),
+    inset 0 0 0 1px rgba(17,17,17,.10) !important;      /* subtle keyline */
+}
