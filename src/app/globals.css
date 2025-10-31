@@ -67,7 +67,7 @@ body {
   --color-hover: #f3f4f6;
 }
 
-/* ===== LUXE CARD UI COLOR TOKENS ===== */
+/* ===== TRUE METAL CARD SYSTEM (VISA/MASTERCARD QUALITY) ===== */
 
 /* Neutrals (shared across themes) */
 :root {
@@ -83,30 +83,60 @@ body {
   --outline-dark: #2A2F36;
 }
 
-/* Gold (warm metal) - for Live Collection */
+/* === BRUSHED GOLD PALETTE (Live Collection) === */
 :root {
-  --gold-hl: #EAD9B0;
-  --gold-base: #C9A86A;
-  --gold-mid: #B0894A;
-  --gold-shd: #7A5E2B;
-  --gold-gradient: linear-gradient(45deg, var(--gold-hl) 0%, var(--gold-base) 45%, var(--gold-mid) 100%);
+  /* Base gradient stops (45°) */
+  --gold-light: #F3E3B8;
+  --gold-mid: #D7B874;
+  --gold-dark: #B48745;
+  
+  /* Micro-stop for richness */
+  --gold-highlight: #FFF6D5; /* at 40-45%, 8-12% opacity */
+  
+  /* Shadow accent */
+  --gold-shadow: #7A5E2B;
+  
+  /* Complete gradients */
+  --gold-base-gradient: linear-gradient(45deg, var(--gold-light) 0%, var(--gold-mid) 50%, var(--gold-dark) 100%);
+  --gold-rim-gradient: linear-gradient(45deg, var(--gold-light) 0%, var(--gold-mid) 45%, var(--gold-dark) 100%);
+  --gold-specular: linear-gradient(45deg, transparent 0%, rgba(255, 246, 213, 0.35) 25%, rgba(255, 246, 213, 0.6) 50%, rgba(255, 246, 213, 0.35) 75%, transparent 100%);
 }
 
-/* Silver (cool metal) - for Awaiting Commission */
+/* === PLATINUM/SILVER PALETTE (Awaiting Commission) === */
 :root {
-  --silver-hl: #E9EFF5;
-  --silver-base: #C9CED6;
-  --silver-mid: #9AA3AD;
-  --silver-shd: #6E7781;
-  --silver-gradient: linear-gradient(45deg, var(--silver-hl) 0%, var(--silver-base) 45%, var(--silver-mid) 100%);
+  /* Base gradient stops */
+  --silver-light: #F0F4FA;
+  --silver-mid: #C9D0D9;
+  --silver-dark: #9CA7B3;
+  
+  /* Cool highlight */
+  --silver-highlight: #E9EEF5; /* at 35-40% */
+  
+  /* Edge shadow */
+  --silver-shadow: #6E7781;
+  
+  /* Complete gradients */
+  --silver-base-gradient: linear-gradient(45deg, var(--silver-light) 0%, var(--silver-mid) 50%, var(--silver-dark) 100%);
+  --silver-rim-gradient: linear-gradient(45deg, var(--silver-light) 0%, var(--silver-mid) 45%, var(--silver-dark) 100%);
+  --silver-specular: linear-gradient(45deg, transparent 0%, rgba(233, 238, 245, 0.35) 25%, rgba(233, 238, 245, 0.6) 50%, rgba(233, 238, 245, 0.35) 75%, transparent 100%);
 }
 
-/* Luxury card surface variants */
+/* === GRAPHITE PALETTE (Future luxe SKU) === */
 :root {
-  --card-gold-surface-light: #F8F6F2;
-  --card-silver-surface-light: #F7F8FA;
-  --card-gold-surface-dark: #1A1816;
-  --card-silver-surface-dark: #161719;
+  --graphite-light: #2B2E32;
+  --graphite-mid: #151719;
+  --graphite-dark: #0E0F11;
+  --graphite-base-gradient: linear-gradient(45deg, var(--graphite-light) 0%, var(--graphite-mid) 50%, var(--graphite-dark) 100%);
+  --graphite-specular: linear-gradient(45deg, transparent 0%, rgba(240, 244, 250, 0.25) 25%, rgba(240, 244, 250, 0.4) 50%, rgba(240, 244, 250, 0.25) 75%, transparent 100%);
+}
+
+/* === ROSE GOLD PALETTE (Future luxe SKU) === */
+:root {
+  --rose-light: #F7D7C8;
+  --rose-mid: #D7A28E;
+  --rose-dark: #B77C68;
+  --rose-base-gradient: linear-gradient(45deg, var(--rose-light) 0%, var(--rose-mid) 50%, var(--rose-dark) 100%);
+  --rose-specular: linear-gradient(45deg, transparent 0%, rgba(247, 215, 200, 0.35) 25%, rgba(247, 215, 200, 0.6) 50%, rgba(247, 215, 200, 0.35) 75%, transparent 100%);
 }
 
 /* Theme-aware tokens */
@@ -119,7 +149,7 @@ body {
   --luxe-outline: var(--outline-light);
 }
 
-/* Dark mode overrides */
+/* Dark mode overrides (+10% brightness shift for metallic colors) */
 @media (prefers-color-scheme: dark) {
   :root {
     --luxe-canvas: var(--bg-canvas-dark);
@@ -127,6 +157,15 @@ body {
     --luxe-text-primary: var(--text-prim-dark);
     --luxe-text-secondary: var(--text-sec-dark);
     --luxe-outline: var(--outline-dark);
+    
+    /* Brightened metals for dark mode */
+    --gold-light: #FFF1CB; /* +10% brightness */
+    --gold-mid: #E4C285;
+    --gold-dark: #C79954;
+    
+    --silver-light: #F8FCFF;
+    --silver-mid: #D6DDE6;
+    --silver-dark: #A9B4C0;
   }
 }
 
@@ -2039,187 +2078,346 @@ body {
   }
 }
 
-/* ===== LUXE CARD TILES (PREMIUM METAL STYLING) ===== */
+/* ===== TRUE METAL CARD SYSTEM (8-LAYER STACK) ===== */
 
-/* Card Tile - Premium Metal Card Design */
+/* Card Tile - Authentic ID-1 Metal Card Design */
 .card-tile {
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 128px;
-  padding: 24px;
-  border-radius: 28px;
+  
+  /* === ID-1 GEOMETRY (1.586:1 aspect ratio) === */
+  width: 100%;
+  aspect-ratio: 1.586;
+  max-height: 220px; /* Mobile: 200-220px height */
+  min-height: 200px;
+  
+  /* === SQUIRCULAR CORNERS (28-32px) === */
+  border-radius: 30px;
+  
+  /* === PREMIUM PADDING === */
+  padding: 28px;
+  
+  /* === INTERACTION === */
   cursor: pointer;
   transition: all 180ms ease-out;
   overflow: hidden;
   
-  /* Surface and Elevation */
-  background: var(--luxe-card-surface);
+  /* === LAYER 8: SHADOW (Light: 0 16 48 rgba(0,0,0,.12) / Dark: 0 20 60 rgba(0,0,0,.55)) === */
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
   
-  /* Inner bevel for metal effect */
+  /* Ensure content zones are properly spaced */
+  gap: 18px;
+}
+
+/* === BRUSHED GOLD CARD (Live Collection) === */
+.card-tile.gold-edition {
+  /* === LAYER 1: BASE GRADIENT (Metal) === */
+  background: var(--gold-base-gradient);
+  
+  /* === LAYER 2: BRUSHED TEXTURE === */
+  background-image: 
+    /* Horizontal brushed texture (6-10% opacity) */
+    linear-gradient(90deg, 
+      transparent 0%, 
+      rgba(255, 255, 255, 0.08) 2%, 
+      transparent 4%, 
+      rgba(255, 255, 255, 0.06) 8%, 
+      transparent 12%, 
+      rgba(255, 255, 255, 0.08) 16%, 
+      transparent 20%),
+    /* === LAYER 3: SPECULAR BAND (24-32px diagonal highlight at 10-16%) === */
+    var(--gold-specular),
+    /* === LAYER 5: WATERMARK (H/guilloché at 4-6% opacity light) === */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23111111' fill-opacity='0.05'%3E%3Cpath d='M30 30h12v24h36V30h12v60h-12V66H42v24H30V30z'/%3E%3Cpath d='M15 15h6v12h18V15h6v30h-6V33H21v12h-6V15z' opacity='0.3'/%3E%3Cpath d='M75 75h6v12h18V75h6v30h-6V93H81v12h-6V75z' opacity='0.3'/%3E%3C/g%3E%3C/svg%3E");
+  
+  background-size: 
+    100% 100%, /* Brushed texture */
+    100% 30px, /* Specular band width */
+    120px 120px; /* Watermark pattern */
+  
+  background-position: 
+    0 0, /* Brushed texture */
+    0 0, /* Specular band */
+    0 0; /* Watermark */
+  
+  background-repeat: 
+    no-repeat, /* Brushed texture */
+    no-repeat, /* Specular band */
+    repeat; /* Watermark */
+  
+  /* === LAYER 4: EDGE RIMS (2px metallic gradient stroke + 1px inner bevel) === */
+  border: 2px solid transparent;
+  background-clip: padding-box;
   box-shadow: 
     /* Main elevation shadow */
-    0 12px 40px rgba(0, 0, 0, 0.10),
-    /* Inner highlight (top/left) */
+    0 16px 48px rgba(0, 0, 0, 0.12),
+    /* Outer rim (2px metallic gradient) */
+    0 0 0 2px var(--gold-rim-gradient),
+    /* Inner bevel (1px highlight/shadow) */
     inset 1px 1px 0 rgba(255, 255, 255, 0.12),
-    /* Inner shadow (bottom/right) */
-    inset -1px -1px 0 rgba(0, 0, 0, 0.08);
-  
-  /* Background texture overlay */
-  background-image: 
-    /* H monogram watermark pattern */
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M20 20h8v16h24V20h8v40h-8V44H28v16h-8V20z' fill='%23111111' fill-opacity='0.06'/%3E%3C/svg%3E"),
-    /* Subtle paper texture */
-    radial-gradient(circle at 25% 25%, rgba(0,0,0,0.02) 0%, transparent 50%),
-    radial-gradient(circle at 75% 75%, rgba(255,255,255,0.01) 0%, transparent 50%);
-  background-size: 80px 80px, 40px 40px, 60px 60px;
-  background-position: 0 0, 20px 20px, 40px 40px;
+    inset -1px -1px 0 rgba(122, 94, 43, 0.16);
 }
 
-/* Gold Edition (Live Collection) */
-.card-tile.gold-edition {
-  background: var(--card-gold-surface-light);
-  border: 2px solid;
-  border-image: var(--gold-gradient) 1;
-  
-  /* Specular highlight line for gold sheen */
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, 
-      transparent 0%, 
-      rgba(234, 217, 176, 0.35) 25%, 
-      rgba(234, 217, 176, 0.6) 50%, 
-      rgba(234, 217, 176, 0.35) 75%, 
-      transparent 100%);
-    pointer-events: none;
-  }
-}
-
-/* Silver Edition (Awaiting Commission) */
+/* === PLATINUM/SILVER CARD (Awaiting Commission) === */
 .card-tile.silver-edition {
-  background: var(--card-silver-surface-light);
-  border: 2px solid;
-  border-image: var(--silver-gradient) 1;
+  /* === LAYER 1: BASE GRADIENT (Metal) === */
+  background: var(--silver-base-gradient);
   
-  /* Specular highlight line for silver sheen */
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, 
+  /* === LAYER 2: BRUSHED TEXTURE === */
+  background-image: 
+    /* Horizontal brushed texture (6-10% opacity) */
+    linear-gradient(90deg, 
       transparent 0%, 
-      rgba(233, 239, 245, 0.35) 25%, 
-      rgba(233, 239, 245, 0.6) 50%, 
-      rgba(233, 239, 245, 0.35) 75%, 
-      transparent 100%);
-    pointer-events: none;
-  }
+      rgba(255, 255, 255, 0.08) 2%, 
+      transparent 4%, 
+      rgba(255, 255, 255, 0.06) 8%, 
+      transparent 12%, 
+      rgba(255, 255, 255, 0.08) 16%, 
+      transparent 20%),
+    /* === LAYER 3: SPECULAR BAND === */
+    var(--silver-specular),
+    /* === LAYER 5: WATERMARK (H/guilloché at 4-6% opacity light) === */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23111111' fill-opacity='0.05'%3E%3Cpath d='M30 30h12v24h36V30h12v60h-12V66H42v24H30V30z'/%3E%3Cpath d='M15 15h6v12h18V15h6v30h-6V33H21v12h-6V15z' opacity='0.3'/%3E%3Cpath d='M75 75h6v12h18V75h6v30h-6V93H81v12h-6V75z' opacity='0.3'/%3E%3C/g%3E%3C/svg%3E");
+  
+  background-size: 
+    100% 100%, /* Brushed texture */
+    100% 30px, /* Specular band width */
+    120px 120px; /* Watermark pattern */
+  
+  background-position: 
+    0 0, /* Brushed texture */
+    0 0, /* Specular band */
+    0 0; /* Watermark */
+  
+  background-repeat: 
+    no-repeat, /* Brushed texture */
+    no-repeat, /* Specular band */
+    repeat; /* Watermark */
+  
+  /* === LAYER 4: EDGE RIMS === */
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  box-shadow: 
+    /* Main elevation shadow */
+    0 16px 48px rgba(0, 0, 0, 0.12),
+    /* Outer rim (2px metallic gradient) */
+    0 0 0 2px var(--silver-rim-gradient),
+    /* Inner bevel (1px highlight/shadow) */
+    inset 1px 1px 0 rgba(255, 255, 255, 0.12),
+    inset -1px -1px 0 rgba(110, 119, 129, 0.16);
 }
 
-/* Hover States */
+/* === PREMIUM MOTION (Restrained, 2-3px lift) === */
 .card-tile:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  
+  /* Enhanced shadows on hover */
+  transition: all 180ms ease-out;
+}
+
+.card-tile.gold-edition:hover {
   box-shadow: 
     /* Enhanced elevation shadow */
-    0 16px 48px rgba(0, 0, 0, 0.12),
-    /* Maintained inner bevel */
-    inset 1px 1px 0 rgba(255, 255, 255, 0.12),
-    inset -1px -1px 0 rgba(0, 0, 0, 0.08);
+    0 20px 60px rgba(0, 0, 0, 0.15),
+    /* Maintained rim */
+    0 0 0 2px var(--gold-rim-gradient),
+    /* Enhanced inner bevel */
+    inset 1px 1px 0 rgba(255, 255, 255, 0.16),
+    inset -1px -1px 0 rgba(122, 94, 43, 0.20);
+  
+  /* === PARALLAX SPECULAR (4-6° movement on hover) === */
+  background-position: 
+    0 0, /* Brushed texture */
+    2% 0, /* Specular band moves 2% right */
+    0 0; /* Watermark stays */
 }
 
-/* Active/Press States */
+.card-tile.silver-edition:hover {
+  box-shadow: 
+    /* Enhanced elevation shadow */
+    0 20px 60px rgba(0, 0, 0, 0.15),
+    /* Maintained rim */
+    0 0 0 2px var(--silver-rim-gradient),
+    /* Enhanced inner bevel */
+    inset 1px 1px 0 rgba(255, 255, 255, 0.16),
+    inset -1px -1px 0 rgba(110, 119, 129, 0.20);
+  
+  /* === PARALLAX SPECULAR === */
+  background-position: 
+    0 0, /* Brushed texture */
+    2% 0, /* Specular band moves 2% right */
+    0 0; /* Watermark stays */
+}
+
+/* === ACTIVE/PRESS STATES (Scale 0.98) === */
 .card-tile:active {
-  transform: translateY(-2px) scale(0.98);
+  transform: translateY(-3px) scale(0.98);
   transition: all 90ms ease-in;
+}
+
+.card-tile.gold-edition:active {
   box-shadow: 
     /* Tightened shadow */
-    0 10px 32px rgba(0, 0, 0, 0.08),
+    0 12px 40px rgba(0, 0, 0, 0.10),
+    0 0 0 2px var(--gold-rim-gradient),
     inset 1px 1px 0 rgba(255, 255, 255, 0.12),
-    inset -1px -1px 0 rgba(0, 0, 0, 0.08);
+    inset -1px -1px 0 rgba(122, 94, 43, 0.16);
 }
 
-/* Focus States */
+.card-tile.silver-edition:active {
+  box-shadow: 
+    /* Tightened shadow */
+    0 12px 40px rgba(0, 0, 0, 0.10),
+    0 0 0 2px var(--silver-rim-gradient),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.12),
+    inset -1px -1px 0 rgba(110, 119, 129, 0.16);
+}
+
+/* === FOCUS STATES === */
 .card-tile:focus {
   outline: none;
-  box-shadow: 
-    0 12px 40px rgba(0, 0, 0, 0.10),
-    inset 1px 1px 0 rgba(255, 255, 255, 0.12),
-    inset -1px -1px 0 rgba(0, 0, 0, 0.08),
-    /* High contrast focus ring */
-    0 0 0 2px var(--luxe-text-primary);
 }
 
-/* Disabled State */
+.card-tile.gold-edition:focus {
+  box-shadow: 
+    0 16px 48px rgba(0, 0, 0, 0.12),
+    0 0 0 2px var(--gold-rim-gradient),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.12),
+    inset -1px -1px 0 rgba(122, 94, 43, 0.16),
+    /* High contrast focus ring */
+    0 0 0 4px #101113;
+}
+
+.card-tile.silver-edition:focus {
+  box-shadow: 
+    0 16px 48px rgba(0, 0, 0, 0.12),
+    0 0 0 2px var(--silver-rim-gradient),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.12),
+    inset -1px -1px 0 rgba(110, 119, 129, 0.16),
+    /* High contrast focus ring */
+    0 0 0 4px #101113;
+}
+
+/* === DISABLED STATE === */
 .card-tile.disabled {
   opacity: 0.6;
   cursor: not-allowed;
   pointer-events: none;
   
-  /* Desaturate watermark */
-  background-image: 
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M20 20h8v16h24V20h8v40h-8V44H28v16h-8V20z' fill='%23111111' fill-opacity='0.03'/%3E%3C/svg%3E");
+  /* Desaturate all effects */
+  filter: grayscale(0.3);
 }
 
-/* Mobile Responsive */
+/* === MOBILE RESPONSIVE === */
 @media (max-width: 767px) {
   .card-tile {
-    padding: 20px;
-    min-height: 120px;
-    border-radius: 24px;
+    /* Mobile sizing: 200-220px height maintained by aspect ratio */
+    padding: 24px;
+    border-radius: 28px;
+    gap: 14px;
     
     /* Adjusted shadows for mobile */
-    box-shadow: 
-      0 8px 28px rgba(0, 0, 0, 0.08),
-      inset 1px 1px 0 rgba(255, 255, 255, 0.10),
-      inset -1px -1px 0 rgba(0, 0, 0, 0.06);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.10);
+  }
+  
+  .card-tile.gold-edition,
+  .card-tile.silver-edition {
+    /* Reduce specular band size on mobile */
+    background-size: 
+      100% 100%, /* Brushed texture */
+      100% 24px, /* Smaller specular band */
+      100px 100px; /* Smaller watermark */
   }
   
   .card-tile:hover {
-    box-shadow: 
-      0 12px 36px rgba(0, 0, 0, 0.10),
-      inset 1px 1px 0 rgba(255, 255, 255, 0.10),
-      inset -1px -1px 0 rgba(0, 0, 0, 0.06);
+    /* Reduce lift on mobile */
+    transform: translateY(-2px);
   }
 }
 
-/* Dark Mode Adaptations */
+/* === TABLET RESPONSIVE === */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .card-tile {
+    padding: 26px;
+    border-radius: 29px;
+    gap: 16px;
+  }
+}
+
+/* === DARK MODE ADAPTATIONS (+10% brightness shift) === */
 @media (prefers-color-scheme: dark) {
   .card-tile {
-    background: var(--luxe-card-surface);
-    box-shadow: 
-      /* Enhanced shadow for dark mode */
-      0 12px 40px rgba(0, 0, 0, 0.50),
-      /* Dark mode inner bevel */
-      inset 1px 1px 0 rgba(0, 0, 0, 0.16),
-      inset -1px -1px 0 rgba(255, 255, 255, 0.08);
-    
-    /* Dark mode watermark */
-    background-image: 
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M20 20h8v16h24V20h8v40h-8V44H28v16h-8V20z' fill='%23FFFFFF' fill-opacity='0.08'/%3E%3C/svg%3E");
+    /* Enhanced shadow for dark mode */
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
   }
   
   .card-tile.gold-edition {
-    background: var(--card-gold-surface-dark);
+    /* Use brightened gold colors */
+    background: linear-gradient(45deg, var(--gold-light) 0%, var(--gold-mid) 50%, var(--gold-dark) 100%);
+    
+    /* Dark mode watermark (6-8% opacity) */
+    background-image: 
+      linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.08) 2%, 
+        transparent 4%, 
+        rgba(255, 255, 255, 0.06) 8%, 
+        transparent 12%, 
+        rgba(255, 255, 255, 0.08) 16%, 
+        transparent 20%),
+      var(--gold-specular),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23FFFFFF' fill-opacity='0.07'%3E%3Cpath d='M30 30h12v24h36V30h12v60h-12V66H42v24H30V30z'/%3E%3Cpath d='M15 15h6v12h18V15h6v30h-6V33H21v12h-6V15z' opacity='0.3'/%3E%3Cpath d='M75 75h6v12h18V75h6v30h-6V93H81v12h-6V75z' opacity='0.3'/%3E%3C/g%3E%3C/svg%3E");
+    
+    box-shadow: 
+      0 20px 60px rgba(0, 0, 0, 0.55),
+      0 0 0 2px var(--gold-rim-gradient),
+      inset 1px 1px 0 rgba(0, 0, 0, 0.16),
+      inset -1px -1px 0 rgba(255, 255, 255, 0.08);
   }
   
   .card-tile.silver-edition {
-    background: var(--card-silver-surface-dark);
+    /* Use brightened silver colors */
+    background: linear-gradient(45deg, var(--silver-light) 0%, var(--silver-mid) 50%, var(--silver-dark) 100%);
+    
+    /* Dark mode watermark (6-8% opacity) */
+    background-image: 
+      linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.08) 2%, 
+        transparent 4%, 
+        rgba(255, 255, 255, 0.06) 8%, 
+        transparent 12%, 
+        rgba(255, 255, 255, 0.08) 16%, 
+        transparent 20%),
+      var(--silver-specular),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23FFFFFF' fill-opacity='0.07'%3E%3Cpath d='M30 30h12v24h36V30h12v60h-12V66H42v24H30V30z'/%3E%3Cpath d='M15 15h6v12h18V15h6v30h-6V33H21v12h-6V15z' opacity='0.3'/%3E%3Cpath d='M75 75h6v12h18V75h6v30h-6V93H81v12h-6V75z' opacity='0.3'/%3E%3C/g%3E%3C/svg%3E");
+    
+    box-shadow: 
+      0 20px 60px rgba(0, 0, 0, 0.55),
+      0 0 0 2px var(--silver-rim-gradient),
+      inset 1px 1px 0 rgba(0, 0, 0, 0.16),
+      inset -1px -1px 0 rgba(255, 255, 255, 0.08);
   }
   
   .card-tile:hover {
-    box-shadow: 
-      0 18px 56px rgba(0, 0, 0, 0.60),
-      inset 1px 1px 0 rgba(0, 0, 0, 0.16),
-      inset -1px -1px 0 rgba(255, 255, 255, 0.08);
+    box-shadow: 0 24px 72px rgba(0, 0, 0, 0.65);
+  }
+}
+
+/* === REDUCED MOTION SUPPORT === */
+@media (prefers-reduced-motion: reduce) {
+  .card-tile {
+    transition: none;
+  }
+  
+  .card-tile:hover {
+    transform: none;
+    background-position: 
+      0 0, /* No parallax movement */
+      0 0,
+      0 0;
   }
 }
 
@@ -2283,7 +2481,7 @@ body {
   align-items: center;
 }
 
-/* ===== LUXE STATUS PILLS (FOIL CAPSULE DESIGN) ===== */
+/* ===== FOIL STATUS PILLS (EXACT SPECIFICATION) ===== */
 
 /* Status Pill - Luxury Foil Capsule */
 .status-chip {
@@ -2294,7 +2492,7 @@ body {
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.02em; /* Engraved feel letter spacing */
+  letter-spacing: 0.02em; /* +2% letter spacing for engraved feel */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2303,24 +2501,24 @@ body {
   overflow: hidden;
   transition: all 120ms ease-out;
   
-  /* Slightly overlapping the card rim */
-  margin-top: -6px;
+  /* Overlapping the card rim by 6-8px for "badge on metal" feel */
+  margin-top: -8px;
   margin-right: -8px;
 }
 
-/* Gold Status Pill - Live Collection */
+/* === GOLD FOIL PILL (Live Collection) === */
 .status-chip-active {
-  /* Metallic gradient outline */
+  /* 1.5px metallic gradient stroke */
   border: 1.5px solid;
-  border-image: var(--gold-gradient) 1;
+  border-image: var(--gold-rim-gradient) 1;
   
-  /* Translucent gold fill */
-  background: rgba(234, 217, 176, 0.06); /* Gold highlight at 6% */
+  /* Fill at 5% (light) / 9% (dark) */
+  background: rgba(243, 227, 184, 0.05); /* Gold light at 5% */
   
-  /* Text styling */
-  color: rgba(122, 94, 43, 0.9); /* Gold shadow at 90% */
+  /* Text in 90% of primary gold color */
+  color: rgba(180, 135, 69, 0.9); /* Gold dark at 90% */
   
-  /* Subtle shimmer animation */
+  /* Micro-shimmer on LIVE: 600ms linear wipe (every 12s) */
   &::before {
     content: '';
     position: absolute;
@@ -2330,55 +2528,66 @@ body {
     height: 100%;
     background: linear-gradient(90deg, 
       transparent 0%, 
-      rgba(234, 217, 176, 0.3) 50%, 
+      rgba(255, 246, 213, 0.4) 45%, 
+      rgba(255, 246, 213, 0.6) 50%, 
+      rgba(255, 246, 213, 0.4) 55%, 
       transparent 100%);
-    animation: goldShimmer 600ms ease-out infinite;
-    animation-delay: 2s; /* Start after initial load */
+    animation: goldShimmerWipe 600ms linear;
+    animation-delay: 3s; /* Start after initial load */
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-out;
     pointer-events: none;
+    opacity: 0;
   }
 }
 
-/* Silver Status Pill - Awaiting Commission */
+/* === SILVER FOIL PILL (Awaiting Commission) === */
 .status-chip-inactive {
-  /* Metallic gradient outline */
+  /* 1.5px metallic gradient stroke */
   border: 1.5px solid;
-  border-image: var(--silver-gradient) 1;
+  border-image: var(--silver-rim-gradient) 1;
   
-  /* Translucent silver fill */
-  background: rgba(233, 239, 245, 0.05); /* Silver highlight at 5% */
+  /* Fill at 5% (light) / 9% (dark) */
+  background: rgba(240, 244, 250, 0.05); /* Silver light at 5% */
   
-  /* Text styling */
-  color: rgba(110, 119, 129, 0.85); /* Silver shadow at 85% */
+  /* Text in 90% of primary silver color */
+  color: rgba(156, 167, 179, 0.9); /* Silver dark at 90% */
   
-  /* Gentle pulse animation */
-  animation: silverPulse 8s ease-in-out infinite;
+  /* Faint alpha pulse (8s) */
+  animation: silverAlphaPulse 8s ease-in-out infinite;
 }
 
 /* Update Status Pill */
 .status-chip-update {
   border: 1.5px solid;
-  border-image: var(--silver-gradient) 1;
-  background: rgba(233, 239, 245, 0.04);
-  color: rgba(110, 119, 129, 0.8);
+  border-image: var(--silver-rim-gradient) 1;
+  background: rgba(240, 244, 250, 0.04);
+  color: rgba(156, 167, 179, 0.85);
 }
 
 /* Revoked Status Pill */
 .status-chip-revoked {
   border: 1.5px solid;
-  border-image: var(--silver-gradient) 1;
-  background: rgba(233, 239, 245, 0.03);
-  color: rgba(110, 119, 129, 0.7);
+  border-image: var(--silver-rim-gradient) 1;
+  background: rgba(240, 244, 250, 0.03);
+  color: rgba(156, 167, 179, 0.7);
   opacity: 0.6;
 }
 
-/* Gold Shimmer Animation */
-@keyframes goldShimmer {
+/* === GOLD SHIMMER ANIMATION (600ms linear wipe every 12s) === */
+@keyframes goldShimmerWipe {
   0% {
     left: -100%;
     opacity: 0;
   }
+  10% {
+    opacity: 1;
+  }
   50% {
     left: 0%;
+    opacity: 1;
+  }
+  90% {
     opacity: 1;
   }
   100% {
@@ -2387,78 +2596,123 @@ body {
   }
 }
 
-/* Silver Pulse Animation */
-@keyframes silverPulse {
+/* Trigger shimmer every 12 seconds */
+.status-chip-active::before {
+  animation: goldShimmerWipe 600ms linear 3s infinite;
+  animation-iteration-count: infinite;
+  /* Pause between shimmers: 12s total - 600ms animation = 11.4s pause */
+  animation-delay: 3s, 15s, 27s, 39s; /* Stagger to create 12s intervals */
+}
+
+/* === SILVER ALPHA PULSE (8s faint pulse) === */
+@keyframes silverAlphaPulse {
   0%, 100% {
-    background: rgba(233, 239, 245, 0.05);
-    border-image: var(--silver-gradient) 1;
+    background: rgba(240, 244, 250, 0.05);
+    opacity: 1;
+  }
+  25% {
+    background: rgba(240, 244, 250, 0.06);
+    opacity: 0.95;
   }
   50% {
-    background: rgba(233, 239, 245, 0.08);
-    border-image: linear-gradient(45deg, 
-      rgba(233, 239, 245, 0.8) 0%, 
-      rgba(201, 206, 214, 0.8) 45%, 
-      rgba(154, 163, 173, 0.8) 100%) 1;
+    background: rgba(240, 244, 250, 0.07);
+    opacity: 0.9;
+  }
+  75% {
+    background: rgba(240, 244, 250, 0.06);
+    opacity: 0.95;
   }
 }
 
-/* Dark Mode Adaptations */
+/* === DARK MODE ADAPTATIONS (9% fill) === */
 @media (prefers-color-scheme: dark) {
   .status-chip-active {
-    background: rgba(234, 217, 176, 0.10); /* More opacity in dark */
-    color: rgba(234, 217, 176, 0.9);
+    /* Fill at 9% in dark mode */
+    background: rgba(255, 241, 203, 0.09); /* Brightened gold at 9% */
+    color: rgba(255, 241, 203, 0.9); /* Brightened gold text */
+    
+    /* Enhanced shimmer for dark mode */
+    &::before {
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 241, 203, 0.5) 45%, 
+        rgba(255, 241, 203, 0.7) 50%, 
+        rgba(255, 241, 203, 0.5) 55%, 
+        transparent 100%);
+    }
   }
   
   .status-chip-inactive {
-    background: rgba(233, 239, 245, 0.08);
-    color: rgba(233, 239, 245, 0.85);
+    /* Fill at 9% in dark mode */
+    background: rgba(248, 252, 255, 0.09); /* Brightened silver at 9% */
+    color: rgba(248, 252, 255, 0.9); /* Brightened silver text */
   }
   
   .status-chip-update {
-    background: rgba(233, 239, 245, 0.06);
-    color: rgba(233, 239, 245, 0.8);
+    background: rgba(248, 252, 255, 0.07);
+    color: rgba(248, 252, 255, 0.85);
   }
   
   .status-chip-revoked {
-    background: rgba(233, 239, 245, 0.04);
-    color: rgba(233, 239, 245, 0.7);
+    background: rgba(248, 252, 255, 0.05);
+    color: rgba(248, 252, 255, 0.7);
+  }
+  
+  /* Dark mode alpha pulse adjustment */
+  @keyframes silverAlphaPulse {
+    0%, 100% {
+      background: rgba(248, 252, 255, 0.09);
+      opacity: 1;
+    }
+    25% {
+      background: rgba(248, 252, 255, 0.11);
+      opacity: 0.95;
+    }
+    50% {
+      background: rgba(248, 252, 255, 0.13);
+      opacity: 0.9;
+    }
+    75% {
+      background: rgba(248, 252, 255, 0.11);
+      opacity: 0.95;
+    }
   }
 }
 
-/* Mobile Responsive */
+/* === MOBILE RESPONSIVE === */
 @media (max-width: 767px) {
   .status-chip {
     height: 28px;
     padding: 0 14px;
     font-size: 11px;
     min-height: 44px; /* Maintain hit target */
-    margin-top: -5px;
+    margin-top: -6px;
     margin-right: -6px;
   }
 }
 
-/* Hover Effects for Status Pills */
+/* === HOVER EFFECTS === */
 .status-chip:hover {
   transform: scale(1.02);
 }
 
 .status-chip-active:hover {
-  background: rgba(234, 217, 176, 0.10);
-  box-shadow: 0 2px 8px rgba(234, 217, 176, 0.2);
+  background: rgba(243, 227, 184, 0.08);
+  box-shadow: 0 2px 8px rgba(243, 227, 184, 0.25);
 }
 
 .status-chip-inactive:hover {
-  background: rgba(233, 239, 245, 0.08);
-  box-shadow: 0 2px 8px rgba(233, 239, 245, 0.15);
+  background: rgba(240, 244, 250, 0.08);
+  box-shadow: 0 2px 8px rgba(240, 244, 250, 0.2);
 }
 
-/* Focus States */
+/* === FOCUS STATES === */
 .status-chip:focus {
   outline: none;
-  box-shadow: 0 0 0 2px var(--luxe-text-primary);
+  box-shadow: 0 0 0 2px #101113;
 }
 
-/* Reduced Motion Support */
+/* === REDUCED MOTION SUPPORT === */
 @media (prefers-reduced-motion: reduce) {
   .status-chip-active::before {
     animation: none;
