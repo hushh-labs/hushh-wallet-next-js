@@ -4886,3 +4886,65 @@ body {
 }
 .card-tile-title{ color:#111 !important; }
 .card-tile-description{ color:#525 !important; }
+
+/* === MOBILE CARD FIT — FINAL OVERRIDE (put at very end) === */
+
+/* Safe left/right padding for the rail */
+@media (max-width: 767px) {
+  .container-narrow { padding-inline: clamp(16px, 5vw, 24px) !important; }
+  .cards-grid{
+    display: grid !important;
+    grid-template-columns: 1fr;      /* 1-up on phones */
+    justify-items: center;           /* center cards horizontally */
+    gap: clamp(12px, 3vw, 20px);
+    padding-inline: 0 !important;    /* rail handles padding */
+  }
+
+  /* Trick: keep width:100% (jo kahin pe set hoga) but LIMIT with max-width */
+  .card-container,
+  .card-tile{
+    width: 100% !important;
+    max-width: 420px !important;     /* <= change here if smaller needed */
+    margin-inline: auto !important;  /* equal L/R always */
+    aspect-ratio: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+  }
+
+  /* Compact internals so small widths par bhi accha lage */
+  .card-tile{ padding: clamp(14px, 4vw, 20px) !important; border-radius: 20px !important; }
+
+  /* Header stack + chip margins neutralize */
+  .card-tile-header{ display:grid !important; grid-template-columns: 1fr !important; gap:10px; }
+  .status-chip{ margin:0 !important; justify-self:start; }
+
+  /* Text wrap — no overflow */
+  .card-tile-title, .card-tile-description, .card-tile-subtext{ overflow-wrap:anywhere; hyphens:auto; }
+  .card-tile-description{ white-space: normal !important; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+
+  /* Action row stable */
+  .card-tile-action{ display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .card-tile-action .action-text{ min-width:0; }
+  .card-tile-action .action-arrow{ flex-shrink:0; }
+}
+
+/* XS phones (<=360px): thoda aur chhota */
+@media (max-width: 360px){
+  .card-container, .card-tile{ max-width: 360px !important; }
+}
+
+/* Big phones (>=520px but <768px): clean 2-column grid */
+@media (min-width: 520px) and (max-width: 767px){
+  .cards-grid{ grid-template-columns: repeat(2, minmax(0,1fr)) !important; justify-items: center; }
+  .card-container, .card-tile{ max-width: 100% !important; } /* columns handle width */
+}
+
+/* Visible boundary + dark text on white (softer but clear) */
+.card-tile{
+  box-shadow: 0 12px 32px rgba(0,0,0,.06), inset 0 0 0 1px rgba(17,17,17,.10) !important;
+}
+.card-tile-title{ color:#111 !important; }
+.card-tile-description{ color:#525 !important; }
+
+/* Prevent any horizontal shift from shadows/rims */
+html, body, .min-h-screen{ overflow-x: clip; }
