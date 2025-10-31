@@ -103,12 +103,12 @@ export default function DashboardPage() {
   const cardDefinitions = [
     {
       type: 'PERSONAL' as CardType,
-      title: 'HUSHH Personal Data Card',
+      title: 'HUSHH Signature Identity Card',
       description: 'Your identity, elegantly minimal.'
     },
     {
       type: 'FOOD' as CardType,
-      title: 'HUSHH Food Taste Card',
+      title: 'HUSHH Culinary Signature Card',
       description: 'Your taste, zero confusion.'
     }
   ];
