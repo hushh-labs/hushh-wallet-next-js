@@ -1516,13 +1516,366 @@ body {
   }
 }
 
-/* Header Divider (1px #E5E5E5 full-bleed) */
-.header-divider {
+/* Enhanced Micro with Icons */
+.dashboard-micro-enhanced {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #525252;
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+}
+
+.wallet-icon {
+  color: #525252;
+  flex-shrink: 0;
+}
+
+.apple-logo,
+.google-logo {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.dot-separator {
+  color: #525252;
+  font-size: 12px;
+  margin: 0 4px;
+}
+
+/* Enhanced Status Row with Progress Widget */
+.status-row-enhanced {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.progress-widget {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.progress-ring {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #E5E5E5;
+  overflow: hidden;
+}
+
+.progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: conic-gradient(#111111 0% calc(var(--progress) * 1%), #E5E5E5 calc(var(--progress) * 1%) 100%);
+  border-radius: 50%;
+}
+
+.progress-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111111;
+  text-transform: uppercase;
+  letter-spacing: 0.035em;
+}
+
+/* Header Actions (Two-column variant) */
+.header-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+/* Action Box */
+.action-box {
+  border: 1px solid #D4D4D4;
+  border-radius: 16px;
+  padding: 20px;
+  background: #FFFFFF;
+  min-width: 280px;
+}
+
+.action-header {
+  margin-bottom: 16px;
+}
+
+.cards-counter {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.035em;
+  color: #111111;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-primary-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 20px;
+  background: #111111;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(17, 17, 17, 0.15);
+}
+
+.btn-primary-action:active {
+  transform: scale(0.98);
+}
+
+.btn-secondary-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 20px;
+  background: transparent;
+  color: #111111;
+  border: 1px solid #D4D4D4;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary-action:hover {
+  background: #FAFAFA;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.btn-secondary-action:active {
+  transform: scale(0.98);
+}
+
+/* Enhanced User Info Card */
+.user-info-enhanced {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: #FFFFFF;
+  border: 1px solid #D4D4D4;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.user-info-enhanced:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+}
+
+.user-info-enhanced .user-details {
+  flex: 1;
+}
+
+.user-chips {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.user-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 8px;
+  background: #FAFAFA;
+  color: #525252;
+  border: 1px solid #E5E5E5;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: 1px solid #D4D4D4;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #525252;
+}
+
+.icon-btn:hover {
+  background: #FAFAFA;
+  border-color: #111111;
+  color: #111111;
+  transform: scale(1.05);
+}
+
+.icon-btn:active {
+  transform: scale(0.95);
+}
+
+.chevron-right {
+  color: #525252;
+  margin-left: 8px;
+}
+
+/* Enhanced Header Divider */
+.header-divider-enhanced {
   height: 1px;
-  background: #E5E5E5; /* 1px #E5E5E5 */
+  background: linear-gradient(to right, rgba(229, 229, 229, 0.3), #E5E5E5, rgba(229, 229, 229, 0.3));
   width: 100vw;
   margin-left: -48px;
-  margin-top: 24px; /* proper spacing after header */
+  margin-top: 32px;
+}
+
+@media (max-width: 1279px) {
+  .header-divider-enhanced {
+    margin-left: -24px;
+  }
+  
+  .action-box {
+    min-width: 240px;
+  }
+}
+
+@media (max-width: 767px) {
+  .header-divider-enhanced {
+    margin-left: -16px;
+  }
+  
+  .header-actions {
+    width: 100%;
+  }
+  
+  .action-box {
+    min-width: auto;
+  }
+  
+  .user-info-enhanced {
+    padding: 16px;
+  }
+  
+  .user-chips {
+    margin-top: 6px;
+  }
+  
+  .dashboard-micro-enhanced {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  
+  .status-row-enhanced {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+/* Focus states for enhanced elements */
+.btn-primary-action:focus,
+.btn-secondary-action:focus,
+.icon-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #111111;
+}
+
+.user-info-enhanced:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #111111, 0 16px 32px rgba(0, 0, 0, 0.12);
+}
+
+/* Success animation for progress completion */
+@keyframes confetti {
+  0% { 
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  50% { 
+    transform: scale(1.2) rotate(180deg);
+    opacity: 0.8;
+  }
+  100% { 
+    transform: scale(1) rotate(360deg);
+    opacity: 1;
+  }
+}
+
+.progress-widget.complete {
+  animation: confetti 800ms ease-out;
+}
+
+/* Ripple effect for buttons */
+.btn-primary-action,
+.btn-secondary-action {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary-action::after,
+.btn-secondary-action::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s;
+  pointer-events: none;
+}
+
+.btn-primary-action:active::after,
+.btn-secondary-action:active::after {
+  width: 100px;
+  height: 100px;
+}
+
+/* Header Divider (Original - keep for fallback) */
+.header-divider {
+  height: 1px;
+  background: #E5E5E5;
+  width: 100vw;
+  margin-left: -48px;
+  margin-top: 24px;
 }
 
 @media (max-width: 1279px) {
