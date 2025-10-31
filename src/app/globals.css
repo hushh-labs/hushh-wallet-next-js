@@ -58,16 +58,15 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom Color Palette */
-:root {
-  --color-ink: #0a0a0a;
-  --color-paper: #ffffff;
-  --color-muted: #6b7280;
-  --color-border: #e5e7eb;
-  --color-hover: #f3f4f6;
-}
+/* ===== LUXE CARD UI — COMPLETE DESIGN SYSTEM ===== */
 
-/* ===== TRUE METAL CARD SYSTEM (VISA/MASTERCARD QUALITY) ===== */
+/* Core Principles:
+ * - Material illusion: 8-layer metal card stack
+ * - Legibility first: WCAG AA compliance  
+ * - Quiet luxury: restrained motion, disciplined type
+ */
+
+/* === 2) COLOR TOKENS === */
 
 /* Neutrals (shared across themes) */
 :root {
@@ -83,65 +82,104 @@ body {
   --outline-dark: #2A2F36;
 }
 
-/* === BRUSHED GOLD PALETTE (Live Collection) === */
+/* Metallic Palettes (finish) */
+/* Gold (Live) */
 :root {
-  /* Base gradient stops (45°) */
-  --gold-light: #F3E3B8;
-  --gold-mid: #D7B874;
-  --gold-dark: #B48745;
-  
-  /* Micro-stop for richness */
-  --gold-highlight: #FFF6D5; /* at 40-45%, 8-12% opacity */
-  
-  /* Shadow accent */
-  --gold-shadow: #7A5E2B;
-  
-  /* Complete gradients */
-  --gold-base-gradient: linear-gradient(45deg, var(--gold-light) 0%, var(--gold-mid) 50%, var(--gold-dark) 100%);
-  --gold-rim-gradient: linear-gradient(45deg, var(--gold-light) 0%, var(--gold-mid) 45%, var(--gold-dark) 100%);
-  --gold-specular: linear-gradient(45deg, transparent 0%, rgba(255, 246, 213, 0.35) 25%, rgba(255, 246, 213, 0.6) 50%, rgba(255, 246, 213, 0.35) 75%, transparent 100%);
+  --gold-hl: #F3E3B8;
+  --gold-base: #D7B874;
+  --gold-mid: #B48745;
+  --gold-shd: #7A5E2B;
+  --gold-gradient: linear-gradient(45deg, var(--gold-hl) 0%, var(--gold-base) 45%, var(--gold-mid) 100%);
+  --gold-rim-gradient: linear-gradient(45deg, var(--gold-hl) 0%, var(--gold-base) 45%, var(--gold-mid) 100%);
 }
 
-/* === PLATINUM/SILVER PALETTE (Awaiting Commission) === */
+/* Platinum / Silver (Awaiting) */
 :root {
-  /* Base gradient stops */
-  --silver-light: #F0F4FA;
-  --silver-mid: #C9D0D9;
-  --silver-dark: #9CA7B3;
-  
-  /* Cool highlight */
-  --silver-highlight: #E9EEF5; /* at 35-40% */
-  
-  /* Edge shadow */
-  --silver-shadow: #6E7781;
-  
-  /* Complete gradients */
-  --silver-base-gradient: linear-gradient(45deg, var(--silver-light) 0%, var(--silver-mid) 50%, var(--silver-dark) 100%);
-  --silver-rim-gradient: linear-gradient(45deg, var(--silver-light) 0%, var(--silver-mid) 45%, var(--silver-dark) 100%);
-  --silver-specular: linear-gradient(45deg, transparent 0%, rgba(233, 238, 245, 0.35) 25%, rgba(233, 238, 245, 0.6) 50%, rgba(233, 238, 245, 0.35) 75%, transparent 100%);
+  --silver-hl: #F0F4FA;
+  --silver-base: #C9D0D9;
+  --silver-mid: #9CA7B3;
+  --silver-shd: #6E7781;
+  --silver-gradient: linear-gradient(45deg, var(--silver-hl) 0%, var(--silver-base) 45%, var(--silver-mid) 100%);
+  --silver-rim-gradient: linear-gradient(45deg, var(--silver-hl) 0%, var(--silver-base) 45%, var(--silver-mid) 100%);
 }
 
-/* === GRAPHITE PALETTE (Future luxe SKU) === */
+/* Graphite (optional dark SKU) */
 :root {
-  --graphite-light: #2B2E32;
+  --graphite-hl: #2B2E32;
   --graphite-mid: #151719;
-  --graphite-dark: #0E0F11;
-  --graphite-base-gradient: linear-gradient(45deg, var(--graphite-light) 0%, var(--graphite-mid) 50%, var(--graphite-dark) 100%);
-  --graphite-specular: linear-gradient(45deg, transparent 0%, rgba(240, 244, 250, 0.25) 25%, rgba(240, 244, 250, 0.4) 50%, rgba(240, 244, 250, 0.25) 75%, transparent 100%);
+  --graphite-shd: #0E0F11;
+  --graphite-gradient: linear-gradient(45deg, var(--graphite-hl) 0%, var(--graphite-mid) 45%, var(--graphite-shd) 100%);
 }
 
-/* === ROSE GOLD PALETTE (Future luxe SKU) === */
+/* Overlays & Effects */
 :root {
-  --rose-light: #F7D7C8;
-  --rose-mid: #D7A28E;
-  --rose-dark: #B77C68;
-  --rose-base-gradient: linear-gradient(45deg, var(--rose-light) 0%, var(--rose-mid) 50%, var(--rose-dark) 100%);
-  --rose-specular: linear-gradient(45deg, transparent 0%, rgba(247, 215, 200, 0.35) 25%, rgba(247, 215, 200, 0.6) 50%, rgba(247, 215, 200, 0.35) 75%, transparent 100%);
+  --specular-light: rgba(255, 255, 255, 0.14); /* 12-16% light mode */
+  --specular-dark: rgba(255, 255, 255, 0.20); /* 18-22% dark mode */
+  --grain-overlay: rgba(0, 0, 0, 0.08); /* 6-10% grain texture */
+  --scrim-overlay: rgba(0, 0, 0, 0.12); /* 10-14% text scrim if needed */
 }
 
-/* Theme-aware tokens */
+/* === TEXT COLOR MATRIX (finish × theme) === */
+
+/* Light Theme Colors */
 :root {
-  /* Light mode defaults */
+  /* Gold finish - Light theme */
+  --gold-light-title: #0F1114;
+  --gold-light-subtitle: #2A2B2E;
+  --gold-light-meta: rgba(58, 61, 66, 0.82); /* 80-85% */
+  --gold-light-pill: rgba(26, 28, 30, 0.9); /* 90% */
+  --gold-light-chevron: #8C939E;
+  --gold-light-chevron-hover: #5A616C;
+  
+  /* Platinum finish - Light theme */
+  --silver-light-title: #101113;
+  --silver-light-subtitle: #2A2B2E;
+  --silver-light-meta: rgba(75, 80, 86, 0.78); /* 75-80% */
+  --silver-light-pill: rgba(26, 28, 30, 0.9); /* 90% */
+  --silver-light-chevron: #8C939E;
+  --silver-light-chevron-hover: #5A616C;
+}
+
+/* Dark Theme Colors */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Brightened metals for dark mode (+10% brightness) */
+    --gold-hl: #FFF1CB;
+    --gold-base: #E4C285;
+    --gold-mid: #C79954;
+    
+    --silver-hl: #F8FCFF;
+    --silver-base: #D6DDE6;
+    --silver-mid: #A9B4C0;
+    
+    /* Update gradients */
+    --gold-gradient: linear-gradient(45deg, var(--gold-hl) 0%, var(--gold-base) 45%, var(--gold-mid) 100%);
+    --silver-gradient: linear-gradient(45deg, var(--silver-hl) 0%, var(--silver-base) 45%, var(--silver-mid) 100%);
+    
+    /* Enhanced effects for dark mode */
+    --specular-light: rgba(255, 255, 255, 0.20);
+    --grain-overlay: rgba(0, 0, 0, 0.14);
+    
+    /* Gold finish - Dark theme */
+    --gold-dark-title: #F4F5F6;
+    --gold-dark-subtitle: #D7DBE0;
+    --gold-dark-meta: rgba(158, 167, 176, 0.87); /* 85-90% */
+    --gold-dark-pill: rgba(244, 245, 246, 0.9); /* 90% */
+    --gold-dark-chevron: #A8B0B9;
+    --gold-dark-chevron-hover: #D5DAE0;
+    
+    /* Platinum finish - Dark theme */
+    --silver-dark-title: #F4F5F6;
+    --silver-dark-subtitle: #D7DBE0;
+    --silver-dark-meta: rgba(169, 177, 186, 0.87); /* 85-90% */
+    --silver-dark-pill: rgba(244, 245, 246, 0.9); /* 90% */
+    --silver-dark-chevron: #A8B0B9;
+    --silver-dark-chevron-hover: #D5DAE0;
+  }
+}
+
+/* Theme-aware tokens for dynamic switching */
+:root {
   --luxe-canvas: var(--bg-canvas-light);
   --luxe-card-surface: var(--card-surface-light);
   --luxe-text-primary: var(--text-prim-light);
@@ -149,7 +187,6 @@ body {
   --luxe-outline: var(--outline-light);
 }
 
-/* Dark mode overrides (+10% brightness shift for metallic colors) */
 @media (prefers-color-scheme: dark) {
   :root {
     --luxe-canvas: var(--bg-canvas-dark);
@@ -157,16 +194,16 @@ body {
     --luxe-text-primary: var(--text-prim-dark);
     --luxe-text-secondary: var(--text-sec-dark);
     --luxe-outline: var(--outline-dark);
-    
-    /* Brightened metals for dark mode */
-    --gold-light: #FFF1CB; /* +10% brightness */
-    --gold-mid: #E4C285;
-    --gold-dark: #C79954;
-    
-    --silver-light: #F8FCFF;
-    --silver-mid: #D6DDE6;
-    --silver-dark: #A9B4C0;
   }
+}
+
+/* Legacy color support */
+:root {
+  --color-ink: var(--text-prim-light);
+  --color-paper: var(--card-surface-light);
+  --color-muted: var(--text-sec-light);
+  --color-border: var(--outline-light);
+  --color-hover: #f3f4f6;
 }
 
 /* Utility Classes */
@@ -2114,27 +2151,34 @@ body {
 /* === BRUSHED GOLD CARD (Live Collection) === */
 .card-tile.gold-edition {
   /* === LAYER 1: BASE GRADIENT (Metal) === */
-  background: var(--gold-base-gradient);
+  background: var(--gold-gradient);
   
-  /* === LAYER 2: BRUSHED TEXTURE === */
+  /* === LAYER 2: BRUSHED TEXTURE + SPECULAR + WATERMARK === */
   background-image: 
     /* Horizontal brushed texture (6-10% opacity) */
     linear-gradient(90deg, 
       transparent 0%, 
-      rgba(255, 255, 255, 0.08) 2%, 
+      var(--grain-overlay) 2%, 
       transparent 4%, 
       rgba(255, 255, 255, 0.06) 8%, 
       transparent 12%, 
-      rgba(255, 255, 255, 0.08) 16%, 
+      var(--grain-overlay) 16%, 
       transparent 20%),
-    /* === LAYER 3: SPECULAR BAND (24-32px diagonal highlight at 10-16%) === */
-    var(--gold-specular),
-    /* === LAYER 5: WATERMARK (H/guilloché at 4-6% opacity light) === */
+    /* === LAYER 3: SPECULAR BAND (24-32px diagonal highlight) === */
+    linear-gradient(45deg, 
+      transparent 0%, 
+      transparent 35%, 
+      var(--specular-light) 37%, 
+      rgba(255, 255, 255, 0.16) 40%, 
+      var(--specular-light) 43%, 
+      transparent 45%, 
+      transparent 100%),
+    /* === LAYER 5: WATERMARK (H/guilloché at 4-6% opacity) === */
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23111111' fill-opacity='0.05'%3E%3Cpath d='M30 30h12v24h36V30h12v60h-12V66H42v24H30V30z'/%3E%3Cpath d='M15 15h6v12h18V15h6v30h-6V33H21v12h-6V15z' opacity='0.3'/%3E%3Cpath d='M75 75h6v12h18V75h6v30h-6V93H81v12h-6V75z' opacity='0.3'/%3E%3C/g%3E%3C/svg%3E");
   
   background-size: 
     100% 100%, /* Brushed texture */
-    100% 30px, /* Specular band width */
+    100% 100%, /* Specular band */
     120px 120px; /* Watermark pattern */
   
   background-position: 
@@ -2157,33 +2201,40 @@ body {
     0 0 0 2px var(--gold-rim-gradient),
     /* Inner bevel (1px highlight/shadow) */
     inset 1px 1px 0 rgba(255, 255, 255, 0.12),
-    inset -1px -1px 0 rgba(122, 94, 43, 0.16);
+    inset -1px -1px 0 var(--gold-shd);
 }
 
 /* === PLATINUM/SILVER CARD (Awaiting Commission) === */
 .card-tile.silver-edition {
   /* === LAYER 1: BASE GRADIENT (Metal) === */
-  background: var(--silver-base-gradient);
+  background: var(--silver-gradient);
   
-  /* === LAYER 2: BRUSHED TEXTURE === */
+  /* === LAYER 2: BRUSHED TEXTURE + SPECULAR + WATERMARK === */
   background-image: 
     /* Horizontal brushed texture (6-10% opacity) */
     linear-gradient(90deg, 
       transparent 0%, 
-      rgba(255, 255, 255, 0.08) 2%, 
+      var(--grain-overlay) 2%, 
       transparent 4%, 
       rgba(255, 255, 255, 0.06) 8%, 
       transparent 12%, 
-      rgba(255, 255, 255, 0.08) 16%, 
+      var(--grain-overlay) 16%, 
       transparent 20%),
     /* === LAYER 3: SPECULAR BAND === */
-    var(--silver-specular),
-    /* === LAYER 5: WATERMARK (H/guilloché at 4-6% opacity light) === */
+    linear-gradient(45deg, 
+      transparent 0%, 
+      transparent 35%, 
+      var(--specular-light) 37%, 
+      rgba(255, 255, 255, 0.16) 40%, 
+      var(--specular-light) 43%, 
+      transparent 45%, 
+      transparent 100%),
+    /* === LAYER 5: WATERMARK (H/guilloché at 4-6% opacity) === */
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23111111' fill-opacity='0.05'%3E%3Cpath d='M30 30h12v24h36V30h12v60h-12V66H42v24H30V30z'/%3E%3Cpath d='M15 15h6v12h18V15h6v30h-6V33H21v12h-6V15z' opacity='0.3'/%3E%3Cpath d='M75 75h6v12h18V75h6v30h-6V93H81v12h-6V75z' opacity='0.3'/%3E%3C/g%3E%3C/svg%3E");
   
   background-size: 
     100% 100%, /* Brushed texture */
-    100% 30px, /* Specular band width */
+    100% 100%, /* Specular band */
     120px 120px; /* Watermark pattern */
   
   background-position: 
@@ -2206,7 +2257,7 @@ body {
     0 0 0 2px var(--silver-rim-gradient),
     /* Inner bevel (1px highlight/shadow) */
     inset 1px 1px 0 rgba(255, 255, 255, 0.12),
-    inset -1px -1px 0 rgba(110, 119, 129, 0.16);
+    inset -1px -1px 0 var(--silver-shd);
 }
 
 /* === PREMIUM MOTION (Restrained, 2-3px lift) === */
@@ -2436,49 +2487,232 @@ body {
 
 /* ===== PREMIUM TYPOGRAPHY (LUXE SPECIFICATION) ===== */
 
-/* Card Title Typography - Premium Scale */
+/* ===== FLUID TYPOGRAPHY SYSTEM (MOBILE-RESPONSIVE) ===== */
+
+/* Card Title Typography - Fluid Scale 22→26px */
 .card-tile-title {
-  font-size: clamp(22px, 2.5vw, 24px); /* 22-24px as per spec */
+  /* Responsive sizing across 320→480 widths */
+  font-size: clamp(22px, 3.5vw, 26px);
   font-weight: 600; /* 600-700 range */
   letter-spacing: -0.003em; /* Tight tracking -0.3% for premium feel */
-  color: var(--luxe-text-primary) !important;
-  margin: 0 0 10px 0; /* Increased spacing */
   line-height: 1.3;
+  margin: 0 0 10px 0; /* Vertical rhythm: Title→Subtitle 10px */
   max-width: 100%;
   overflow-wrap: break-word;
   hyphens: auto;
 }
 
-/* Card Description - Premium Treatment */
+/* Card Description - Fluid Scale 14→16px */
 .card-tile-description {
-  font-size: clamp(15px, 1.5vw, 16px); /* 15-16px as per spec */
+  font-size: clamp(14px, 2vw, 16px); /* 14-16px as per spec */
   font-weight: 450; /* Slightly lighter for hierarchy */
   line-height: 1.5; /* 150% line height for readability */
-  color: var(--luxe-text-primary) !important;
-  margin: 0 0 14px 0; /* Increased spacing */
+  margin: 0 0 14px 0; /* Vertical rhythm: Subtitle→Meta 14px */
   max-width: 100%;
 }
 
-/* Card Meta Line - Refined Typography */
+/* Card Meta Line - Fluid Scale 12→13px */
 .card-tile-subtext {
-  font-size: 13px; /* Consistent 13px for meta */
+  font-size: clamp(12px, 1.5vw, 13px); /* 12-13px meta text */
   font-weight: 500;
   letter-spacing: 0.01em; /* Subtle letter spacing */
-  color: rgba(var(--luxe-text-primary), 0.75) !important; /* 75% opacity for hierarchy */
-  margin: 4px 0 0 0;
+  margin: 4px 0 0 0; /* Vertical rhythm: Meta spacing */
   line-height: 1.4;
 }
 
-/* Enhanced Action Text */
+/* Enhanced Action Text - Fluid Scale 14→15px */
 .action-text {
-  font-size: clamp(14px, 1.5vw, 15px);
+  font-size: clamp(14px, 1.8vw, 15px);
   font-weight: 500;
   letter-spacing: 0.005em; /* Subtle spacing for luxury feel */
-  color: var(--luxe-text-primary);
   transition: all 120ms ease-out; /* Matching card transition timing */
   min-height: 44px;
   display: flex;
   align-items: center;
+}
+
+/* ===== TEXT COLOR MATRIX (FINISH × THEME COMBINATIONS) ===== */
+
+/* === GOLD EDITION TEXT COLORS === */
+.card-tile.gold-edition .card-tile-title {
+  color: var(--gold-light-title);
+}
+
+.card-tile.gold-edition .card-tile-description {
+  color: var(--gold-light-subtitle);
+}
+
+.card-tile.gold-edition .card-tile-subtext {
+  color: var(--gold-light-meta);
+}
+
+.card-tile.gold-edition .action-text {
+  color: var(--gold-light-title);
+}
+
+.card-tile.gold-edition .action-arrow {
+  color: var(--gold-light-chevron);
+}
+
+.card-tile.gold-edition:hover .action-arrow {
+  color: var(--gold-light-chevron-hover);
+}
+
+/* === SILVER EDITION TEXT COLORS === */
+.card-tile.silver-edition .card-tile-title {
+  color: var(--silver-light-title);
+}
+
+.card-tile.silver-edition .card-tile-description {
+  color: var(--silver-light-subtitle);
+}
+
+.card-tile.silver-edition .card-tile-subtext {
+  color: var(--silver-light-meta);
+}
+
+.card-tile.silver-edition .action-text {
+  color: var(--silver-light-title);
+}
+
+.card-tile.silver-edition .action-arrow {
+  color: var(--silver-light-chevron);
+}
+
+.card-tile.silver-edition:hover .action-arrow {
+  color: var(--silver-light-chevron-hover);
+}
+
+/* === DARK MODE TEXT COLORS === */
+@media (prefers-color-scheme: dark) {
+  /* Gold edition - Dark theme */
+  .card-tile.gold-edition .card-tile-title {
+    color: var(--gold-dark-title);
+  }
+
+  .card-tile.gold-edition .card-tile-description {
+    color: var(--gold-dark-subtitle);
+  }
+
+  .card-tile.gold-edition .card-tile-subtext {
+    color: var(--gold-dark-meta);
+  }
+
+  .card-tile.gold-edition .action-text {
+    color: var(--gold-dark-title);
+  }
+
+  .card-tile.gold-edition .action-arrow {
+    color: var(--gold-dark-chevron);
+  }
+
+  .card-tile.gold-edition:hover .action-arrow {
+    color: var(--gold-dark-chevron-hover);
+  }
+
+  /* Silver edition - Dark theme */
+  .card-tile.silver-edition .card-tile-title {
+    color: var(--silver-dark-title);
+  }
+
+  .card-tile.silver-edition .card-tile-description {
+    color: var(--silver-dark-subtitle);
+  }
+
+  .card-tile.silver-edition .card-tile-subtext {
+    color: var(--silver-dark-meta);
+  }
+
+  .card-tile.silver-edition .action-text {
+    color: var(--silver-dark-title);
+  }
+
+  .card-tile.silver-edition .action-arrow {
+    color: var(--silver-dark-chevron);
+  }
+
+  .card-tile.silver-edition:hover .action-arrow {
+    color: var(--silver-dark-chevron-hover);
+  }
+}
+
+/* === RESPONSIVE BREAKPOINTS (DEVICE MATRIX) === */
+
+/* xs ≤360 (small Android) */
+@media (max-width: 360px) {
+  .card-tile {
+    min-height: 180px; /* Height clamping per spec */
+    padding: 20px;
+    border-radius: 26px;
+  }
+  
+  .card-tile-title {
+    font-size: 22px; /* Fixed 22px for xs */
+  }
+  
+  .card-tile-description {
+    font-size: 14px; /* Fixed 14px for xs */
+  }
+  
+  .card-tile-subtext {
+    font-size: 12px; /* Fixed 12px for xs */
+  }
+}
+
+/* sm 361–480 */
+@media (min-width: 361px) and (max-width: 480px) {
+  .card-tile {
+    min-height: 190px;
+    padding: 22px;
+    border-radius: 27px;
+  }
+}
+
+/* md 481–768 */
+@media (min-width: 481px) and (max-width: 768px) {
+  .card-tile {
+    min-height: 210px;
+    padding: 24px;
+    border-radius: 28px;
+  }
+  
+  .card-tile-title {
+    font-size: 24px; /* Fixed 24px for md */
+  }
+}
+
+/* lg 769–1024 */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .card-tile {
+    min-height: 220px;
+    padding: 26px;
+    border-radius: 29px;
+  }
+}
+
+/* xl ≥1025 */
+@media (min-width: 1025px) {
+  .card-tile {
+    min-height: 230px; /* Max height per spec */
+    padding: 28px;
+    border-radius: 30px;
+  }
+  
+  .card-tile-title {
+    font-size: 26px; /* Max 26px if space allows */
+  }
+}
+
+/* === CONTAINER MAX-WIDTH CONTROL (600-640px mobile) === */
+.cards-grid {
+  max-width: 640px; /* Container max-width on mobile */
+  margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+  .cards-grid {
+    max-width: 600px;
+  }
 }
 
 /* ===== FOIL STATUS PILLS (EXACT SPECIFICATION) ===== */

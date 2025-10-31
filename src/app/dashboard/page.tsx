@@ -203,6 +203,15 @@ interface CardTileProps {
 }
 
 function CardTile({ type, title, description, status, lastIssued, onClick }: CardTileProps) {
+  const [formattedDate, setFormattedDate] = useState<string>('');
+
+  useEffect(() => {
+    // Format date only on client side to avoid hydration mismatch
+    if (lastIssued) {
+      setFormattedDate(lastIssued.toLocaleDateString());
+    }
+  }, [lastIssued]);
+
   const getStatusConfig = () => {
     switch (status) {
       case 'NOT_CREATED':
@@ -218,7 +227,7 @@ function CardTile({ type, title, description, status, lastIssued, onClick }: Car
           chipClass: 'status-chip-active', 
           cardClass: 'gold-edition',
           actionText: 'Access Collection',
-          subText: lastIssued ? `Last commissioned: ${lastIssued.toLocaleDateString()}` : ''
+          subText: formattedDate ? `Last commissioned: ${formattedDate}` : ''
         };
       case 'UPDATE_AVAILABLE':
         return {
@@ -283,7 +292,7 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#14191E]">
+    <div className="min-h-screen">
       {/* Premium Enhanced Header */}
       <div className="dashboard-header">
         <div className="header-rail">
