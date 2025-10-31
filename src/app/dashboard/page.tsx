@@ -41,28 +41,28 @@ function CardTile({ type, title, description, status, lastIssued, onClick }: Car
     switch (status) {
       case 'NOT_CREATED':
         return {
-          chipText: 'Not created',
+          chipText: 'Awaiting Commission',
           chipClass: 'status-chip-inactive',
-          actionText: 'Create card'
+          actionText: 'Commission Collection'
         };
       case 'ACTIVE':
         return {
-          chipText: 'Active',
+          chipText: 'Live Collection',
           chipClass: 'status-chip-active', 
-          actionText: 'View card',
-          subText: lastIssued ? `Last issued: ${lastIssued.toLocaleDateString()}` : ''
+          actionText: 'Access Collection',
+          subText: lastIssued ? `Last commissioned: ${lastIssued.toLocaleDateString()}` : ''
         };
       case 'UPDATE_AVAILABLE':
         return {
-          chipText: 'Update available',
+          chipText: 'Refinement Available',
           chipClass: 'status-chip-update',
-          actionText: 'Re-issue'
+          actionText: 'Refine Collection'
         };
       case 'REVOKED':
         return {
-          chipText: 'Revoked',
+          chipText: 'Archive',
           chipClass: 'status-chip-revoked',
-          actionText: 'Create new'
+          actionText: 'Commission New'
         };
     }
   };
@@ -119,13 +119,13 @@ export default function DashboardPage() {
       <div className="dashboard-header">
         <div className="header-rail">
           <div className="header-text-stack">
-            <div className="header-eyebrow">DASHBOARD</div>
+            <div className="header-eyebrow">PRIVATE COLLECTION</div>
             <h1 className="dashboard-title">
-              Set up your Hushh passes
+              Curate Your Exclusive Hushh Collection
             </h1>
             <div className="dashboard-title-keyline"></div>
             <p className="dashboard-deck">
-              Show once, get served right.
+              Present once. Experience excellence, always.
             </p>
             <div className="dashboard-micro-enhanced">
               <svg className="wallet-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -133,7 +133,7 @@ export default function DashboardPage() {
                 <path d="m23 7-2 0"/>
                 <path d="m23 11-2 0"/>
               </svg>
-              <span>Apple Wallet & Google Wallet supported.</span>
+              <span>Seamlessly integrated with Apple Wallet & Google Wallet for effortless sophistication.</span>
               <svg className="apple-logo" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
               </svg>
@@ -147,26 +147,26 @@ export default function DashboardPage() {
                 <div className="progress-ring">
                   <div className="progress-fill" style={{ '--progress': '50%' } as React.CSSProperties}></div>
                 </div>
-                <span className="progress-text">1 of 2 set</span>
+                <span className="progress-text">1 of 2 Curated</span>
               </div>
               <span className="status-separator">·</span>
-              <a href="/cards/personal" className="missing-link">Missing: Profile Pass</a>
+              <a href="/cards/personal" className="missing-link">Awaiting: Signature Profile</a>
             </div>
           </div>
           <div className="header-actions">
             <div className="action-box">
               <div className="action-header">
-                <span className="cards-counter">CARDS: 1 / 2</span>
+                <span className="cards-counter">COLLECTION: 1 / 2</span>
               </div>
               <div className="action-buttons">
                 <button className="btn-primary-action">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M12 5v14M5 12h14"/>
                   </svg>
-                  Create Profile Pass
+                  Commission Profile Collection
                 </button>
                 <button className="btn-secondary-action">
-                  Create Taste Pass
+                  Commission Culinary Collection
                 </button>
               </div>
             </div>
@@ -178,7 +178,7 @@ export default function DashboardPage() {
                 <p className="user-name">{user.name}</p>
                 <p className="user-email">{user.email}</p>
                 <div className="user-chips">
-                  <span className="user-chip">Primary Pass</span>
+                  <span className="user-chip">Signature Collection</span>
                   <span className="user-chip">Apple</span>
                   <span className="user-chip">Google</span>
                 </div>
@@ -233,8 +233,8 @@ export default function DashboardPage() {
         <div className="container-narrow">
           <div className="footer-content">
             <p className="footer-text">
-              Each card stores your preferences securely and creates a minimal, 
-              shareable profile for Apple Wallet. Update anytime.
+              Each collection is meticulously crafted to reflect your refined preferences, 
+              creating an elegant digital presence within Apple Wallet. Modify at your discretion.
             </p>
           </div>
         </div>
