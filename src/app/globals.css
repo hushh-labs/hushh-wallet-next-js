@@ -4613,3 +4613,72 @@ body {
     color: #9CA3AF;
   }
 }
+
+/* ===== CARD RESPONSIVENESS FIXES - FLUID RESIZE PATCH ===== */
+
+/* ---------- A) Let the card grow naturally ---------- */
+@media (max-width: 1024px) {
+  .card-tile { max-height: none; }         /* remove cap so wrapped text isn't clipped */
+}
+@media (max-width: 767px) {
+  .card-tile {
+    aspect-ratio: auto;                    /* stop height being forced by width */
+    min-height: 0;                         /* allow smaller phones to shrink */
+    padding: clamp(16px, 4vw, 24px);       /* keep comfortable padding */
+  }
+}
+
+/* ---------- B) Header that actually responds ---------- */
+/* Move from flex to grid so the chip doesn't shove content off */
+.card-tile-header {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;  /* title block can shrink */
+  align-items: start;
+  gap: 12px;
+}
+.card-tile-info { min-width: 0; }             /* allow text to wrap within grid cell */
+
+@media (max-width: 480px) {
+  .card-tile-header { grid-template-columns: 1fr; }
+  .status-chip { justify-self: start; margin-right: 0; } /* keep chip inside on tiny widths */
+}
+
+/* ---------- C) Text should wrap, not force width ---------- */
+.card-tile-title,
+.card-tile-description,
+.card-tile-subtext {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+/* You have a mobile rule that sets .card-tile-description { white-space: nowrap; } — override it */
+@media (max-width: 767px) {
+  .card-tile-description {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;                 /* graceful 2-line trim */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* ---------- D) Action row never overflows ---------- */
+.card-tile-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.card-tile-action .action-text { min-width: 0; }   /* allow label to truncate before arrow */
+.card-tile-action .action-arrow { flex-shrink: 0; }
+
+/* ---------- E) Grid that truly responds (2-up when possible) ---------- */
+.cards-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: clamp(12px, 3vw, 24px);
+  max-width: 100%;
+}
+@media (max-width: 360px) {
+  .cards-grid { grid-template-columns: 1fr; }      /* very small phones */
+}
