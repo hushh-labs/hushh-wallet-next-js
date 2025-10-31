@@ -176,12 +176,6 @@ function WalletIntegration({ className = '' }: WalletIntegrationProps) {
 }
 
 // Mock data for now - will be replaced with real auth/database
-const MOCK_USER = {
-  id: '1',
-  name: 'Demo User',
-  email: 'demo@hushh.ai'
-};
-
 const MOCK_CARD_DATA: Partial<Record<CardType, CardData>> = {
   PERSONAL: {
     type: 'PERSONAL',
@@ -265,7 +259,6 @@ function CardTile({ type, title, description, status, lastIssued, onClick }: Car
 
 export default function DashboardPage() {
   const [cards, setCards] = useState<Partial<Record<CardType, CardData>>>(MOCK_CARD_DATA);
-  const [user] = useState(MOCK_USER);
 
   const handleCardClick = (cardType: CardType) => {
     // Navigate to specific card flow
@@ -326,35 +319,6 @@ export default function DashboardPage() {
                 <button className="btn-secondary-action">
                   Commission Culinary Collection
                 </button>
-              </div>
-            </div>
-            <div className="user-info-enhanced">
-              <div className="user-avatar">
-                {user.name.charAt(0)}
-              </div>
-              <div className="user-details">
-                <p className="user-name">{user.name}</p>
-                <p className="user-email">{user.email}</p>
-                <div className="user-chips">
-                  <span className="user-chip">Signature Collection</span>
-                  <span className="user-chip">Apple</span>
-                  <span className="user-chip">Google</span>
-                </div>
-              </div>
-              <div className="user-actions">
-                <button className="icon-btn" title="Add to Apple Wallet">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12.017 3.652c-.8-.961-2.139-1.652-3.573-1.652-0.221 0-0.442 0.017-0.661 0.051 0.132 2.139 1.097 3.956 2.42 5.148 0.8 0.733 1.87 1.364 3.056 1.364 0.309 0 0.618-0.034 0.918-0.103-0.221-2.104-1.097-3.869-2.16-4.808zM18.5 15.5c-0.55 1.164-1.364 2.104-2.42 2.726-0.827 0.487-1.87 0.785-2.988 0.785-1.052 0-2.087-0.264-3.056-0.785-1.056-0.622-1.87-1.562-2.42-2.726-0.55-1.164-0.827-2.328-0.827-3.5s0.277-2.336 0.827-3.5c0.55-1.164 1.364-2.104 2.42-2.726 0.969-0.521 2.004-0.785 3.056-0.785 1.118 0 2.161 0.298 2.988 0.785 1.056 0.622 1.87 1.562 2.42 2.726 0.55 1.164 0.827 2.328 0.827 3.5s-0.277 2.336-0.827 3.5z"/>
-                  </svg>
-                </button>
-                <button className="icon-btn" title="Add to Google Wallet">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                  </svg>
-                </button>
-                <svg className="chevron-right" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
               </div>
             </div>
           </div>
