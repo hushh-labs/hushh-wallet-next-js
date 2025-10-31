@@ -1759,7 +1759,7 @@ body {
 .action-box {
   border: 1px solid #D4D4D4;
   border-radius: 16px;
-  padding: 24px;
+  padding: 20px;
   background: #FFFFFF;
   min-width: 280px;
 }
@@ -1788,7 +1788,7 @@ body {
   justify-content: center;
   gap: 8px;
   height: 44px;
-  padding: 0 28px;
+  padding: 0 20px;
   background: #111111;
   color: #FFFFFF;
   border: none;
@@ -1813,7 +1813,7 @@ body {
   align-items: center;
   justify-content: center;
   height: 44px;
-  padding: 0 28px;
+  padding: 0 20px;
   background: transparent;
   color: #111111;
   border: 1px solid #D4D4D4;
@@ -3362,7 +3362,7 @@ body {
 
 /* Footer copy ≤ 64ch - N600 muted */
 .footer-text {
-  font-size: clamp(16px, 1.5vw, 17px);
+  font-size: clamp(14px, 1.5vw, 15px);
   color: var(--muted);  /* N600 */
   line-height: 1.6;
   max-width: 64ch;
@@ -4146,7 +4146,7 @@ body {
   background: #FFFFFF;
   border: 1px solid #E5E7EB;
   border-radius: 16px;
-  padding: 20px 24px;
+  padding: 16px 20px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
   margin: 12px 0;
   transition: all 0.2s ease;
@@ -4359,7 +4359,7 @@ body {
 /* Mobile Optimizations */
 @media (max-width: 767px) {
   .wallet-integration-card {
-    padding: 18px 20px;
+    padding: 14px 16px;
     margin: 10px 0;
     border-radius: 12px;
   }
@@ -4417,7 +4417,7 @@ body {
 /* Large Screen Optimizations */
 @media (min-width: 1024px) {
   .wallet-integration-card {
-    padding: 24px 28px;
+    padding: 18px 24px;
     border-radius: 20px;
   }
   
@@ -4949,74 +4949,69 @@ body {
 /* Prevent any horizontal shift from shadows/rims */
 html, body, .min-h-screen{ overflow-x: clip; }
 
-/* ===== PHONE RAIL: ONE GRID FOR ALL ===== */
+/* ===== PHONE RAIL/GRID SYSTEM — SINGLE SOURCE OF TRUTH ===== */
+
+/* === PHONE RAIL: One truth for all === */
 :root{
-  --phone-gutter: 16px;     /* L/R gutter on phones (try 18/20 if needed) */
-  --phone-rail-max: 420px;  /* max content width inside phone frame */
+  --phone-gutter: 16px;      /* left/right gutter on phone */
+  --phone-rail-max: 420px;   /* content width cap inside the phone frame */
 }
 
 @media (max-width: 767px){
-  /* Rail utility (we'll apply it to existing wrappers via selectors below) */
-  .__rail { 
+  /* Utility that centers & clamps width to the rail */
+  .__phone-rail {
     box-sizing: border-box;
-    inline-size: min(var(--phone-rail-max),
-                     calc(100vw - (var(--phone-gutter) * 2)));
+    inline-size: min(var(--phone-rail-max), calc(100vw - (var(--phone-gutter) * 2)));
     margin-inline: auto;
-    padding-inline: 0;
+    padding-inline: 0;  /* padding rail par mat do, rail hi clamp karega */
   }
+}
 
-  /* 1) Snap ALL top wrappers to the same rail */
+/* === Sab top-level wrappers ko rail par snap karo (no JSX change) === */
+@media (max-width: 767px){
+  /* Header / actions / content / footer sab same rail par */
   .header-rail,
-  .wallet-integration-card,
   .action-box,
+  .wallet-integration-card,
   .container-narrow,
   .cards-grid,
-  .dashboard-footer .container-narrow{
-    inline-size: min(var(--phone-rail-max),
-                     calc(100vw - (var(--phone-gutter) * 2))) !important;
+  .user-info-enhanced,
+  .dashboard-footer .container-narrow { 
+    inline-size: min(var(--phone-rail-max), calc(100vw - (var(--phone-gutter) * 2))) !important;
     margin-inline: auto !important;
     padding-inline: 0 !important;
     box-sizing: border-box;
   }
 
-  /* 2) Grid for cards strictly inside the rail */
+  /* koi bhi negative/side shifting rule neutralize */
+  .header-divider-enhanced,
+  .header-divider { margin-left: 0 !important; width: 100% !important; }
+}
+
+/* === Cards grid & tiles ko rail follow karna === */
+@media (max-width: 767px){
   .cards-grid{
     display: grid !important;
-    grid-template-columns: 1fr;    /* 1-up on phones */
-    justify-items: stretch;        /* fill the rail width */
+    grid-template-columns: 1fr;        /* 1-up on phone */
+    justify-items: stretch;            /* fill the rail */
     gap: clamp(12px, 3vw, 20px);
   }
-
-  /* 3) Tiles fill the rail (no extra widths) */
   .card-container, .card-tile{
-    width: 100% !important;
+    width: 100% !important;            /* rail already clamps width */
     max-width: none !important;
     margin-inline: 0 !important;
-    aspect-ratio: auto !important;
-    max-height: none !important;
-    min-height: 0 !important;
+    aspect-ratio: auto !important;     /* natural height */
   }
-
-  /* 4) Compact internals + clean stack */
-  .card-tile{ padding: clamp(14px, 4vw, 20px) !important; border-radius: 20px !important; }
+  /* header stack + no edge bite */
   .card-tile-header{ display:grid !important; grid-template-columns: 1fr !important; gap:10px; }
   .status-chip{ margin:0 !important; justify-self:start; }
-  .card-tile-title,.card-tile-description,.card-tile-subtext{ overflow-wrap:anywhere; hyphens:auto; }
-  .card-tile-description{ white-space: normal !important; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-
-  /* 5) Kill layout shifters */
-  .header-divider-enhanced, .header-divider{ margin-left:0 !important; width:100% !important; }
 }
 
-/* Optional: big phones (≥520px) → 2-column within the same rail */
-@media (min-width: 520px) and (max-width: 767px){
-  .cards-grid{ grid-template-columns: repeat(2, minmax(0,1fr)) !important; }
-}
-
-/* Page guards */
+/* === Page-wide guards (jitni baar shift dikhe, ye pakdega) === */
+/* koi horizontal drift nahi */
 html, body, .min-h-screen{ overflow-x: clip; }
 
-/* Visible boundary + darker text on white */
+/* text colors + subtle keyline so white background pe boundary dikhe */
 .card-tile{
   box-shadow: 0 12px 32px rgba(0,0,0,.06),
               inset 0 0 0 1px rgba(17,17,17,.10) !important;
@@ -5024,11 +5019,114 @@ html, body, .min-h-screen{ overflow-x: clip; }
 .card-tile-title{ color:#111 !important; }
 .card-tile-description{ color:#525 !important; }
 
-/* ===== PHONE RAIL DEBUG OVERLAY (Optional) ===== */
-/* Toggle this class on <body> in devtools to see the rail boundaries */
-body.grid-debug::after{
-  content:"";
-  position: fixed; inset: 0; pointer-events:none; z-index: 9999;
+/* === (Optional) 2-column large phones === */
+@media (min-width: 520px) and (max-width: 767px){
+  .cards-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+
+/* === PHONE RAIL IMPLEMENTATION — SYSTEMATIC OVERRIDE === */
+
+/* 1) Single-source rail system integration */
+:root {
+  --phone-gutter: 16px;
+  --phone-rail-max: 420px;
+}
+
+/* 2) Apply rail constraints to all major layout containers */
+@media (max-width: 767px) {
+  .header-rail,
+  .action-box,
+  .wallet-integration-card,
+  .container-narrow,
+  .cards-grid,
+  .user-info-enhanced,
+  .dashboard-footer .container-narrow {
+    inline-size: min(var(--phone-rail-max), calc(100vw - (var(--phone-gutter) * 2))) !important;
+    margin-inline: auto !important;
+    padding-inline: 0 !important;
+    box-sizing: border-box;
+  }
+}
+
+/* 3) Mobile card grid optimization */
+@media (max-width: 767px) {
+  .cards-grid {
+    display: grid !important;
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+    gap: clamp(12px, 3vw, 20px);
+  }
+  
+  .card-container, .card-tile {
+    width: 100% !important;
+    max-width: none !important;
+    margin-inline: 0 !important;
+    aspect-ratio: auto !important;
+  }
+}
+
+/* 4) Layout guards & overflow prevention */
+html, body, .min-h-screen {
+  overflow-x: clip !important;
+}
+
+.header-divider-enhanced,
+.header-divider {
+  margin-left: 0 !important;
+  width: 100% !important;
+}
+
+/* 5) Visual consistency improvements */
+.card-tile {
+  box-shadow: 0 12px 32px rgba(0,0,0,.06),
+              inset 0 0 0 1px rgba(17,17,17,.10) !important;
+}
+
+.card-tile-title { color: #111 !important; }
+.card-tile-description { color: #525 !important; }
+
+/* 6) Responsive breakpoint system */
+/* XS phones (≤360px): Single column, compact */
+@media (max-width: 360px) {
+  .card-container, .card-tile {
+    max-width: 360px !important;
+  }
+}
+
+/* Small phones (361-480px): Single column, optimized */
+@media (min-width: 361px) and (max-width: 480px) {
+  .card-container, .card-tile {
+    max-width: 90vw !important;
+  }
+}
+
+/* Large phones (520-767px): Two column grid */
+@media (min-width: 520px) and (max-width: 767px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    justify-items: center;
+  }
+  
+  .card-container, .card-tile {
+    max-width: 100% !important;
+  }
+}
+
+/* === PHONE RAIL TUNING CONTROLS === */
+/* Adjust these variables to fine-tune the rail system */
+:root {
+  --phone-gutter: 16px;      /* Try 18px or 20px for more inset */
+  --phone-rail-max: 420px;   /* Try 400px or 380px for tighter content */
+}
+
+/* === DEBUG GRID OVERLAY (Optional) === */
+/* Add class 'grid-debug' to body in devtools to see rail boundaries */
+body.grid-debug::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
   background:
     linear-gradient(90deg, transparent var(--phone-gutter),
                          rgba(0,0,0,.08) calc(var(--phone-gutter) + 1px),
@@ -5036,16 +5134,4 @@ body.grid-debug::after{
     linear-gradient(90deg, transparent calc(100vw - var(--phone-gutter)),
                          rgba(0,0,0,.08) calc(100vw - var(--phone-gutter) - 1px),
                          transparent 100%);
-}
-
-@media (max-width: 767px) {
-  body.grid-debug::after {
-    display: block;
-  }
-}
-
-@media (min-width: 768px) {
-  body.grid-debug::after {
-    display: none;
-  }
 }
