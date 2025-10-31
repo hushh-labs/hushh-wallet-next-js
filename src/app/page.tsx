@@ -1,5 +1,5 @@
 'use client';
-// FORCE CACHE BUST: Dashboard as Home Page
+// FORCE CACHE BUST: Dashboard as Home Page v2
 import { useState, useEffect } from 'react';
 import { CardType, CardStatus, CardData } from '@/types';
 
