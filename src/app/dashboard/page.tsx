@@ -209,12 +209,14 @@ function CardTile({ type, title, description, status, lastIssued, onClick }: Car
         return {
           chipText: 'Awaiting Commission',
           chipClass: 'status-chip-inactive',
+          cardClass: 'silver-edition',
           actionText: 'Commission Collection'
         };
       case 'ACTIVE':
         return {
           chipText: 'Live Collection',
           chipClass: 'status-chip-active', 
+          cardClass: 'gold-edition',
           actionText: 'Access Collection',
           subText: lastIssued ? `Last commissioned: ${lastIssued.toLocaleDateString()}` : ''
         };
@@ -222,12 +224,14 @@ function CardTile({ type, title, description, status, lastIssued, onClick }: Car
         return {
           chipText: 'Refinement Available',
           chipClass: 'status-chip-update',
+          cardClass: 'silver-edition',
           actionText: 'Refine Collection'
         };
       case 'REVOKED':
         return {
           chipText: 'Archive',
           chipClass: 'status-chip-revoked',
+          cardClass: 'silver-edition',
           actionText: 'Commission New'
         };
     }
@@ -236,7 +240,7 @@ function CardTile({ type, title, description, status, lastIssued, onClick }: Car
   const config = getStatusConfig();
 
   return (
-    <div className="card-tile" onClick={onClick}>
+    <div className={`card-tile ${config.cardClass}`} onClick={onClick}>
       <div className="card-tile-header">
         <div className="card-tile-info">
           <h3 className="card-tile-title">{title}</h3>

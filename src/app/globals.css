@@ -67,6 +67,69 @@ body {
   --color-hover: #f3f4f6;
 }
 
+/* ===== LUXE CARD UI COLOR TOKENS ===== */
+
+/* Neutrals (shared across themes) */
+:root {
+  --bg-canvas-light: #FAFAFA;
+  --bg-canvas-dark: #0B0C0E;
+  --card-surface-light: #FFFFFF;
+  --card-surface-dark: #0F1114;
+  --text-prim-light: #101113;
+  --text-sec-light: #5F6368;
+  --text-prim-dark: #F4F5F6;
+  --text-sec-dark: #BDC2C9;
+  --outline-light: #E5E7EB;
+  --outline-dark: #2A2F36;
+}
+
+/* Gold (warm metal) - for Live Collection */
+:root {
+  --gold-hl: #EAD9B0;
+  --gold-base: #C9A86A;
+  --gold-mid: #B0894A;
+  --gold-shd: #7A5E2B;
+  --gold-gradient: linear-gradient(45deg, var(--gold-hl) 0%, var(--gold-base) 45%, var(--gold-mid) 100%);
+}
+
+/* Silver (cool metal) - for Awaiting Commission */
+:root {
+  --silver-hl: #E9EFF5;
+  --silver-base: #C9CED6;
+  --silver-mid: #9AA3AD;
+  --silver-shd: #6E7781;
+  --silver-gradient: linear-gradient(45deg, var(--silver-hl) 0%, var(--silver-base) 45%, var(--silver-mid) 100%);
+}
+
+/* Luxury card surface variants */
+:root {
+  --card-gold-surface-light: #F8F6F2;
+  --card-silver-surface-light: #F7F8FA;
+  --card-gold-surface-dark: #1A1816;
+  --card-silver-surface-dark: #161719;
+}
+
+/* Theme-aware tokens */
+:root {
+  /* Light mode defaults */
+  --luxe-canvas: var(--bg-canvas-light);
+  --luxe-card-surface: var(--card-surface-light);
+  --luxe-text-primary: var(--text-prim-light);
+  --luxe-text-secondary: var(--text-sec-light);
+  --luxe-outline: var(--outline-light);
+}
+
+/* Dark mode overrides */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --luxe-canvas: var(--bg-canvas-dark);
+    --luxe-card-surface: var(--card-surface-dark);
+    --luxe-text-primary: var(--text-prim-dark);
+    --luxe-text-secondary: var(--text-sec-dark);
+    --luxe-outline: var(--outline-dark);
+  }
+}
+
 /* Utility Classes */
 .text-ink {
   color: var(--color-ink);
@@ -1976,34 +2039,187 @@ body {
   }
 }
 
-/* Card Tile (White Canvas - N0 surface with N300 keylines) */
+/* ===== LUXE CARD TILES (PREMIUM METAL STYLING) ===== */
+
+/* Card Tile - Premium Metal Card Design */
 .card-tile {
-  background: var(--card-surface);  /* N0 white */
-  border: 1px solid var(--keyline);  /* N300 #D4D4D4 */
-  border-radius: 20px;
-  padding: 24px;
-  transition: all 0.2s ease;
-  cursor: pointer;
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   min-height: 128px;
+  padding: 24px;
+  border-radius: 28px;
+  cursor: pointer;
+  transition: all 180ms ease-out;
+  overflow: hidden;
+  
+  /* Surface and Elevation */
+  background: var(--luxe-card-surface);
+  
+  /* Inner bevel for metal effect */
+  box-shadow: 
+    /* Main elevation shadow */
+    0 12px 40px rgba(0, 0, 0, 0.10),
+    /* Inner highlight (top/left) */
+    inset 1px 1px 0 rgba(255, 255, 255, 0.12),
+    /* Inner shadow (bottom/right) */
+    inset -1px -1px 0 rgba(0, 0, 0, 0.08);
+  
+  /* Background texture overlay */
+  background-image: 
+    /* H monogram watermark pattern */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M20 20h8v16h24V20h8v40h-8V44H28v16h-8V20z' fill='%23111111' fill-opacity='0.06'/%3E%3C/svg%3E"),
+    /* Subtle paper texture */
+    radial-gradient(circle at 25% 25%, rgba(0,0,0,0.02) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(255,255,255,0.01) 0%, transparent 50%);
+  background-size: 80px 80px, 40px 40px, 60px 60px;
+  background-position: 0 0, 20px 20px, 40px 40px;
 }
 
+/* Gold Edition (Live Collection) */
+.card-tile.gold-edition {
+  background: var(--card-gold-surface-light);
+  border: 2px solid;
+  border-image: var(--gold-gradient) 1;
+  
+  /* Specular highlight line for gold sheen */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      rgba(234, 217, 176, 0.35) 25%, 
+      rgba(234, 217, 176, 0.6) 50%, 
+      rgba(234, 217, 176, 0.35) 75%, 
+      transparent 100%);
+    pointer-events: none;
+  }
+}
+
+/* Silver Edition (Awaiting Commission) */
+.card-tile.silver-edition {
+  background: var(--card-silver-surface-light);
+  border: 2px solid;
+  border-image: var(--silver-gradient) 1;
+  
+  /* Specular highlight line for silver sheen */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      rgba(233, 239, 245, 0.35) 25%, 
+      rgba(233, 239, 245, 0.6) 50%, 
+      rgba(233, 239, 245, 0.35) 75%, 
+      transparent 100%);
+    pointer-events: none;
+  }
+}
+
+/* Hover States */
 .card-tile:hover {
-  background: var(--subtle-band);  /* N50 #FAFAFA */
-  border-color: var(--keyline);  /* N300 unchanged */
+  transform: translateY(-2px);
+  box-shadow: 
+    /* Enhanced elevation shadow */
+    0 16px 48px rgba(0, 0, 0, 0.12),
+    /* Maintained inner bevel */
+    inset 1px 1px 0 rgba(255, 255, 255, 0.12),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.08);
 }
 
+/* Active/Press States */
+.card-tile:active {
+  transform: translateY(-2px) scale(0.98);
+  transition: all 90ms ease-in;
+  box-shadow: 
+    /* Tightened shadow */
+    0 10px 32px rgba(0, 0, 0, 0.08),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.12),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.08);
+}
+
+/* Focus States */
 .card-tile:focus {
   outline: none;
-  box-shadow: 0 0 0 2px var(--ring);  /* N900 focus ring */
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.10),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.12),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.08),
+    /* High contrast focus ring */
+    0 0 0 2px var(--luxe-text-primary);
 }
 
+/* Disabled State */
+.card-tile.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+  
+  /* Desaturate watermark */
+  background-image: 
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M20 20h8v16h24V20h8v40h-8V44H28v16h-8V20z' fill='%23111111' fill-opacity='0.03'/%3E%3C/svg%3E");
+}
+
+/* Mobile Responsive */
 @media (max-width: 767px) {
   .card-tile {
     padding: 20px;
     min-height: 120px;
+    border-radius: 24px;
+    
+    /* Adjusted shadows for mobile */
+    box-shadow: 
+      0 8px 28px rgba(0, 0, 0, 0.08),
+      inset 1px 1px 0 rgba(255, 255, 255, 0.10),
+      inset -1px -1px 0 rgba(0, 0, 0, 0.06);
+  }
+  
+  .card-tile:hover {
+    box-shadow: 
+      0 12px 36px rgba(0, 0, 0, 0.10),
+      inset 1px 1px 0 rgba(255, 255, 255, 0.10),
+      inset -1px -1px 0 rgba(0, 0, 0, 0.06);
+  }
+}
+
+/* Dark Mode Adaptations */
+@media (prefers-color-scheme: dark) {
+  .card-tile {
+    background: var(--luxe-card-surface);
+    box-shadow: 
+      /* Enhanced shadow for dark mode */
+      0 12px 40px rgba(0, 0, 0, 0.50),
+      /* Dark mode inner bevel */
+      inset 1px 1px 0 rgba(0, 0, 0, 0.16),
+      inset -1px -1px 0 rgba(255, 255, 255, 0.08);
+    
+    /* Dark mode watermark */
+    background-image: 
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M20 20h8v16h24V20h8v40h-8V44H28v16h-8V20z' fill='%23FFFFFF' fill-opacity='0.08'/%3E%3C/svg%3E");
+  }
+  
+  .card-tile.gold-edition {
+    background: var(--card-gold-surface-dark);
+  }
+  
+  .card-tile.silver-edition {
+    background: var(--card-silver-surface-dark);
+  }
+  
+  .card-tile:hover {
+    box-shadow: 
+      0 18px 56px rgba(0, 0, 0, 0.60),
+      inset 1px 1px 0 rgba(0, 0, 0, 0.16),
+      inset -1px -1px 0 rgba(255, 255, 255, 0.08);
   }
 }
 
@@ -2020,75 +2236,240 @@ body {
   flex: 1;
 }
 
-/* Card Title Typography - Pure Black */
+/* ===== PREMIUM TYPOGRAPHY (LUXE SPECIFICATION) ===== */
+
+/* Card Title Typography - Premium Scale */
 .card-tile-title {
-  font-size: clamp(18px, 2.5vw, 20px);
-  font-weight: 600;
-  color: #000000 !important;  /* Pure black */
-  margin: 0 0 8px 0;
+  font-size: clamp(22px, 2.5vw, 24px); /* 22-24px as per spec */
+  font-weight: 600; /* 600-700 range */
+  letter-spacing: -0.003em; /* Tight tracking -0.3% for premium feel */
+  color: var(--luxe-text-primary) !important;
+  margin: 0 0 10px 0; /* Increased spacing */
   line-height: 1.3;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
-/* Card Description - Pure Black */
+/* Card Description - Premium Treatment */
 .card-tile-description {
-  font-size: clamp(14px, 1.5vw, 15px);
-  color: #000000 !important;  /* Pure black */
-  margin: 0;
+  font-size: clamp(15px, 1.5vw, 16px); /* 15-16px as per spec */
+  font-weight: 450; /* Slightly lighter for hierarchy */
+  line-height: 1.5; /* 150% line height for readability */
+  color: var(--luxe-text-primary) !important;
+  margin: 0 0 14px 0; /* Increased spacing */
+  max-width: 100%;
+}
+
+/* Card Meta Line - Refined Typography */
+.card-tile-subtext {
+  font-size: 13px; /* Consistent 13px for meta */
+  font-weight: 500;
+  letter-spacing: 0.01em; /* Subtle letter spacing */
+  color: rgba(var(--luxe-text-primary), 0.75) !important; /* 75% opacity for hierarchy */
+  margin: 4px 0 0 0;
   line-height: 1.4;
 }
 
-/* Card Meta Line - Pure Black */
-.card-tile-subtext {
+/* Enhanced Action Text */
+.action-text {
   font-size: clamp(14px, 1.5vw, 15px);
   font-weight: 500;
-  color: #000000 !important;  /* Pure black */
-  margin: 4px 0 0 0;
-  line-height: 1.3;
+  letter-spacing: 0.005em; /* Subtle spacing for luxury feel */
+  color: var(--luxe-text-primary);
+  transition: all 120ms ease-out; /* Matching card transition timing */
+  min-height: 44px;
+  display: flex;
+  align-items: center;
 }
 
-/* Status Chips (White Canvas Monochrome) */
+/* ===== LUXE STATUS PILLS (FOIL CAPSULE DESIGN) ===== */
+
+/* Status Pill - Luxury Foil Capsule */
 .status-chip {
+  position: relative;
   height: 32px;
-  padding: 0 12px;
+  padding: 0 16px;
   border-radius: 9999px;
-  border: 1px solid;
-  background: transparent;
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em; /* Engraved feel letter spacing */
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   min-height: 44px; /* Accessibility hit target */
+  overflow: hidden;
+  transition: all 120ms ease-out;
+  
+  /* Slightly overlapping the card rim */
+  margin-top: -6px;
+  margin-right: -8px;
 }
 
-.status-chip-inactive {
-  color: var(--muted);  /* N600 text */
-  border-color: var(--keyline);  /* N300 border */
-}
-
+/* Gold Status Pill - Live Collection */
 .status-chip-active {
-  color: var(--ink);  /* N900 text */
-  border-color: rgba(17, 17, 17, 0.6);  /* N900 60% opacity border */
+  /* Metallic gradient outline */
+  border: 1.5px solid;
+  border-image: var(--gold-gradient) 1;
+  
+  /* Translucent gold fill */
+  background: rgba(234, 217, 176, 0.06); /* Gold highlight at 6% */
+  
+  /* Text styling */
+  color: rgba(122, 94, 43, 0.9); /* Gold shadow at 90% */
+  
+  /* Subtle shimmer animation */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      rgba(234, 217, 176, 0.3) 50%, 
+      transparent 100%);
+    animation: goldShimmer 600ms ease-out infinite;
+    animation-delay: 2s; /* Start after initial load */
+    pointer-events: none;
+  }
 }
 
+/* Silver Status Pill - Awaiting Commission */
+.status-chip-inactive {
+  /* Metallic gradient outline */
+  border: 1.5px solid;
+  border-image: var(--silver-gradient) 1;
+  
+  /* Translucent silver fill */
+  background: rgba(233, 239, 245, 0.05); /* Silver highlight at 5% */
+  
+  /* Text styling */
+  color: rgba(110, 119, 129, 0.85); /* Silver shadow at 85% */
+  
+  /* Gentle pulse animation */
+  animation: silverPulse 8s ease-in-out infinite;
+}
+
+/* Update Status Pill */
 .status-chip-update {
-  color: var(--muted);  /* N600 text */
-  border-color: var(--keyline);  /* N300 border */
+  border: 1.5px solid;
+  border-image: var(--silver-gradient) 1;
+  background: rgba(233, 239, 245, 0.04);
+  color: rgba(110, 119, 129, 0.8);
 }
 
+/* Revoked Status Pill */
 .status-chip-revoked {
-  color: var(--muted);  /* N600 text */
-  border-color: var(--keyline);  /* N300 border */
+  border: 1.5px solid;
+  border-image: var(--silver-gradient) 1;
+  background: rgba(233, 239, 245, 0.03);
+  color: rgba(110, 119, 129, 0.7);
+  opacity: 0.6;
 }
 
+/* Gold Shimmer Animation */
+@keyframes goldShimmer {
+  0% {
+    left: -100%;
+    opacity: 0;
+  }
+  50% {
+    left: 0%;
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+/* Silver Pulse Animation */
+@keyframes silverPulse {
+  0%, 100% {
+    background: rgba(233, 239, 245, 0.05);
+    border-image: var(--silver-gradient) 1;
+  }
+  50% {
+    background: rgba(233, 239, 245, 0.08);
+    border-image: linear-gradient(45deg, 
+      rgba(233, 239, 245, 0.8) 0%, 
+      rgba(201, 206, 214, 0.8) 45%, 
+      rgba(154, 163, 173, 0.8) 100%) 1;
+  }
+}
+
+/* Dark Mode Adaptations */
+@media (prefers-color-scheme: dark) {
+  .status-chip-active {
+    background: rgba(234, 217, 176, 0.10); /* More opacity in dark */
+    color: rgba(234, 217, 176, 0.9);
+  }
+  
+  .status-chip-inactive {
+    background: rgba(233, 239, 245, 0.08);
+    color: rgba(233, 239, 245, 0.85);
+  }
+  
+  .status-chip-update {
+    background: rgba(233, 239, 245, 0.06);
+    color: rgba(233, 239, 245, 0.8);
+  }
+  
+  .status-chip-revoked {
+    background: rgba(233, 239, 245, 0.04);
+    color: rgba(233, 239, 245, 0.7);
+  }
+}
+
+/* Mobile Responsive */
 @media (max-width: 767px) {
   .status-chip {
     height: 28px;
+    padding: 0 14px;
     font-size: 11px;
     min-height: 44px; /* Maintain hit target */
+    margin-top: -5px;
+    margin-right: -6px;
+  }
+}
+
+/* Hover Effects for Status Pills */
+.status-chip:hover {
+  transform: scale(1.02);
+}
+
+.status-chip-active:hover {
+  background: rgba(234, 217, 176, 0.10);
+  box-shadow: 0 2px 8px rgba(234, 217, 176, 0.2);
+}
+
+.status-chip-inactive:hover {
+  background: rgba(233, 239, 245, 0.08);
+  box-shadow: 0 2px 8px rgba(233, 239, 245, 0.15);
+}
+
+/* Focus States */
+.status-chip:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--luxe-text-primary);
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .status-chip-active::before {
+    animation: none;
+  }
+  
+  .status-chip-inactive {
+    animation: none;
+  }
+  
+  .status-chip:hover {
+    transform: none;
   }
 }
 
