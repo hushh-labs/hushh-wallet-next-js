@@ -1237,13 +1237,13 @@ body {
   --ring: var(--n900);
 }
 
-/* White Canvas with Sophisticated Grid Falloff */
+/* White Canvas with Grid Behind Content (Contrast Fixed) */
 .min-h-screen {
-  background: var(--canvas);
+  background: #FFFFFF; /* Hard set pure white */
   position: relative;
 }
 
-/* Sophisticated grid with center-to-edge falloff + header fade */
+/* Grid layer behind content - never overlays text */
 .min-h-screen::before {
   content: '';
   position: fixed;
@@ -1252,17 +1252,16 @@ body {
   right: 0;
   bottom: 0;
   pointer-events: none;
-  z-index: 0;
+  z-index: -1; /* Behind header content */
   
-  /* Base 24px grid at increased center opacity (15-18%) */
+  /* 24px grid, center 8-10% opacity */
   background-image: 
-    linear-gradient(rgba(229, 229, 229, 0.16) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(229, 229, 229, 0.16) 1px, transparent 1px);
+    linear-gradient(rgba(229, 229, 229, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(229, 229, 229, 0.09) 1px, transparent 1px);
   background-size: 24px 24px;
   
-  /* Sophisticated opacity mask: clean white header area + center-to-edge falloff */
+  /* Top fade to 0% for header area (14-16vh) */
   mask: 
-    /* Top fade: clean white in header (0-16vh), then visible grid */
     linear-gradient(to bottom, 
       rgba(0,0,0,0) 0%, 
       rgba(0,0,0,0) 14vh, 
@@ -1271,7 +1270,6 @@ body {
       rgba(0,0,0,1) calc(100vh - 20vh), 
       rgba(0,0,0,0.3) calc(100vh - 16vh), 
       rgba(0,0,0,0) 100%),
-    /* Left/right fade: 5-8% width each side */
     linear-gradient(to right, 
       rgba(0,0,0,0.3) 0%, 
       rgba(0,0,0,0.7) 8%, 
@@ -1359,60 +1357,77 @@ body {
   }
 }
 
-/* Dashboard Header (Unique Premium Layout) */
+/* Premium Dashboard Header (Signature Design) */
 .dashboard-header {
-  padding-top: clamp(64px, 8vh, 80px);
-  padding-bottom: 32px;
+  padding-top: clamp(64px, 8vh, 80px); /* Top pad 64–80 */
+  padding-bottom: 0;
+  background: #FFFFFF; /* Pure white */
+  opacity: 1; /* Never fade content */
+  mix-blend-mode: normal; /* No blend modes */
 }
 
-.header-content {
+/* Header Rail (Left-locked 720px max, not centered) */
+.header-rail {
+  max-width: 720px;
+  margin: 0; /* Left-locked, not centered */
+  padding: 0 48px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 24px;
-  margin-bottom: 24px;
+  margin-bottom: 24px; /* Header→Profile 24 */
 }
 
-@media (max-width: 768px) {
-  .header-content {
+@media (max-width: 1279px) {
+  .header-rail {
+    padding: 0 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  .header-rail {
+    padding: 0 16px;
     flex-direction: column;
     gap: 16px;
   }
 }
 
-.header-text {
+/* Header Text Stack */
+.header-text-stack {
   flex: 1;
+  opacity: 1; /* Never fade content */
+  mix-blend-mode: normal; /* No blend modes */
 }
 
-/* Eyebrow (subtle signature) */
+/* Eyebrow "DASHBOARD" */
 .header-eyebrow {
-  font-size: 14px;
+  font-size: 14px; /* 13–14 */
   font-weight: 500;
   letter-spacing: 0.05em; /* +5% letter-spacing */
   text-transform: uppercase;
   color: #111111; /* #111 black */
-  margin-bottom: 14px; /* 12-16 range */
+  margin-bottom: 14px; /* Eyebrow→H1 12–16 */
   line-height: 1;
 }
 
-/* H1 treatment (distinct, not loud) */
+/* H1 treatment with signature keyline */
 .dashboard-title {
   font-size: clamp(40px, 5.5vw, 64px); /* clamp 40→64 */
-  font-weight: 700;
+  font-weight: 700; /* 700 */
   line-height: 1.15; /* LH ~1.15 */
   letter-spacing: -0.015em; /* tracking −0.015em */
   color: #111111; /* #111 */
-  margin-bottom: 12px; /* 10-12px offset spacing */
+  margin-bottom: 0; /* controlled by keyline */
   position: relative;
 }
 
-/* Keyline underline (visual anchor—unique but monochrome) */
-.dashboard-title-underline {
+/* Signature Keyline Underline (3px #D4D4D4) */
+.dashboard-title-keyline {
   width: 60%; /* 56–64% of the rail */
   height: 3px; /* 3px rule */
   background: #D4D4D4; /* #D4D4D4 */
-  margin-top: 12px; /* offset 10–12px below H1 */
-  margin-bottom: 16px; /* H1→Deck 12-16 */
+  margin-top: 12px; /* H1→Keyline 10–12 */
+  margin-bottom: 16px; /* Keyline→Deck 14–16 */
   animation: growKeyline 140ms ease-out 60ms both; /* grow 0→100% over 140ms */
 }
 
@@ -1425,29 +1440,13 @@ body {
   }
 }
 
-/* Deck */
+/* Deck (≤64ch) */
 .dashboard-deck {
   font-size: 18px; /* 18 */
   line-height: 1.65; /* / 1.65 */
   color: #111111; /* #111 */
-  margin-bottom: 12px; /* Deck→Micro/Progress 12 */
-  max-width: 64ch; /* max 64ch */
-}
-
-/* Header Meta Row (Micro + Progress Chip) */
-.header-meta-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-top: 0; /* controlled by deck margin-bottom */
-}
-
-@media (max-width: 767px) {
-  .header-meta-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
+  margin-bottom: 12px; /* Deck→Micro 12 */
+  max-width: 64ch; /* ≤64ch, avoid orphans */
 }
 
 /* Micro */
@@ -1455,64 +1454,85 @@ body {
   font-size: 15px; /* 14–15 */
   font-weight: 500; /* / 500 */
   color: #525252; /* #525 (muted) */
+  margin: 0 0 12px 0; /* Micro→Status 12 */
+  line-height: 1.4;
+}
+
+/* Status Row (CARDS: 1 / 2 · Missing: Profile Pass) */
+.status-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
   margin: 0;
   line-height: 1.4;
 }
 
-/* Progress chip (small, tasteful) */
-.progress-chip {
-  height: 30px; /* height 28–30 */
-  padding: 0 12px;
-  border: 1px solid #D4D4D4; /* 1px #D4D4D4 border */
-  border-radius: 9999px;
-  background: transparent; /* transparent fill */
-  font-size: 12px;
+.status-text {
+  font-size: 13px;
   font-weight: 600; /* uppercase 600 */
   text-transform: uppercase;
-  letter-spacing: 0.035em; /* letter-spacing +3–4% */
-  color: #111111; /* text #111 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  letter-spacing: 0.035em; /* +3–4% letter spacing */
+  color: #111111; /* #111 */
+}
+
+.status-separator {
+  font-size: 13px;
+  color: #525252; /* #525 */
+  font-weight: 500;
+}
+
+.missing-link {
+  font-size: 13px;
+  font-weight: 500;
+  color: #111111; /* #111 */
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.missing-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.missing-link:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #111111;
+  border-radius: 2px;
 }
 
 @media (max-width: 767px) {
-  .progress-chip {
-    height: 28px; /* 28–30 */
-    font-size: 11px;
-  }
-  
   .header-eyebrow {
     font-size: 13px; /* 13–14 */
   }
   
-  .dashboard-title-underline {
+  .dashboard-title-keyline {
     width: 56%; /* 56–64% */
+  }
+  
+  .status-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
   }
 }
 
-/* Separating hairline below hero - full bleed N200 */
-.header-content::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -24px;
+/* Header Divider (1px #E5E5E5 full-bleed) */
+.header-divider {
   height: 1px;
-  background: var(--hairline);  /* N200 */
+  background: #E5E5E5; /* 1px #E5E5E5 */
   width: 100vw;
   margin-left: -48px;
+  margin-top: 24px; /* proper spacing after header */
 }
 
 @media (max-width: 1279px) {
-  .header-content::after {
+  .header-divider {
     margin-left: -24px;
   }
 }
 
 @media (max-width: 767px) {
-  .header-content::after {
+  .header-divider {
     margin-left: -16px;
   }
 }

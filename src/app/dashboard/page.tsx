@@ -115,39 +115,38 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[#14191E]">
-      {/* Header */}
+      {/* Premium Header */}
       <div className="dashboard-header">
-        <div className="container-narrow">
-          <div className="header-content">
-            <div className="header-text">
-              <div className="header-eyebrow">DASHBOARD</div>
-              <h1 className="dashboard-title">
-                Set up your Hushh passes
-              </h1>
-              <div className="dashboard-title-underline"></div>
-              <p className="dashboard-deck">
-                Show once, get served right.
-              </p>
-              <div className="header-meta-row">
-                <p className="dashboard-micro">
-                  Apple Wallet & Google Wallet supported.
-                </p>
-                <div className="progress-chip">
-                  Cards: 1 / 2
-                </div>
-              </div>
+        <div className="header-rail">
+          <div className="header-text-stack">
+            <div className="header-eyebrow">DASHBOARD</div>
+            <h1 className="dashboard-title">
+              Set up your Hushh passes
+            </h1>
+            <div className="dashboard-title-keyline"></div>
+            <p className="dashboard-deck">
+              Show once, get served right.
+            </p>
+            <p className="dashboard-micro">
+              Apple Wallet & Google Wallet supported.
+            </p>
+            <div className="status-row">
+              <span className="status-text">CARDS: 1 / 2</span>
+              <span className="status-separator">·</span>
+              <a href="/cards/personal" className="missing-link">Missing: Profile Pass</a>
             </div>
-            <div className="user-info">
-              <div className="user-avatar">
-                {user.name.charAt(0)}
-              </div>
-              <div className="user-details">
-                <p className="user-name">{user.name}</p>
-                <p className="user-email">{user.email}</p>
-              </div>
+          </div>
+          <div className="user-info">
+            <div className="user-avatar">
+              {user.name.charAt(0)}
+            </div>
+            <div className="user-details">
+              <p className="user-name">{user.name}</p>
+              <p className="user-email">{user.email}</p>
             </div>
           </div>
         </div>
+        <div className="header-divider"></div>
       </div>
 
       {/* Cards Grid */}
