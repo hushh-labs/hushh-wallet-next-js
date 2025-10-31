@@ -120,12 +120,22 @@ export default function DashboardPage() {
         <div className="container-narrow">
           <div className="header-content">
             <div className="header-text">
+              <div className="header-eyebrow">DASHBOARD</div>
               <h1 className="dashboard-title">
-                Build your <span className="font-black">HUSHH cards</span>
+                Set up your Hushh passes
               </h1>
+              <div className="dashboard-title-underline"></div>
               <p className="dashboard-subtitle">
-                Show once, be served right.
+                Show once, get served right.
               </p>
+              <div className="header-meta-row">
+                <p className="dashboard-micro">
+                  Apple Wallet & Google Wallet supported.
+                </p>
+                <div className="progress-chip">
+                  Cards: 1 / 2
+                </div>
+              </div>
             </div>
             <div className="user-info">
               <div className="user-avatar">
