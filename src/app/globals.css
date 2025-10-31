@@ -3105,7 +3105,7 @@ body {
   background: rgba(243, 227, 184, 0.05); /* Gold light at 5% */
   
   /* Text in black for better visibility */
-  color: #000000; /* Black text for visibility */
+  color: #000000 !important; /* Black text for visibility - force override */
   
   /* Micro-shimmer on LIVE: 600ms linear wipe (every 12s) */
   &::before {
@@ -3140,7 +3140,7 @@ body {
   background: rgba(240, 244, 250, 0.05); /* Silver light at 5% */
   
   /* Text in black for better visibility */
-  color: #000000; /* Black text for visibility */
+  color: #000000 !important; /* Black text for visibility - force override */
   
   /* Faint alpha pulse (8s) */
   animation: silverAlphaPulse 8s ease-in-out infinite;
