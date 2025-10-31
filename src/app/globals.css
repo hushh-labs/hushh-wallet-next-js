@@ -1759,7 +1759,7 @@ body {
 .action-box {
   border: 1px solid #D4D4D4;
   border-radius: 16px;
-  padding: 20px;
+  padding: 24px;
   background: #FFFFFF;
   min-width: 280px;
 }
@@ -1788,7 +1788,7 @@ body {
   justify-content: center;
   gap: 8px;
   height: 44px;
-  padding: 0 20px;
+  padding: 0 28px;
   background: #111111;
   color: #FFFFFF;
   border: none;
@@ -1813,7 +1813,7 @@ body {
   align-items: center;
   justify-content: center;
   height: 44px;
-  padding: 0 20px;
+  padding: 0 28px;
   background: transparent;
   color: #111111;
   border: 1px solid #D4D4D4;
@@ -4146,7 +4146,7 @@ body {
   background: #FFFFFF;
   border: 1px solid #E5E7EB;
   border-radius: 16px;
-  padding: 16px 20px;
+  padding: 20px 24px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
   margin: 12px 0;
   transition: all 0.2s ease;
@@ -4359,7 +4359,7 @@ body {
 /* Mobile Optimizations */
 @media (max-width: 767px) {
   .wallet-integration-card {
-    padding: 14px 16px;
+    padding: 18px 20px;
     margin: 10px 0;
     border-radius: 12px;
   }
@@ -4417,7 +4417,7 @@ body {
 /* Large Screen Optimizations */
 @media (min-width: 1024px) {
   .wallet-integration-card {
-    padding: 18px 24px;
+    padding: 24px 28px;
     border-radius: 20px;
   }
   
