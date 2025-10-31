@@ -2020,28 +2020,28 @@ body {
   flex: 1;
 }
 
-/* Card Title Typography - N900 ink */
+/* Card Title Typography - Pure Black */
 .card-tile-title {
   font-size: clamp(18px, 2.5vw, 20px);
   font-weight: 600;
-  color: var(--ink);  /* N900 */
+  color: #000000 !important;  /* Pure black */
   margin: 0 0 8px 0;
   line-height: 1.3;
 }
 
-/* Card Description - N600 muted */
+/* Card Description - Pure Black */
 .card-tile-description {
   font-size: clamp(14px, 1.5vw, 15px);
-  color: var(--muted);  /* N600 */
+  color: #000000 !important;  /* Pure black */
   margin: 0;
   line-height: 1.4;
 }
 
-/* Card Meta Line - N600 muted */
+/* Card Meta Line - Pure Black */
 .card-tile-subtext {
   font-size: clamp(14px, 1.5vw, 15px);
   font-weight: 500;
-  color: var(--muted);  /* N600 */
+  color: #000000 !important;  /* Pure black */
   margin: 4px 0 0 0;
   line-height: 1.3;
 }
@@ -2504,17 +2504,17 @@ body {
   width: 100%;
   padding: 1rem 1.25rem;
   font-size: 1rem;
-  border: 1px solid var(--color-border);
+  border: 1px solid #2A3036;
   border-radius: 0.75rem;
-  background: var(--color-paper);
-  color: #000000;
+  background: #232A31;
+  color: #FFFAF5;
   transition: all 0.2s;
 }
 
 .text-input:focus {
   outline: none;
-  border-color: var(--color-ink);
-  box-shadow: 0 0 0 3px rgba(10, 10, 10, 0.1);
+  border-color: #E8E0D8;
+  box-shadow: 0 0 0 3px rgba(232, 224, 216, 0.1);
 }
 
 .text-input.error {
@@ -2522,7 +2522,7 @@ body {
 }
 
 .text-input::placeholder {
-  color: var(--color-muted);
+  color: #8AA0B2;
 }
 
 .field-error {
