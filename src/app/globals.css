@@ -2250,7 +2250,7 @@ body {
   border-radius: 30px;
   
   /* === PREMIUM PADDING === */
-  padding: 28px;
+  padding: 20px;
   
   /* === INTERACTION === */
   cursor: pointer;
@@ -3505,7 +3505,7 @@ body {
 /* Responsive tablet adjustments */
 @media (max-width: 1023px) and (min-width: 768px) {
   .card-tile {
-    padding: 20px;
+    padding: 18px;
     min-height: 120px;
   }
   
@@ -3519,11 +3519,11 @@ body {
 /* Mobile layout keeps hierarchy: title → status → action */
 @media (max-width: 767px) {
   .card-tile-header {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
   
   .card-tile-action {
-    margin-top: 8px;
+    margin-top: 6px;
   }
   
   /* Ensure no text wrap glitches */
@@ -4858,7 +4858,7 @@ body {
 /* Internal padding compact so chhote widths par bhi fit ho */
 @media (max-width: 767px){
   .card-tile{
-    padding: clamp(14px, 4vw, 20px) !important;
+    padding: clamp(16px, 3vw, 18px) !important;
     border-radius: 20px !important;
   }
   /* header clean stack + chip margins neutralize */
