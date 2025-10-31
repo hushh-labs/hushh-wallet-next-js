@@ -1416,7 +1416,7 @@ body {
   font-weight: 700; /* 700 */
   line-height: 1.15; /* LH ~1.15 */
   letter-spacing: -0.015em; /* tracking −0.015em */
-  color: #111111; /* #111 */
+  color: #000000 !important; /* Pure black, force override */
   margin-bottom: 0; /* controlled by keyline */
   position: relative;
 }
