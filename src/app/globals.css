@@ -3104,8 +3104,8 @@ body {
   /* Fill at 5% (light) / 9% (dark) */
   background: rgba(243, 227, 184, 0.05); /* Gold light at 5% */
   
-  /* Text in 90% of primary gold color */
-  color: rgba(180, 135, 69, 0.9); /* Gold dark at 90% */
+  /* Text in black for better visibility */
+  color: #000000; /* Black text for visibility */
   
   /* Micro-shimmer on LIVE: 600ms linear wipe (every 12s) */
   &::before {
@@ -3139,8 +3139,8 @@ body {
   /* Fill at 5% (light) / 9% (dark) */
   background: rgba(240, 244, 250, 0.05); /* Silver light at 5% */
   
-  /* Text in 90% of primary silver color */
-  color: rgba(156, 167, 179, 0.9); /* Silver dark at 90% */
+  /* Text in black for better visibility */
+  color: #000000; /* Black text for visibility */
   
   /* Faint alpha pulse (8s) */
   animation: silverAlphaPulse 8s ease-in-out infinite;
