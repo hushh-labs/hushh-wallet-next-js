@@ -3362,7 +3362,7 @@ body {
 
 /* Footer copy ≤ 64ch - N600 muted */
 .footer-text {
-  font-size: clamp(14px, 1.5vw, 15px);
+  font-size: clamp(16px, 1.5vw, 17px);
   color: var(--muted);  /* N600 */
   line-height: 1.6;
   max-width: 64ch;
