@@ -125,7 +125,7 @@ export default function DashboardPage() {
                 Set up your Hushh passes
               </h1>
               <div className="dashboard-title-underline"></div>
-              <p className="dashboard-subtitle">
+              <p className="dashboard-deck">
                 Show once, get served right.
               </p>
               <div className="header-meta-row">

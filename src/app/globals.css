@@ -1384,36 +1384,36 @@ body {
   flex: 1;
 }
 
-/* Eyebrow (Subtle Signature) */
+/* Eyebrow (subtle signature) */
 .header-eyebrow {
   font-size: 14px;
   font-weight: 500;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em; /* +5% letter-spacing */
   text-transform: uppercase;
-  color: var(--ink); /* N900 */
-  margin-bottom: 14px;
+  color: #111111; /* #111 black */
+  margin-bottom: 14px; /* 12-16 range */
   line-height: 1;
 }
 
-/* H1 Typography (Distinctive, Premium) - clamp 40→64 */
+/* H1 treatment (distinct, not loud) */
 .dashboard-title {
-  font-size: clamp(40px, 5.5vw, 64px);
+  font-size: clamp(40px, 5.5vw, 64px); /* clamp 40→64 */
   font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: -0.015em;
-  color: var(--ink);  /* N900 */
-  margin-bottom: 12px;
+  line-height: 1.15; /* LH ~1.15 */
+  letter-spacing: -0.015em; /* tracking −0.015em */
+  color: #111111; /* #111 */
+  margin-bottom: 12px; /* 10-12px offset spacing */
   position: relative;
 }
 
-/* Distinctive Keyline Underline (Unique Visual Anchor) */
+/* Keyline underline (visual anchor—unique but monochrome) */
 .dashboard-title-underline {
-  width: 60%; /* 56-64% of rail */
-  height: 3px;
-  background: var(--keyline); /* N300 #D4D4D4 */
-  margin-top: 12px;
-  margin-bottom: 16px;
-  animation: growKeyline 140ms ease-out 60ms both;
+  width: 60%; /* 56–64% of the rail */
+  height: 3px; /* 3px rule */
+  background: #D4D4D4; /* #D4D4D4 */
+  margin-top: 12px; /* offset 10–12px below H1 */
+  margin-bottom: 16px; /* H1→Deck 12-16 */
+  animation: growKeyline 140ms ease-out 60ms both; /* grow 0→100% over 140ms */
 }
 
 @keyframes growKeyline {
@@ -1425,14 +1425,13 @@ body {
   }
 }
 
-/* Deck Typography - N900 black, one line preferred */
-.dashboard-subtitle {
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);  /* N900 black */
-  margin-bottom: 12px;
-  max-width: 64ch;
+/* Deck */
+.dashboard-deck {
+  font-size: 18px; /* 18 */
+  line-height: 1.65; /* / 1.65 */
+  color: #111111; /* #111 */
+  margin-bottom: 12px; /* Deck→Micro/Progress 12 */
+  max-width: 64ch; /* max 64ch */
 }
 
 /* Header Meta Row (Micro + Progress Chip) */
@@ -1440,7 +1439,7 @@ body {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-top: 12px;
+  margin-top: 0; /* controlled by deck margin-bottom */
 }
 
 @media (max-width: 767px) {
@@ -1451,27 +1450,27 @@ body {
   }
 }
 
-/* Micro Helper Text */
+/* Micro */
 .dashboard-micro {
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--muted); /* N600 #525252 */
+  font-size: 15px; /* 14–15 */
+  font-weight: 500; /* / 500 */
+  color: #525252; /* #525 (muted) */
   margin: 0;
   line-height: 1.4;
 }
 
-/* Progress Chip (Instrument Panel Feel) */
+/* Progress chip (small, tasteful) */
 .progress-chip {
-  height: 30px;
+  height: 30px; /* height 28–30 */
   padding: 0 12px;
-  border: 1px solid var(--keyline); /* N300 #D4D4D4 */
+  border: 1px solid #D4D4D4; /* 1px #D4D4D4 border */
   border-radius: 9999px;
-  background: transparent;
+  background: transparent; /* transparent fill */
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 600; /* uppercase 600 */
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--ink); /* N900 */
+  letter-spacing: 0.035em; /* letter-spacing +3–4% */
+  color: #111111; /* text #111 */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1480,16 +1479,16 @@ body {
 
 @media (max-width: 767px) {
   .progress-chip {
-    height: 28px;
+    height: 28px; /* 28–30 */
     font-size: 11px;
   }
   
   .header-eyebrow {
-    font-size: 13px;
+    font-size: 13px; /* 13–14 */
   }
   
   .dashboard-title-underline {
-    width: 50%;
+    width: 56%; /* 56–64% */
   }
 }
 
