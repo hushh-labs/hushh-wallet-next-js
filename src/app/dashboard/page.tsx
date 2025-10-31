@@ -2,6 +2,7 @@
 // FORCE CACHE BUST: 8:30 PM Dashboard with only 2 cards
 import { useState, useEffect } from 'react';
 import { CardType, CardStatus, CardData } from '@/types';
+import Tilt from 'react-parallax-tilt';
 
 // Wallet integration component
 interface WalletIntegrationProps {
@@ -248,25 +249,65 @@ function CardTile({ type, title, description, status, lastIssued, onClick }: Car
 
   const config = getStatusConfig();
 
+  // Tilt configuration based on card status and finish
+  const getTiltConfig = () => {
+    const isGold = config.cardClass === 'gold-edition';
+    
+    return {
+      perspective: 1000,
+      scale: 1.02,
+      speed: 400,
+      max: isGold ? 12 : 8, // Gold cards get slightly more tilt
+      glare: true,
+      'max-glare': isGold ? 0.3 : 0.2, // Gold cards get more glare
+      'glare-prerender': false,
+      gyroscope: true,
+      gyroscopeMinAngleX: -25,
+      gyroscopeMaxAngleX: 25,
+      gyroscopeMinAngleY: -25,
+      gyroscopeMaxAngleY: 25,
+    };
+  };
+
   return (
-    <div className={`card-tile ${config.cardClass}`} onClick={onClick}>
-      <div className="card-tile-header">
-        <div className="card-tile-info">
-          <h3 className="card-tile-title">{title}</h3>
-          <p className="card-tile-description">{description}</p>
-          {config.subText && <p className="card-tile-subtext">{config.subText}</p>}
+    <Tilt
+      {...getTiltConfig()}
+      className="tilt-container"
+      style={{ 
+        transformStyle: 'preserve-3d',
+        height: 'auto',
+        width: '100%'
+      }}
+    >
+      <div 
+        className={`card-tile ${config.cardClass}`} 
+        onClick={onClick}
+        style={{ 
+          transform: 'translateZ(20px)',
+          transformStyle: 'preserve-3d'
+        }}
+      >
+        <div className="card-tile-header">
+          <div className="card-tile-info">
+            <h3 className="card-tile-title">{title}</h3>
+            <p className="card-tile-description">{description}</p>
+            {config.subText && <p className="card-tile-subtext">{config.subText}</p>}
+          </div>
+          <div 
+            className={`status-chip ${config.chipClass}`}
+            style={{ transform: 'translateZ(30px)' }}
+          >
+            {config.chipText}
+          </div>
         </div>
-        <div className={`status-chip ${config.chipClass}`}>
-          {config.chipText}
+        <div className="card-tile-action">
+          <span className="action-text">{config.actionText}</span>
+          <svg className="action-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </div>
       </div>
-      <div className="card-tile-action">
-        <span className="action-text">{config.actionText}</span>
-        <svg className="action-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      </div>
-    </div>
+    </Tilt>
   );
 }
 

@@ -111,6 +111,26 @@ body {
   --graphite-gradient: linear-gradient(45deg, var(--graphite-hl) 0%, var(--graphite-mid) 45%, var(--graphite-shd) 100%);
 }
 
+/* Burgundy (Rich Wine - Inspiration Palette) */
+:root {
+  --burgundy-hl: #A8334A;
+  --burgundy-base: #6E0D25;
+  --burgundy-mid: #4A0A1C;
+  --burgundy-shd: #2D0612;
+  --burgundy-gradient: linear-gradient(45deg, var(--burgundy-hl) 0%, var(--burgundy-base) 45%, var(--burgundy-mid) 100%);
+  --burgundy-rim-gradient: linear-gradient(45deg, var(--burgundy-hl) 0%, var(--burgundy-base) 45%, var(--burgundy-mid) 100%);
+}
+
+/* Bronze (Rich Amber - Inspiration Palette) */
+:root {
+  --bronze-hl: #F4E4A6;
+  --bronze-base: #DCAB6B;
+  --bronze-mid: #774E24;
+  --bronze-shd: #4A2F15;
+  --bronze-gradient: linear-gradient(45deg, var(--bronze-hl) 0%, var(--bronze-base) 45%, var(--bronze-mid) 100%);
+  --bronze-rim-gradient: linear-gradient(45deg, var(--bronze-hl) 0%, var(--bronze-base) 45%, var(--bronze-mid) 100%);
+}
+
 /* Overlays & Effects */
 :root {
   --specular-light: rgba(255, 255, 255, 0.14); /* 12-16% light mode */
@@ -2258,6 +2278,118 @@ body {
     /* Inner bevel (1px highlight/shadow) */
     inset 1px 1px 0 rgba(255, 255, 255, 0.12),
     inset -1px -1px 0 var(--silver-shd);
+}
+
+/* === BURGUNDY CARD (Rich Wine - Fluid Gradient) === */
+.card-tile.burgundy-edition {
+  /* === LAYER 1: BASE GRADIENT (Fluid Metal) === */
+  background: var(--burgundy-gradient);
+  
+  /* === LAYER 2: FLUID TEXTURE + ENHANCED SPECULAR + WATERMARK === */
+  background-image: 
+    /* Liquid flow texture (8-12% opacity) */
+    linear-gradient(135deg, 
+      transparent 0%, 
+      rgba(168, 51, 74, 0.08) 3%, 
+      transparent 6%, 
+      rgba(45, 6, 18, 0.12) 12%, 
+      transparent 18%, 
+      rgba(168, 51, 74, 0.08) 24%, 
+      transparent 30%),
+    /* === LAYER 3: ENHANCED SPECULAR BAND (Liquid Metal) === */
+    linear-gradient(60deg, 
+      transparent 0%, 
+      transparent 30%, 
+      rgba(255, 255, 255, 0.18) 35%, 
+      rgba(255, 255, 255, 0.25) 40%, 
+      rgba(255, 255, 255, 0.18) 45%, 
+      transparent 50%, 
+      transparent 100%),
+    /* === LAYER 5: WATERMARK (H/guilloché at 6-8% opacity) === */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23FFFFFF' fill-opacity='0.07'%3E%3Cpath d='M30 30h12v24h36V30h12v60h-12V66H42v24H30V30z'/%3E%3Cpath d='M15 15h6v12h18V15h6v30h-6V33H21v12h-6V15z' opacity='0.4'/%3E%3Cpath d='M75 75h6v12h18V75h6v30h-6V93H81v12h-6V75z' opacity='0.4'/%3E%3C/g%3E%3C/svg%3E");
+  
+  background-size: 
+    100% 100%, /* Fluid texture */
+    100% 100%, /* Enhanced specular band */
+    140px 140px; /* Larger watermark pattern */
+  
+  background-position: 
+    0 0, /* Fluid texture */
+    0 0, /* Specular band */
+    0 0; /* Watermark */
+  
+  background-repeat: 
+    no-repeat, /* Fluid texture */
+    no-repeat, /* Specular band */
+    repeat; /* Watermark */
+  
+  /* === LAYER 4: ENHANCED EDGE RIMS === */
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  box-shadow: 
+    /* Enhanced elevation shadow */
+    0 18px 54px rgba(110, 13, 37, 0.15),
+    /* Outer rim (2px metallic gradient) */
+    0 0 0 2px var(--burgundy-rim-gradient),
+    /* Inner bevel (enhanced highlight/shadow) */
+    inset 1px 1px 0 rgba(255, 255, 255, 0.15),
+    inset -1px -1px 0 rgba(45, 6, 18, 0.20);
+}
+
+/* === BRONZE CARD (Rich Amber - Fluid Gradient) === */
+.card-tile.bronze-edition {
+  /* === LAYER 1: BASE GRADIENT (Fluid Metal) === */
+  background: var(--bronze-gradient);
+  
+  /* === LAYER 2: FLUID TEXTURE + ENHANCED SPECULAR + WATERMARK === */
+  background-image: 
+    /* Liquid flow texture (8-12% opacity) */
+    linear-gradient(120deg, 
+      transparent 0%, 
+      rgba(244, 228, 166, 0.10) 4%, 
+      transparent 8%, 
+      rgba(119, 78, 36, 0.14) 15%, 
+      transparent 22%, 
+      rgba(244, 228, 166, 0.10) 28%, 
+      transparent 35%),
+    /* === LAYER 3: ENHANCED SPECULAR BAND (Liquid Metal) === */
+    linear-gradient(50deg, 
+      transparent 0%, 
+      transparent 32%, 
+      rgba(255, 255, 255, 0.20) 37%, 
+      rgba(255, 255, 255, 0.28) 42%, 
+      rgba(255, 255, 255, 0.20) 47%, 
+      transparent 52%, 
+      transparent 100%),
+    /* === LAYER 5: WATERMARK (H/guilloché at 6-8% opacity) === */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23FFFFFF' fill-opacity='0.08'%3E%3Cpath d='M30 30h12v24h36V30h12v60h-12V66H42v24H30V30z'/%3E%3Cpath d='M15 15h6v12h18V15h6v30h-6V33H21v12h-6V15z' opacity='0.4'/%3E%3Cpath d='M75 75h6v12h18V75h6v30h-6V93H81v12h-6V75z' opacity='0.4'/%3E%3C/g%3E%3C/svg%3E");
+  
+  background-size: 
+    100% 100%, /* Fluid texture */
+    100% 100%, /* Enhanced specular band */
+    130px 130px; /* Larger watermark pattern */
+  
+  background-position: 
+    0 0, /* Fluid texture */
+    0 0, /* Specular band */
+    0 0; /* Watermark */
+  
+  background-repeat: 
+    no-repeat, /* Fluid texture */
+    no-repeat, /* Specular band */
+    repeat; /* Watermark */
+  
+  /* === LAYER 4: ENHANCED EDGE RIMS === */
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  box-shadow: 
+    /* Enhanced elevation shadow */
+    0 18px 54px rgba(220, 171, 107, 0.15),
+    /* Outer rim (2px metallic gradient) */
+    0 0 0 2px var(--bronze-rim-gradient),
+    /* Inner bevel (enhanced highlight/shadow) */
+    inset 1px 1px 0 rgba(255, 255, 255, 0.18),
+    inset -1px -1px 0 rgba(74, 47, 21, 0.22);
 }
 
 /* === PREMIUM MOTION (Restrained, 2-3px lift) === */
