@@ -4793,3 +4793,96 @@ body {
     0 16px 48px rgba(0,0,0,.08),
     inset 0 0 0 1px rgba(17,17,17,.10) !important;      /* subtle keyline */
 }
+
+/* === PHONE LAYOUT TUNING — paste at the very end === */
+
+/* Safe & centered rail so left/right padding equal rahe */
+.container-narrow{
+  margin-inline: auto !important;
+  padding-inline: clamp(16px, 5vw, 24px) !important;
+  box-sizing: border-box;
+}
+
+/* Horizontal scroll ko kabhi allow mat karo */
+.min-h-screen{ overflow-x: clip; }
+
+/* ---- Mobile card sizing knobs ---- */
+:root{
+  --card-w-xs: 86vw;   /* <=360px  phones */
+  --card-w-sm: 90vw;   /* 361–480px phones */
+}
+
+/* Base grid: center items */
+.cards-grid{
+  display: grid !important;
+  grid-template-columns: 1fr;        /* 1-up on most phones */
+  place-items: center;               /* center each card */
+  gap: clamp(12px, 3vw, 20px);
+  padding-inline: 0 !important;      /* rail controls padding */
+}
+
+/* Card itself: width shrink + natural height */
+@media (max-width: 360px){
+  .card-container, .card-tile{
+    width: var(--card-w-xs) !important;
+    margin-inline: auto !important;
+    aspect-ratio: auto !important;   /* height content ke hisaab se */
+    max-height: none !important;
+    min-height: 0 !important;
+  }
+}
+@media (min-width: 361px) and (max-width: 480px){
+  .card-container, .card-tile{
+    width: var(--card-w-sm) !important;
+    margin-inline: auto !important;
+    aspect-ratio: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+  }
+}
+
+/* Large phones (≥520px): neat 2-column grid */
+@media (min-width: 520px) and (max-width: 767px){
+  .cards-grid{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    place-items: stretch;            /* each column fills equally */
+    gap: clamp(12px, 3vw, 24px);
+  }
+  .card-container, .card-tile{
+    width: 100% !important;          /* columns handle the width */
+    aspect-ratio: auto !important;
+    max-height: none !important;
+  }
+}
+
+/* Internal padding compact so chhote widths par bhi fit ho */
+@media (max-width: 767px){
+  .card-tile{
+    padding: clamp(14px, 4vw, 20px) !important;
+    border-radius: 20px !important;
+  }
+  /* header clean stack + chip margins neutralize */
+  .card-tile-header{ display:grid; grid-template-columns: 1fr; gap:10px; }
+  .status-chip{ margin:0 !important; justify-self: start; }
+  /* text wrap (koi nowrap/overflow issue na rahe) */
+  .card-tile-title,
+  .card-tile-description,
+  .card-tile-subtext{ overflow-wrap:anywhere; hyphens:auto; }
+  .card-tile-description{
+    white-space: normal !important;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  /* action row tight + arrow fixed */
+  .card-tile-action{ display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .card-tile-action .action-text{ min-width:0; }
+  .card-tile-action .action-arrow{ flex-shrink:0; }
+}
+
+/* Visible boundary + darker text on white */
+.card-tile{
+  box-shadow:
+    0 12px 32px rgba(0,0,0,.06),
+    inset 0 0 0 1px rgba(17,17,17,.10) !important;
+}
+.card-tile-title{ color:#111 !important; }
+.card-tile-description{ color:#525 !important; }
