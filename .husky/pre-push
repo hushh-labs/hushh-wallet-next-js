@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+branch="$(git rev-parse --abbrev-ref HEAD)"
+if [ "$branch" = "main" ]; then
+  echo "🚀 Vercel CLI: deploying to PRODUCTION…"
+  vercel --prod --yes
+else
+  echo "🔍 Vercel CLI: creating PREVIEW deployment…"
+  vercel --yes
+fi
