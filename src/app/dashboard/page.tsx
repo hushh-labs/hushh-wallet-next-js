@@ -205,12 +205,23 @@ interface CardTileProps {
 
 function CardTile({ type, title, description, status, lastIssued, onClick }: CardTileProps) {
   const [formattedDate, setFormattedDate] = useState<string>('');
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     // Format date only on client side to avoid hydration mismatch
     if (lastIssued) {
       setFormattedDate(lastIssued.toLocaleDateString());
     }
+
+    // Detect mobile for optimized tilt behavior
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
   }, [lastIssued]);
 
   const getStatusConfig = () => {
@@ -249,64 +260,72 @@ function CardTile({ type, title, description, status, lastIssued, onClick }: Car
 
   const config = getStatusConfig();
 
-  // Tilt configuration based on card status and finish
+  // Optimized tilt configuration - disabled on mobile for performance
   const getTiltConfig = () => {
+    if (isMobile) {
+      return {
+        tiltEnable: false,
+        scale: 1,
+        perspective: 1000,
+        speed: 0
+      };
+    }
+
     const isGold = config.cardClass === 'gold-edition';
     
     return {
+      tiltEnable: true,
       perspective: 1000,
-      scale: 1.02,
-      speed: 400,
-      max: isGold ? 12 : 8, // Gold cards get slightly more tilt
-      glare: true,
-      'max-glare': isGold ? 0.3 : 0.2, // Gold cards get more glare
+      scale: 1.01, // Reduced scale for smoother performance
+      speed: 300, // Faster response
+      max: isGold ? 8 : 6, // Reduced tilt angles
+      glare: !isMobile,
+      'max-glare': isGold ? 0.2 : 0.15, // Reduced glare
       'glare-prerender': false,
-      gyroscope: true,
-      gyroscopeMinAngleX: -25,
-      gyroscopeMaxAngleX: 25,
-      gyroscopeMinAngleY: -25,
-      gyroscopeMaxAngleY: 25,
+      gyroscope: false, // Disabled for better performance
     };
   };
+
+  // Card content
+  const cardContent = (
+    <div 
+      className={`card-tile ${config.cardClass} ${isMobile ? 'mobile-optimized' : ''}`} 
+      onClick={onClick}
+    >
+      <div className="card-tile-header">
+        <div className="card-tile-info">
+          <h3 className="card-tile-title">{title}</h3>
+          <p className="card-tile-description">{description}</p>
+          {config.subText && <p className="card-tile-subtext">{config.subText}</p>}
+        </div>
+        <div className={`status-chip ${config.chipClass}`}>
+          {config.chipText}
+        </div>
+      </div>
+      <div className="card-tile-action">
+        <span className="action-text">{config.actionText}</span>
+        <svg className="action-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  );
+
+  // Return with or without Tilt based on device
+  if (isMobile) {
+    return (
+      <div className="card-container mobile">
+        {cardContent}
+      </div>
+    );
+  }
 
   return (
     <Tilt
       {...getTiltConfig()}
-      className="tilt-container"
-      style={{ 
-        transformStyle: 'preserve-3d',
-        height: 'auto',
-        width: '100%'
-      }}
+      className="card-container desktop"
     >
-      <div 
-        className={`card-tile ${config.cardClass}`} 
-        onClick={onClick}
-        style={{ 
-          transform: 'translateZ(20px)',
-          transformStyle: 'preserve-3d'
-        }}
-      >
-        <div className="card-tile-header">
-          <div className="card-tile-info">
-            <h3 className="card-tile-title">{title}</h3>
-            <p className="card-tile-description">{description}</p>
-            {config.subText && <p className="card-tile-subtext">{config.subText}</p>}
-          </div>
-          <div 
-            className={`status-chip ${config.chipClass}`}
-            style={{ transform: 'translateZ(30px)' }}
-          >
-            {config.chipText}
-          </div>
-        </div>
-        <div className="card-tile-action">
-          <span className="action-text">{config.actionText}</span>
-          <svg className="action-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </div>
-      </div>
+      {cardContent}
     </Tilt>
   );
 }
