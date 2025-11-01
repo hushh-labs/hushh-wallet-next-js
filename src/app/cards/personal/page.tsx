@@ -201,37 +201,39 @@ export default function PersonalCardPage() {
 
       {/* Form Section */}
       {(appState === AppState.FORM || appState === AppState.GENERATING) && (
-        <div className="min-h-screen section-padding bg-paper">
-          <div className="container-wide">
-            {/* Header */}
-            <div className="text-center mb-16 space-y-6 fade-in">
-              <p className="text-eyebrow">Enter Your Details</p>
-              <h1 className="text-hero text-ink">
-                Fill your <span className="font-black">personal information</span>
-              </h1>
-              <p className="text-deck text-muted max-w-3xl mx-auto">
-                Complete all fields to create your personalized identity card. 
-                <strong className="text-ink">All fields</strong> are required for a complete card.
-              </p>
-            </div>
+        <div className="min-h-screen bg-paper">
+          <div className="section-padding">
+            <div className="container-narrow">
+              {/* Header */}
+              <div className="text-center mb-12 space-y-6 fade-in">
+                <p className="text-eyebrow">Enter Your Details</p>
+                <h1 className="text-hero text-ink">
+                  Fill your <span className="font-black">personal information</span>
+                </h1>
+                <p className="text-deck text-muted max-w-3xl mx-auto">
+                  Complete all fields to create your personalized identity card. 
+                  <strong className="text-ink">All fields</strong> are required for a complete card.
+                </p>
+              </div>
 
-            {/* Personal Data Selector */}
-            <div className={`${appState === AppState.GENERATING ? 'loading' : ''}`}>
-              <PersonalDataSelector 
-                onGenerate={handleGenerate}
-                isGenerating={appState === AppState.GENERATING}
-              />
-            </div>
+              {/* Personal Data Selector */}
+              <div className={`${appState === AppState.GENERATING ? 'loading' : ''}`}>
+                <PersonalDataSelector 
+                  onGenerate={handleGenerate}
+                  isGenerating={appState === AppState.GENERATING}
+                />
+              </div>
 
-            {/* Back Link */}
-            <div className="text-center mt-12">
-              <button
-                onClick={handleReset}
-                className="btn-secondary"
-                disabled={appState === AppState.GENERATING}
-              >
-                ← Back to Card Info
-              </button>
+              {/* Back Link */}
+              <div className="text-center mt-12">
+                <button
+                  onClick={handleReset}
+                  className="btn-secondary"
+                  disabled={appState === AppState.GENERATING}
+                >
+                  ← Back to Card Info
+                </button>
+              </div>
             </div>
           </div>
         </div>
