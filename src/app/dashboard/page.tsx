@@ -378,18 +378,18 @@ export default function DashboardPage() {
             </div>
           </div>
           <div className="header-actions">
-            <div className="action-box">
+            <div className="action-box __phone-rail">
               <div className="action-header">
                 <span className="cards-counter">COLLECTION: 1 / 2</span>
               </div>
               <div className="action-buttons">
-                <button className="btn-primary-action">
+                <button className="btn-primary-action btn-rail">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M12 5v14M5 12h14"/>
                   </svg>
                   Commission Profile Collection
                 </button>
-                <button className="btn-secondary-action">
+                <button className="btn-secondary-action btn-rail">
                   Commission Culinary Collection
                 </button>
               </div>

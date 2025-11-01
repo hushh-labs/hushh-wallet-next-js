@@ -4949,6 +4949,68 @@ body {
 /* Prevent any horizontal shift from shadows/rims */
 html, body, .min-h-screen{ overflow-x: clip; }
 
+/* ==== ACTION BOX — phone rail + internal padding ===== */
+:root{
+  --ab-pad-x: clamp(18px, 5vw, 24px);
+  --ab-pad-y: clamp(14px, 4vw, 18px);
+  --ab-gap:   clamp(10px, 3vw, 14px);
+  --ab-btn-h: 56px; /* phone pill height */
+}
+
+.action-box{
+  /* already has border etc.; add consistent inner padding */
+  padding-inline: max(var(--ab-pad-x), env(safe-area-inset-left)) !important;
+  padding-block: var(--ab-pad-y) !important;
+  box-sizing: border-box;
+  border-radius: 20px; /* looks nicer with round pills */
+}
+
+.action-header{ margin-bottom: var(--ab-gap) !important; }
+
+.cards-counter{
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.035em;
+  color: #111;
+}
+
+/* Stack buttons with equal gaps */
+.action-buttons{
+  display: flex;
+  flex-direction: column;
+  gap: var(--ab-gap);
+}
+
+/* Make both buttons fill the rail & keep pill shape */
+.btn-rail{
+  width: 100%;
+  min-height: var(--ab-btn-h);
+  border-radius: 9999px !important;
+  padding-inline: 20px;            /* text breathing room */
+  box-sizing: border-box;
+  justify-content: center;
+}
+
+/* Optional: tighter on very small phones */
+@media (max-width: 767px){
+  :root{
+    --ab-pad-x: clamp(18px, 6vw, 22px);
+    --ab-pad-y: clamp(12px, 4vw, 16px);
+    --ab-gap:   clamp(8px, 3vw, 12px);
+    --ab-btn-h: 52px;
+  }
+}
+
+/* Already added earlier, but ensure rail snap covers action-box too */
+@media (max-width: 767px){
+  .action-box{
+    inline-size: min(var(--phone-rail-max, 420px), calc(100vw - (var(--phone-gutter, 16px) * 2))) !important;
+    margin-inline: auto !important;
+    padding-inline: max(var(--ab-pad-x), env(safe-area-inset-left)) !important;
+  }
+}
+
 /* ===== PHONE RAIL/GRID SYSTEM — SINGLE SOURCE OF TRUTH ===== */
 
 /* === PHONE RAIL: One truth for all === */
