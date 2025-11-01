@@ -24,9 +24,9 @@ export async function generatePersonalAppleWalletPass(passData: PersonalPassData
 
     console.log('Certificates loaded successfully for Personal Pass');
 
-    // Use the SAME working model as food preference card (luxury.pass)
+    // Use the updated personal pass model with golden design
     const pass = await PKPass.from({
-      model: path.join(projectRoot, 'passModels', 'luxury.pass'),
+      model: path.join(projectRoot, 'passModels', 'personal.pass'),
       certificates: {
         wwdr,
         signerCert,
@@ -36,7 +36,12 @@ export async function generatePersonalAppleWalletPass(passData: PersonalPassData
     }, {
       // Override pass.json data with personal information
       serialNumber: `HUSHH-PERSONAL-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      description: `${passData.preferredName}'s Personal Data Card`
+      description: `${passData.preferredName}'s Personal Data Card`,
+      // Apply premium golden color scheme
+      backgroundColor: 'rgb(117, 65, 10)', // Deep bronze
+      foregroundColor: 'rgb(255, 248, 235)', // Warm cream text
+      labelColor: 'rgb(216, 178, 111)', // Golden labels
+      logoText: 'Hushh Personal'
     });
 
     const serialNumber = `HUSHH-PERSONAL-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;

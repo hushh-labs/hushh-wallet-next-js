@@ -4,10 +4,14 @@
   "teamIdentifier": "WVDK9JW99C",
   "organizationName": "HushOne, Inc.",
   "description": "Hushh Personal Data Card",
-  "logoText": "Hushh",
-  "foregroundColor": "rgb(255, 250, 245)",
-  "backgroundColor": "rgb(26, 26, 26)",
-  "labelColor": "rgb(180, 175, 170)",
+  "logoText": "HUSHH PERSONAL",
+  "foregroundColor": "rgb(255, 248, 235)",
+  "backgroundColor": "rgb(117, 65, 10)",
+  "labelColor": "rgb(216, 178, 111)",
+  "webService": {
+    "webServiceURL": "https://hushh.ai/wallet",
+    "authenticationToken": "vxwxd7J8AlNNFPS8k0a0FfUFtq0ewzFdc"
+  },
   "generic": {
     "primaryFields": [
       {
