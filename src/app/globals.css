@@ -5132,6 +5132,70 @@ body.grid-debug::after {
                          rgba(0,0,0,.08) calc(var(--phone-gutter) + 1px),
                          transparent calc(var(--phone-gutter) + 1px)),
     linear-gradient(90deg, transparent calc(100vw - var(--phone-gutter)),
-                         rgba(0,0,0,.08) calc(100vw - var(--phone-gutter) - 1px),
+                         rgba(0,0,0,.08) calc(var(--phone-gutter) - 1px),
                          transparent 100%);
+}
+
+/* === Wallet tile internal padding & alignment — FINAL OVERRIDE === */
+
+/* Tokens: adjust if you want tighter/looser */
+:root{
+  --wi-pad-x: clamp(18px, 5vw, 24px);
+  --wi-pad-y: clamp(14px, 4vw, 18px);
+  --wi-gap:   clamp(10px, 3vw, 14px);
+}
+
+.wallet-integration-card{
+  /* equal internal L/R padding + safe-area */
+  padding-inline: max(var(--wi-pad-x), env(safe-area-inset-left)) !important;
+  padding-block: var(--wi-pad-y) !important;
+
+  /* prevent any inner bleed to edges */
+  box-sizing: border-box;
+  border-radius: 16px;
+}
+
+/* Top row: icon + title */
+.wallet-feature-tile{
+  display: grid !important;
+  grid-template-columns: auto 1fr; /* icon | text */
+  align-items: center;
+  column-gap: var(--wi-gap);
+  margin: 0; /* remove any default margins */
+  padding: 0;
+}
+
+/* Icon should never kiss the edge; but let it stay fixed size */
+.wallet-icon-container{
+  margin: 0 !important;
+  flex-shrink: 0;
+}
+
+/* Text block must be allowed to wrap (no overflow) */
+.wallet-content{ min-width: 0; }
+.wallet-title{
+  margin: 0;
+  text-wrap: pretty;
+}
+
+/* Chip row gets the SAME left start as the title (because of card padding) */
+.wallet-chips{
+  display: flex;
+  gap: var(--wi-gap);
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: var(--wi-gap);
+  padding: 0;         /* no extra inset, card padding already handles it */
+}
+
+/* Chips should never sprawn beyond the card */
+.wallet-chip{ max-width: 100%; }
+
+/* OPTIONAL: phone-specific little tighter spacing */
+@media (max-width: 767px){
+  :root{
+    --wi-pad-x: clamp(18px, 6vw, 22px);
+    --wi-pad-y: clamp(12px, 4vw, 16px);
+    --wi-gap:   clamp(8px, 3vw, 12px);
+  }
 }
