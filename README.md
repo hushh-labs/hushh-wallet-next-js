@@ -321,8 +321,9 @@ git push origin feature/mobile-optimization
 ## 🌍 Live Deployment & URLs
 
 ### Production URLs:
-- **Current Live URL**: `https://hushh-wallet-nujox0nm8-ankit-kumar-singhs-projects-390074cd.vercel.app`
-- **Target Clean URL**: `https://hushh-wallet.vercel.app` (setup instructions below)
+- **✅ Clean URL Available**: `https://hushh-wallet-app.vercel.app`
+- **🎯 Target Ultra-Clean URL**: `https://hushh-wallet.vercel.app` (optional setup below)
+- **Current Deployment**: `https://hushh-wallet-6n9bdpnia-ankit-kumar-singhs-projects-390074cd.vercel.app`
 
 ### 🔧 Setting Up Clean Domain URL
 
