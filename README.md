@@ -318,7 +318,37 @@ git push origin feature/mobile-optimization
 # After review, merge to main (triggers production deployment)
 ```
 
-## 📊 Monitoring & Analytics
+## 🌍 Live Deployment & URLs
+
+### Production URLs:
+- **Current Live URL**: `https://hushh-wallet-nujox0nm8-ankit-kumar-singhs-projects-390074cd.vercel.app`
+- **Target Clean URL**: `https://hushh-wallet.vercel.app` (setup instructions below)
+
+### 🔧 Setting Up Clean Domain URL
+
+#### Option 1: Rename Vercel Project (Recommended)
+```bash
+# Method 1: Via Vercel Dashboard
+1. Go to https://vercel.com/dashboard
+2. Select your project: "hushh-wallet-app"
+3. Go to Settings → General
+4. Change "Project Name" to: hushh-wallet
+5. Save changes
+6. Your new URL will be: https://hushh-wallet.vercel.app
+
+# Method 2: Via CLI
+vercel project rm hushh-wallet-app
+vercel --name hushh-wallet --prod
+```
+
+#### Option 2: Custom Domain (Professional)
+```bash
+# Set up custom domain (requires domain ownership)
+vercel domains add hushh-wallet.com
+vercel domains assign hushh-wallet.com
+```
+
+### 📊 Monitoring & Analytics
 
 ### Vercel Dashboard:
 - **Project**: `ankit-kumar-singhs-projects-390074cd/hushh-wallet-app`
@@ -326,9 +356,25 @@ git push origin feature/mobile-optimization
 - **Analytics**: Available in Vercel dashboard
 
 ### Deployment URLs:
-- **Production**: Auto-generated on each deploy
+- **Production**: `https://hushh-wallet-nujox0nm8-ankit-kumar-singhs-projects-390074cd.vercel.app`
 - **Preview**: Generated for feature branches
 - **Inspection**: Use `vercel inspect <url>` for details
+
+### 🚀 Auto-Deployment Status Tracking
+
+Every successful push to main branch:
+```bash
+✅ Code pushed to GitHub
+✅ Husky pre-push hook triggered  
+✅ Vercel deployment started
+✅ Build completed successfully
+✅ Live on: https://hushh-wallet-nujox0nm8-ankit-kumar-singhs-projects-390074cd.vercel.app
+✅ Changes reflected instantly
+```
+
+**Deployment Timeline**: ~30-60 seconds from push to live
+**Status Check**: Visit production URL to verify changes
+**Rollback**: `vercel rollback` if needed
 
 ## 🔒 Security & Environment
 
