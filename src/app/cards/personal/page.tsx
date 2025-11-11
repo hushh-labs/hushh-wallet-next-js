@@ -2,11 +2,13 @@
 // Force cache refresh for new single-page flow - deployed at 11:08 AM
 import { useState, useEffect } from 'react';
 import { PersonalDataSelector } from '@/components/PersonalDataSelector';
+import { CardPreview } from '@/components/CardPreview';
 import { PersonalPayload } from '@/types';
 
 enum AppState {
   HERO = 'hero',
   FORM = 'form',
+  PREVIEW = 'preview',
   GENERATING = 'generating',
   SUCCESS = 'success',
   ERROR = 'error'
@@ -17,6 +19,7 @@ export default function PersonalCardPage() {
   const [isIOS, setIsIOS] = useState<boolean | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [generatedURL, setGeneratedURL] = useState<string>('');
+  const [personalData, setPersonalData] = useState<PersonalPayload | null>(null);
 
   // Device detection (same as food card)
   useEffect(() => {
@@ -36,7 +39,16 @@ export default function PersonalCardPage() {
     setAppState(AppState.FORM);
   };
 
-  const handleGenerate = async (personalData: PersonalPayload) => {
+  // Form submission -> Preview (not direct generation)
+  const handleFormSubmit = (data: PersonalPayload) => {
+    setPersonalData(data);
+    setAppState(AppState.PREVIEW);
+  };
+
+  // Preview -> Generate pass
+  const handleGenerate = async () => {
+    if (!personalData) return;
+    
     setAppState(AppState.GENERATING);
     setErrorMessage('');
 
@@ -138,6 +150,11 @@ export default function PersonalCardPage() {
     }
   };
 
+  // Preview -> Edit (go back to form)
+  const handleEditFromPreview = () => {
+    setAppState(AppState.FORM);
+  };
+
   const handleReset = () => {
     setAppState(AppState.HERO);
     setErrorMessage('');
@@ -219,7 +236,7 @@ export default function PersonalCardPage() {
               {/* Personal Data Selector */}
               <div className={`${appState === AppState.GENERATING ? 'loading' : ''}`}>
                 <PersonalDataSelector 
-                  onGenerate={handleGenerate}
+                  onGenerate={handleFormSubmit}
                   isGenerating={appState === AppState.GENERATING}
                 />
               </div>
@@ -234,6 +251,38 @@ export default function PersonalCardPage() {
                   ← Back to Card Info
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Preview Section */}
+      {appState === AppState.PREVIEW && personalData && (
+        <div className="min-h-screen bg-paper">
+          <div className="section-padding">
+            <div className="container-narrow">
+              <CardPreview 
+                personalData={personalData}
+                onGenerate={handleGenerate}
+                onEdit={handleEditFromPreview}
+                isGenerating={false}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Generating State */}
+      {appState === AppState.GENERATING && personalData && (
+        <div className="min-h-screen bg-paper">
+          <div className="section-padding">
+            <div className="container-narrow">
+              <CardPreview 
+                personalData={personalData}
+                onGenerate={handleGenerate}
+                onEdit={handleEditFromPreview}
+                isGenerating={true}
+              />
             </div>
           </div>
         </div>

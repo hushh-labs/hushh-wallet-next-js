@@ -4707,6 +4707,27 @@ body {
   direction: rtl;
 }
 
+/* ===== 3D FLIP ANIMATION FOR CARD PREVIEW ===== */
+
+/* 3D Transform Classes for Card Preview Component */
+.rotateY-0 { 
+  transform: rotateY(0deg); 
+}
+
+.rotateY-180 { 
+  transform: rotateY(180deg); 
+}
+
+/* Card flip container preserve-3d support */
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backfaceVisibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
 /* Touch Device Optimizations */
 @media (hover: none) and (pointer: coarse) {
   .wallet-chip {
