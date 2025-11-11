@@ -194,7 +194,7 @@ const MOCK_CARD_DATA: Partial<Record<CardType, CardData>> = {
   }
 };
 
-interface CardTileProps {
+interface ExecutiveRowProps {
   type: CardType;
   title: string;
   description: string;
@@ -203,56 +203,45 @@ interface CardTileProps {
   onClick: () => void;
 }
 
-function CardTile({ type, title, description, status, lastIssued, onClick }: CardTileProps) {
+function ExecutiveRow({ type, title, description, status, lastIssued, onClick }: ExecutiveRowProps) {
   const [formattedDate, setFormattedDate] = useState<string>('');
-  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     // Format date only on client side to avoid hydration mismatch
     if (lastIssued) {
-      setFormattedDate(lastIssued.toLocaleDateString());
+      setFormattedDate(lastIssued.toLocaleDateString('en-US', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      }));
     }
-
-    // Detect mobile for optimized tilt behavior
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
   }, [lastIssued]);
 
   const getStatusConfig = () => {
     switch (status) {
       case 'NOT_CREATED':
         return {
-          chipText: 'Awaiting Commission',
-          chipClass: 'status-chip-inactive',
-          cardClass: 'silver-edition',
+          chipText: 'AWAITING COMMISSION',
+          chipClass: 'executive-status-awaiting',
           actionText: 'Commission Collection'
         };
       case 'ACTIVE':
         return {
-          chipText: 'Live Collection',
-          chipClass: 'status-chip-active', 
-          cardClass: 'gold-edition',
+          chipText: 'LIVE COLLECTION',
+          chipClass: 'executive-status-live',
           actionText: 'Access Collection',
-          subText: formattedDate ? `Last commissioned: ${formattedDate}` : ''
+          metaText: formattedDate ? `Last commissioned: ${formattedDate}` : ''
         };
       case 'UPDATE_AVAILABLE':
         return {
-          chipText: 'Refinement Available',
-          chipClass: 'status-chip-update',
-          cardClass: 'silver-edition',
+          chipText: 'REFINEMENT AVAILABLE',
+          chipClass: 'executive-status-update',
           actionText: 'Refine Collection'
         };
       case 'REVOKED':
         return {
-          chipText: 'Archive',
-          chipClass: 'status-chip-revoked',
-          cardClass: 'silver-edition',
+          chipText: 'ARCHIVE',
+          chipClass: 'executive-status-revoked',
           actionText: 'Commission New'
         };
     }
@@ -260,73 +249,45 @@ function CardTile({ type, title, description, status, lastIssued, onClick }: Car
 
   const config = getStatusConfig();
 
-  // Optimized tilt configuration - disabled on mobile for performance
-  const getTiltConfig = () => {
-    if (isMobile) {
-      return {
-        tiltEnable: false,
-        scale: 1,
-        perspective: 1000,
-        speed: 0
-      };
-    }
-
-    const isGold = config.cardClass === 'gold-edition';
-    
-    return {
-      tiltEnable: true,
-      perspective: 1000,
-      scale: 1.01, // Reduced scale for smoother performance
-      speed: 300, // Faster response
-      max: isGold ? 8 : 6, // Reduced tilt angles
-      glare: !isMobile,
-      'max-glare': isGold ? 0.2 : 0.15, // Reduced glare
-      'glare-prerender': false,
-      gyroscope: false, // Disabled for better performance
-    };
-  };
-
-  // Card content
-  const cardContent = (
+  return (
     <div 
-      className={`card-tile ${config.cardClass} ${isMobile ? 'mobile-optimized' : ''}`} 
+      className="executive-row"
       onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick();
+        }
+      }}
     >
-      <div className="card-tile-header">
-        <div className="card-tile-info">
-          <h3 className="card-tile-title">{title}</h3>
-          <p className="card-tile-description">{description}</p>
-          {config.subText && <p className="card-tile-subtext">{config.subText}</p>}
+      <div className="executive-row-content">
+        {/* Line 1: Title + Status Pill */}
+        <div className="executive-row-line1">
+          <h3 className="executive-title">{title}</h3>
+          <div className={`executive-status-pill ${config.chipClass}`}>
+            {config.chipText}
+          </div>
         </div>
-        <div className={`status-chip ${config.chipClass}`}>
-          {config.chipText}
+
+        {/* Line 2: Subtitle (purple) */}
+        <p className="executive-subtitle">{description}</p>
+
+        {/* Line 3: Meta (if available) */}
+        {config.metaText && (
+          <p className="executive-meta">{config.metaText}</p>
+        )}
+
+        {/* Footer: Helper Text */}
+        <div className="executive-footer">
+          <span className="executive-helper">{config.actionText}</span>
+          <svg className="executive-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </div>
-      </div>
-      <div className="card-tile-action">
-        <span className="action-text">{config.actionText}</span>
-        <svg className="action-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
       </div>
     </div>
-  );
-
-  // Return with or without Tilt based on device
-  if (isMobile) {
-    return (
-      <div className="card-container mobile">
-        {cardContent}
-      </div>
-    );
-  }
-
-  return (
-    <Tilt
-      {...getTiltConfig()}
-      className="card-container desktop"
-    >
-      {cardContent}
-    </Tilt>
   );
 }
 
@@ -399,16 +360,16 @@ export default function DashboardPage() {
         <div className="header-divider-enhanced"></div>
       </div>
 
-      {/* Cards Grid */}
+      {/* Executive Rows */}
       <div className="dashboard-content">
         <div className="container-narrow">
-          <div className="cards-grid">
+          <div className="executive-list">
             {cardDefinitions.map((cardDef) => {
               const cardData = cards[cardDef.type];
               if (!cardData) return null;
               
               return (
-                <CardTile
+                <ExecutiveRow
                   key={cardDef.type}
                   type={cardDef.type}
                   title={cardDef.title}

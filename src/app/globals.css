@@ -5095,6 +5095,371 @@ body {
 /* Prevent any horizontal shift from shadows/rims */
 html, body, .min-h-screen{ overflow-x: clip; }
 
+/* ===== EXECUTIVE MEDIA LIST ROWS (OPTION A) ===== */
+
+/* Executive List Container */
+.executive-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* 12-16px vertical spacing between rows */
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+@media (min-width: 768px) {
+  .executive-list {
+    gap: 16px;
+  }
+}
+
+/* Individual Executive Row */
+.executive-row {
+  min-height: 72px; /* 72-84px base height */
+  padding: 12px 16px; /* 12px vertical, 16px horizontal */
+  background: #FFFFFF; /* Pure white background */
+  border: 1px solid #E5E5E5; /* Very light hairline */
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 120ms ease-out;
+  position: relative;
+  overflow: hidden;
+  
+  /* Subtle elevation */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+@media (min-width: 768px) {
+  .executive-row {
+    min-height: 84px;
+    padding: 16px;
+    border-radius: 16px;
+  }
+}
+
+/* Row Content Layout */
+.executive-row-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+  justify-content: center;
+}
+
+/* Line 1: Title + Status Pill */
+.executive-row-line1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+/* Title Typography (17px/semibold/-2% tracking) */
+.executive-title {
+  font-size: 17px;
+  font-weight: 600; /* semibold */
+  letter-spacing: -0.02em; /* -2% tracking */
+  line-height: 1.3;
+  color: #0F172A; /* Onyx text */
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+/* Subtitle Typography (14px/regular/brand violet) */
+.executive-subtitle {
+  font-size: 14px;
+  font-weight: 400; /* regular */
+  line-height: 1.5;
+  color: #7C3AED; /* Deep violet for brand accent */
+  margin: 0;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+/* Meta Line Typography (12-13px/medium/slate-500) */
+.executive-meta {
+  font-size: 13px;
+  font-weight: 500; /* medium */
+  line-height: 1.4;
+  color: #64748B; /* Slate-500 */
+  margin: 0;
+  margin-top: 2px;
+}
+
+/* Footer: Helper + Chevron */
+.executive-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* Helper Text Typography (12-13px/medium/slate-500) */
+.executive-helper {
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748B; /* Slate-500 muted */
+  line-height: 1.4;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Chevron Icon */
+.executive-chevron {
+  color: #94A3B8; /* Slate-400 */
+  flex-shrink: 0;
+  transition: all 120ms ease-out;
+}
+
+/* Status Pills (22-24px height with 1px keyline) */
+.executive-status-pill {
+  height: 24px;
+  padding: 0 12px;
+  border-radius: 12px;
+  font-size: 11px; /* ALL CAPS 11-12px */
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid;
+  transition: all 120ms ease-out;
+  min-width: fit-content;
+}
+
+/* LIVE COLLECTION Status (Soft-gold keyline on warm off-white fill) */
+.executive-status-live {
+  background: #FFFBF5; /* Warm off-white fill */
+  border-color: #F59E0B; /* Soft-gold keyline */
+  color: #92400E; /* Dark amber text */
+}
+
+/* AWAITING COMMISSION Status (Cool-grey keyline on white) */
+.executive-status-awaiting {
+  background: #FFFFFF; /* White fill */
+  border-color: #D1D5DB; /* Cool-grey keyline */
+  color: #374151; /* Dark grey text */
+}
+
+/* REFINEMENT AVAILABLE Status */
+.executive-status-update {
+  background: #F0F9FF; /* Light blue fill */
+  border-color: #0EA5E9; /* Blue keyline */
+  color: #075985; /* Dark blue text */
+}
+
+/* ARCHIVE Status */
+.executive-status-revoked {
+  background: #F9FAFB; /* Light grey fill */
+  border-color: #9CA3AF; /* Grey keyline */
+  color: #6B7280; /* Muted grey text */
+  opacity: 0.8;
+}
+
+/* Row Hover States */
+.executive-row:hover {
+  transform: scale(0.97); /* 0.97 scale on tap */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border-color: #D1D5DB;
+}
+
+.executive-row:hover .executive-chevron {
+  color: #64748B; /* Darken chevron on hover */
+  transform: translateX(2px);
+}
+
+.executive-row:hover .executive-status-live {
+  background: #FEF3C7; /* Slightly richer gold on hover */
+}
+
+.executive-row:hover .executive-status-awaiting {
+  background: #F9FAFB; /* Subtle fill on hover */
+}
+
+/* Row Focus States (Accessibility) */
+.executive-row:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #7C3AED; /* Purple focus ring */
+}
+
+.executive-row:focus-visible {
+  outline: 2px solid #7C3AED;
+  outline-offset: 2px;
+}
+
+/* Row Active/Press States */
+.executive-row:active {
+  transform: scale(0.95);
+  transition: transform 70ms ease;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 767px) {
+  .executive-list {
+    gap: 10px;
+  }
+  
+  .executive-row {
+    min-height: 68px;
+    padding: 10px 14px;
+    border-radius: 10px;
+  }
+  
+  .executive-row-content {
+    gap: 4px;
+  }
+  
+  .executive-row-line1 {
+    gap: 10px;
+    margin-bottom: 3px;
+  }
+  
+  .executive-title {
+    font-size: 16px;
+  }
+  
+  .executive-subtitle {
+    font-size: 13px;
+  }
+  
+  .executive-meta {
+    font-size: 12px;
+  }
+  
+  .executive-helper {
+    font-size: 12px;
+  }
+  
+  .executive-status-pill {
+    height: 22px;
+    padding: 0 10px;
+    font-size: 10px;
+  }
+  
+  .executive-footer {
+    margin-top: 6px;
+  }
+}
+
+/* Animation: Staggered Fade-Up */
+.executive-row:nth-child(1) {
+  animation: fadeUpRow 260ms ease-out 60ms both;
+}
+
+.executive-row:nth-child(2) {
+  animation: fadeUpRow 260ms ease-out 120ms both;
+}
+
+.executive-row:nth-child(3) {
+  animation: fadeUpRow 260ms ease-out 180ms both;
+}
+
+@keyframes fadeUpRow {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .executive-row {
+    animation: none;
+    transition: none;
+  }
+  
+  .executive-row:hover {
+    transform: none;
+  }
+  
+  .executive-row:active {
+    transform: none;
+  }
+  
+  .executive-chevron {
+    transition: none;
+  }
+  
+  .executive-row:hover .executive-chevron {
+    transform: none;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .executive-row {
+    border-width: 2px;
+    border-color: #000000;
+  }
+  
+  .executive-status-pill {
+    border-width: 2px;
+  }
+  
+  .executive-status-live {
+    border-color: #000000;
+    color: #000000;
+  }
+  
+  .executive-status-awaiting {
+    border-color: #000000;
+    color: #000000;
+  }
+}
+
+/* Dark Mode Adaptations */
+@media (prefers-color-scheme: dark) {
+  .executive-row {
+    background: #1F2937; /* Dark background */
+    border-color: #374151; /* Dark border */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  .executive-title {
+    color: #F9FAFB; /* Light text */
+  }
+  
+  .executive-subtitle {
+    color: #A78BFA; /* Lighter violet */
+  }
+  
+  .executive-meta,
+  .executive-helper {
+    color: #9CA3AF; /* Light muted */
+  }
+  
+  .executive-chevron {
+    color: #6B7280;
+  }
+  
+  .executive-status-live {
+    background: #451A03; /* Dark amber background */
+    border-color: #F59E0B;
+    color: #FCD34D; /* Light amber text */
+  }
+  
+  .executive-status-awaiting {
+    background: #111827; /* Dark background */
+    border-color: #4B5563;
+    color: #D1D5DB; /* Light grey text */
+  }
+  
+  .executive-row:hover {
+    background: #374151;
+    border-color: #4B5563;
+  }
+}
+
 /* ==== ACTION BOX — phone rail + internal padding ===== */
 :root{
   --ab-pad-x: clamp(18px, 5vw, 24px);

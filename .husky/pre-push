@@ -1,7 +1,7 @@
 branch="$(git rev-parse --abbrev-ref HEAD)"
 if [ "$branch" = "main" ]; then
   echo "🚀 Vercel CLI: deploying to PRODUCTION…"
-  vercel --prod --yes
+  npm run deploy:prod
 else
   echo "🔍 Vercel CLI: creating PREVIEW deployment…"
   vercel --yes
