@@ -157,53 +157,126 @@ export function PersonalDataSelector({ onGenerate, isGenerating = false }: Perso
     <div className="w-full max-w-2xl mx-auto">
       <div className="space-y-8">
         
-        {/* Test Data Section */}
+        {/* Test Data Section - Luxury Design */}
         {showTestData && (
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
-            <div className="text-center space-y-4">
-              <h3 className="text-lg font-semibold text-gray-800">
-                🚀 Quick Demo - Try with Sample Data
-              </h3>
-              <p className="text-sm text-gray-600">
-                Click any profile below to instantly fill the form and see your card preview
-              </p>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
-                {TEST_PROFILES.map((profile, index) => (
-                  <button
-                    key={index}
-                    onClick={() => loadTestData(index)}
-                    className="p-4 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 text-left group"
-                  >
-                    <div className="space-y-2">
-                      <div className="font-medium text-gray-800 group-hover:text-blue-700">
-                        {profile.preferredName}
-                      </div>
-                      <div className="text-xs text-gray-500 space-y-1">
-                        <div>{profile.legalName}</div>
-                        <div>{profile.phone}</div>
-                        <div className="capitalize">{profile.gender}</div>
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-              
-              <div className="text-xs text-gray-500 mt-3">
-                Or fill the form manually below ↓
+          <div className="relative">
+            {/* Premium Background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 rounded-2xl opacity-95"></div>
+            <div className="relative bg-gradient-to-r from-slate-50/10 to-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 shadow-2xl">
+              <div className="text-center space-y-6">
+                <div className="space-y-3">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-amber-400 to-yellow-500 rounded-2xl shadow-lg">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold text-white tracking-tight">
+                    Quick Demo
+                  </h3>
+                  <div className="w-24 h-1 bg-gradient-to-r from-amber-400 to-yellow-300 rounded-full mx-auto"></div>
+                </div>
+                <p className="text-amber-100/90 text-lg font-medium">
+                  Try with premium sample profiles
+                </p>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
+                  {TEST_PROFILES.map((profile, index) => {
+                    const gradients = [
+                      'from-blue-600 via-blue-700 to-indigo-800',
+                      'from-purple-600 via-pink-600 to-rose-700', 
+                      'from-emerald-600 via-teal-600 to-cyan-700'
+                    ];
+                    const avatarGradients = [
+                      'from-blue-400 to-blue-600',
+                      'from-purple-400 to-pink-500',
+                      'from-emerald-400 to-teal-500'
+                    ];
+                    
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => loadTestData(index)}
+                        className="group relative overflow-hidden rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                      >
+                        {/* Card Background */}
+                        <div className={`absolute inset-0 bg-gradient-to-br ${gradients[index]} opacity-90`}></div>
+                        
+                        {/* Glass Effect */}
+                        <div className="absolute inset-0 bg-white/5 backdrop-blur-sm"></div>
+                        
+                        {/* Content */}
+                        <div className="relative p-6 space-y-4">
+                          {/* Avatar */}
+                          <div className="flex justify-center">
+                            <div className={`w-16 h-16 bg-gradient-to-br ${avatarGradients[index]} rounded-full flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300`}>
+                              <span className="text-2xl font-bold text-white">
+                                {profile.preferredName[0]}
+                              </span>
+                            </div>
+                          </div>
+                          
+                          {/* Profile Info */}
+                          <div className="space-y-3">
+                            <div className="text-center">
+                              <h4 className="text-xl font-bold text-white group-hover:text-amber-200 transition-colors duration-200">
+                                {profile.preferredName}
+                              </h4>
+                              <div className="w-12 h-0.5 bg-white/30 rounded-full mx-auto mt-2"></div>
+                            </div>
+                            
+                            <div className="space-y-2 text-sm">
+                              <div className="flex items-center justify-center space-x-2">
+                                <div className="w-2 h-2 bg-white/60 rounded-full"></div>
+                                <span className="text-white/90 font-medium">{profile.legalName}</span>
+                              </div>
+                              <div className="flex items-center justify-center space-x-2">
+                                <div className="w-2 h-2 bg-white/60 rounded-full"></div>
+                                <span className="text-white/75">{profile.phone}</span>
+                              </div>
+                              <div className="flex items-center justify-center space-x-2">
+                                <div className="w-2 h-2 bg-white/60 rounded-full"></div>
+                                <span className="text-white/75 capitalize">{profile.gender}</span>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Hover Effect */}
+                          <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl"></div>
+                        </div>
+                        
+                        {/* Shine Effect */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                      </button>
+                    );
+                  })}
+                </div>
+                
+                <div className="flex items-center justify-center space-x-3 mt-6">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-amber-400/60 rounded-full animate-pulse delay-100"></div>
+                    <div className="w-2 h-2 bg-amber-400/30 rounded-full animate-pulse delay-200"></div>
+                  </div>
+                  <p className="text-amber-200/80 text-sm font-medium">
+                    Or create custom profile below
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* Clear Form Button */}
+        {/* Clear Form Button - Luxury Style */}
         {!showTestData && selectedProfile >= 0 && (
           <div className="text-center">
             <button
               onClick={clearForm}
-              className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+              className="group inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
             >
-              ← Clear and use custom data
+              <svg className="w-4 h-4 group-hover:text-amber-300 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              <span className="text-sm font-medium">Clear and use custom data</span>
             </button>
           </div>
         )}
