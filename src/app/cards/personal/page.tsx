@@ -8,7 +8,6 @@ import { PersonalPayload } from '@/types';
 enum AppState {
   HERO = 'hero',
   FORM = 'form',
-  PREVIEW = 'preview',
   GENERATING = 'generating',
   SUCCESS = 'success',
   ERROR = 'error'
@@ -39,16 +38,9 @@ export default function PersonalCardPage() {
     setAppState(AppState.FORM);
   };
 
-  // Form submission -> Preview (not direct generation)
-  const handleFormSubmit = (data: PersonalPayload) => {
+  // Form submission -> Direct generation (no preview)
+  const handleFormSubmit = async (data: PersonalPayload) => {
     setPersonalData(data);
-    setAppState(AppState.PREVIEW);
-  };
-
-  // Preview -> Save personal data to unified backend
-  const handleGenerate = async () => {
-    if (!personalData) return;
-    
     setAppState(AppState.GENERATING);
     setErrorMessage('');
 
@@ -62,11 +54,11 @@ export default function PersonalCardPage() {
         body: JSON.stringify({
           section: 'personal',
           data: {
-            preferredName: personalData.preferredName,
-            legalName: personalData.legalName,
-            phone: personalData.phone,
-            dob: personalData.dob,
-            gender: personalData.gender
+            preferredName: data.preferredName,
+            legalName: data.legalName,
+            phone: data.phone,
+            dob: data.dob,
+            gender: data.gender
           }
         }),
       });
@@ -110,11 +102,6 @@ export default function PersonalCardPage() {
       setErrorMessage(error instanceof Error ? error.message : 'Failed to save personal data');
       setAppState(AppState.ERROR);
     }
-  };
-
-  // Preview -> Edit (go back to form)
-  const handleEditFromPreview = () => {
-    setAppState(AppState.FORM);
   };
 
   const handleReset = () => {
@@ -239,6 +226,16 @@ export default function PersonalCardPage() {
                 />
               </div>
 
+              {/* Generating State Indicator */}
+              {appState === AppState.GENERATING && (
+                <div className="mt-8 text-center">
+                  <div className="inline-flex items-center space-x-2 text-muted">
+                    <div className="w-4 h-4 border-2 border-gold border-t-transparent rounded-full animate-spin"></div>
+                    <span>Saving your personal information...</span>
+                  </div>
+                </div>
+              )}
+
               {/* Back Link */}
               <div className="text-center mt-12">
                 <button
@@ -254,37 +251,6 @@ export default function PersonalCardPage() {
         </div>
       )}
 
-      {/* Preview Section */}
-      {appState === AppState.PREVIEW && personalData && (
-        <div className="min-h-screen bg-paper">
-          <div className="section-padding">
-            <div className="container-narrow">
-              <CardPreview 
-                personalData={personalData}
-                onGenerate={handleGenerate}
-                onEdit={handleEditFromPreview}
-                isGenerating={false}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Generating State */}
-      {appState === AppState.GENERATING && personalData && (
-        <div className="min-h-screen bg-paper">
-          <div className="section-padding">
-            <div className="container-narrow">
-              <CardPreview 
-                personalData={personalData}
-                onGenerate={handleGenerate}
-                onEdit={handleEditFromPreview}
-                isGenerating={true}
-              />
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Success State (Non-iOS) */}
       {appState === AppState.SUCCESS && (
