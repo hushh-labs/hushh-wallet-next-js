@@ -25,7 +25,7 @@ export class FetchError extends Error {
  * Safe JSON fetch that handles non-JSON error responses gracefully
  */
 export async function fetchJSON<T>(url: string, options: FetchOptions = {}): Promise<T> {
-  const { timeout = 10000, ...fetchOptions } = options;
+  const { timeout = 30000, ...fetchOptions } = options;
   
   // Create abort controller for timeout
   const controller = new AbortController();

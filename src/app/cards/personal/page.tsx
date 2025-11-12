@@ -159,7 +159,7 @@ export default function PersonalCardPage() {
           dob: personalData.dob,
           gender: personalData.gender
         }
-      }, { timeout: 15000 }); // 15 second timeout
+      }); // Use default 30 second timeout
 
       // Analytics: personal_data_saved
       if (typeof window !== 'undefined' && (window as any).gtag) {
@@ -240,7 +240,7 @@ export default function PersonalCardPage() {
       }
 
       const response = await fetch(`/api/cards/download/${uid}`, {
-        signal: AbortSignal.timeout(15000) // 15 second timeout
+        signal: AbortSignal.timeout(30000) // 30 second timeout
       });
       
       if (!response.ok) {
