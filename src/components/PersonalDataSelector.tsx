@@ -175,12 +175,12 @@ export function PersonalDataSelector({ onGenerate, isGenerating = false }: Perso
             disabled={!canGenerate() || isGenerating}
             className={`btn-primary w-full ${(!canGenerate() || isGenerating) ? 'disabled' : ''}`}
           >
-            {isGenerating ? 'Loading Preview...' : 'Preview Card'}
+            {isGenerating ? 'Creating Your Card...' : 'Create My Card'}
           </button>
           
           {!canGenerate() && (
             <p className="text-sm text-muted text-center mt-3">
-              Please fill all required fields to preview your card
+              Please fill all required fields to create your card
             </p>
           )}
         </div>
