@@ -1,7 +1,114 @@
 // ===== CARD TYPES =====
-export type CardType = 'PERSONAL' | 'BRAND' | 'ALLERGY' | 'FOOD';
+export type CardType = 'PERSONAL' | 'BRAND' | 'ALLERGY' | 'FOOD' | 'HUSHH_ID';
 
 export type CardStatus = 'NOT_CREATED' | 'ACTIVE' | 'UPDATE_AVAILABLE' | 'REVOKED';
+
+// ===== UNIFIED HUSHH ID CARD =====
+export type HushhCardPayload = {
+  // Personal section
+  gender?: "male" | "female" | "other" | "prefer_not_to_say";
+  legalName: string;
+  preferredName: string;
+  phone: string; // E.164 format
+  dob: string; // YYYY-MM-DD format
+  
+  // Food section  
+  foodType: "omnivore" | "pescatarian" | "vegetarian" | "vegan" | "jain" | "eggitarian";
+  spiceLevel: "no" | "mild" | "medium" | "hot" | "extra_hot";
+  cuisines: string[];    // max 3
+  dishes: string[];      // max 3  
+  exclusions: string[];  // max 2
+};
+
+// ===== FIRESTORE DATA STRUCTURES =====
+export type UserRecord = {
+  profile: {
+    preferredName: string;
+    legalName: string;
+    dob: string; // YYYY-MM-DD
+    phone: string; // E.164 format
+    gender?: string;
+  };
+  food: {
+    foodType: string;
+    spiceLevel: string;
+    topCuisines: string[];
+    dishStyles: string[];
+    exclusions: string[];
+  };
+  card: {
+    publicId: string; // UUID
+    activeShareId: string; // Current QR target
+    passSerial: string;
+    platform?: { apple?: string; google?: string };
+  };
+  owner: {
+    ownerTokenHash: string; // bcrypt hash
+    recoveryKeyHash: string; // bcrypt hash
+    createdAt: Date;
+    lastSeenDevice?: string;
+  };
+  shareSettings: {
+    visibility: "public_minimal" | "public_full" | "private";
+    redactionPolicy?: object;
+  };
+};
+
+export type PublicProfile = {
+  sections: {
+    personal: {
+      preferredName: string;
+      age: number; // computed from DOB
+      maskedPhone: string; // "+91-••••-•••27"
+    };
+    food: {
+      foodType: string;
+      spiceLevel: string;
+      topCuisines: string[];
+      dishStyles: string[];
+      exclusions: string[];
+    };
+  };
+  lastUpdated: Date;
+  version: number;
+  redacted: boolean;
+};
+
+export type ShareLink = {
+  publicId: string;
+  status: "active" | "revoked";
+  rotates: boolean;
+  ttl?: Date;
+  createdAt: Date;
+};
+
+export type ScanEvent = {
+  shareId: string;
+  publicId: string;
+  timestamp: Date;
+  userAgent?: string;
+  anonymousId: string;
+};
+
+// ===== AUTH-LESS TOKENS =====
+export type OwnerTokenClaim = {
+  uid: string;
+  deviceId: string;
+  issued: number;
+  expires: number;
+};
+
+export type RecoveryPhrase = {
+  words: string[]; // 12-word BIP39 mnemonic
+  checksum: string;
+};
+
+export type TokenValidationResult = {
+  valid: boolean;
+  uid?: string;
+  deviceId?: string;
+  error?: string;
+};
 
 // ===== FOOD CARD (existing, renamed for consistency) =====
 export type FoodPayload = {

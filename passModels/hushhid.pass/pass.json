@@ -1,0 +1,72 @@
+{
+  "formatVersion": 1,
+  "passTypeIdentifier": "pass.com.hushh.idcard",
+  "teamIdentifier": "WVDK9JW99C",
+  "organizationName": "HushOne, Inc.",
+  "description": "hushh ID Card",
+  "logoText": "hushh ID CARD",
+  "foregroundColor": "rgb(248, 245, 235)",
+  "backgroundColor": "rgb(20, 25, 30)",
+  "labelColor": "rgb(255, 215, 0)",
+  "webService": {
+    "webServiceURL": "https://hushh.ai/wallet",
+    "authenticationToken": "vxwxd7J8AlNNFPS8k0a0FfUFtq0ewzFdc"
+  },
+  "generic": {
+    "primaryFields": [
+      {
+        "key": "preferredName",
+        "label": "",
+        "value": "{{PREFERRED_NAME}}",
+        "textAlignment": "PKTextAlignmentCenter"
+      }
+    ],
+    "secondaryFields": [],
+    "auxiliaryFields": [],
+    "backFields": [
+      {
+        "key": "qrInfo",
+        "label": "Scan to View",
+        "value": "Identity & food preferences"
+      },
+      {
+        "key": "age",
+        "label": "Age",
+        "value": "{{AGE}} years old"
+      },
+      {
+        "key": "foodType",
+        "label": "Diet",
+        "value": "{{FOOD_TYPE}}"
+      },
+      {
+        "key": "spiceLevel",
+        "label": "Spice Level",
+        "value": "{{SPICE_LEVEL}}"
+      },
+      {
+        "key": "cuisines",
+        "label": "Favorite Cuisines",
+        "value": "{{CUISINES}}"
+      },
+      {
+        "key": "privacy",
+        "label": "Privacy Notice",
+        "value": "Your identity and preferences are privacy-first. Only sanitized data is shared when you present this card."
+      },
+      {
+        "key": "support",
+        "label": "Support",
+        "value": "Visit hushh.ai for help • Card ID: {{SERIAL_SUFFIX}}"
+      }
+    ]
+  },
+  "relevantDate": "{{ISSUE_DATE_ISO}}",
+  "barcodes": [
+    {
+      "message": "{{SHARE_URL}}",
+      "format": "PKBarcodeFormatQR",
+      "messageEncoding": "iso-8859-1"
+    }
+  ]
+}

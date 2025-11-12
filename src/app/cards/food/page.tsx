@@ -41,90 +41,69 @@ export default function FoodCardPage() {
     setErrorMessage('');
 
     try {
-      const response = await fetch('/api/passes/create', {
+      // Send food preferences to unified backend
+      const response = await fetch('/api/cards/update', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(preferences),
+        body: JSON.stringify({
+          section: 'food',
+          data: {
+            foodType: preferences.foodType,
+            spiceLevel: preferences.spice,
+            cuisines: preferences.cuisines || [],
+            dishes: preferences.dishes || [],
+            exclusions: preferences.exclusions || []
+          }
+        }),
       });
 
       if (!response.ok) {
-        // Handle error response
-        try {
-          const error = await response.json();
-          throw new Error(error.error || 'Failed to generate pass');
-        } catch {
-          throw new Error('Failed to generate pass');
-        }
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to save food preferences');
       }
 
-      // Check if the response is a .pkpass file (binary)
-      const contentType = response.headers.get('content-type');
-      if (contentType === 'application/vnd.apple.pkpass') {
-        // Handle binary .pkpass file download
-        const blob = await response.blob();
-        const filename = response.headers.get('content-disposition')?.match(/filename="(.+)"/)?.[1] || 'HushOne-TasteCard.pkpass';
-        
-        // Create download link
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
+      const result = await response.json();
 
-        // Analytics: pkpass_issued
+      // Analytics: food_data_saved
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'food_data_saved', {
+          event_category: 'unified_card_creation',
+          is_complete: result.data.isComplete
+        });
+      }
+
+      if (result.data.isComplete && result.data.hasPass) {
+        // Complete card available - show success with pass download
+        setGeneratedURL(result.data.shareUrl);
+        // Store UID for pass download
+        sessionStorage.setItem('hushh_uid', result.data.uid);
+
+        // Analytics: unified_card_generated
         if (typeof window !== 'undefined' && (window as any).gtag) {
-          (window as any).gtag('event', 'pkpass_issued', {
+          (window as any).gtag('event', 'unified_card_generated', {
             event_category: 'pass_generation'
           });
         }
 
-        // For iOS, show success
-        if (isIOS) {
-          // Analytics: wallet_open_attempt
-          if (typeof window !== 'undefined' && (window as any).gtag) {
-            (window as any).gtag('event', 'wallet_open_attempt', {
-              event_category: 'pass_generation'
-            });
-          }
-        }
-        
         setAppState(AppState.SUCCESS);
-        setGeneratedURL(''); // No URL needed for direct download
       } else {
-        // Handle JSON response (fallback/demo mode)
-        const data = await response.json();
-        setGeneratedURL(data.url);
-
-        // Analytics: pkpass_issued
-        if (typeof window !== 'undefined' && (window as any).gtag) {
-          (window as any).gtag('event', 'pkpass_issued', {
-            event_category: 'pass_generation'
-          });
-        }
-
-        // For iOS, redirect to the wallet URL
-        if (isIOS) {
-          // Analytics: wallet_open_attempt
-          if (typeof window !== 'undefined' && (window as any).gtag) {
-            (window as any).gtag('event', 'wallet_open_attempt', {
-              event_category: 'pass_generation'
-            });
-          }
-          
-          window.location.href = data.url;
-        } else {
+        // Partial data saved - redirect to personal or dashboard
+        if (result.data.isComplete) {
+          // Both sections complete but pass generation failed
+          setGeneratedURL(result.data.shareUrl);
+          sessionStorage.setItem('hushh_uid', result.data.uid);
           setAppState(AppState.SUCCESS);
+        } else {
+          // Need to complete personal section
+          window.location.href = '/cards/personal';
         }
       }
 
     } catch (error) {
-      console.error('Generation error:', error);
-      setErrorMessage(error instanceof Error ? error.message : 'Failed to generate pass');
+      console.error('Save error:', error);
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to save food preferences');
       setAppState(AppState.ERROR);
     }
   };
@@ -136,9 +115,45 @@ export default function FoodCardPage() {
   };
 
   const handleEmailLink = () => {
-    const subject = encodeURIComponent('Your Hushh Taste Card');
-    const body = encodeURIComponent(`Here's your Hushh Taste Card: ${generatedURL}`);
+    const subject = encodeURIComponent('Your Hushh Unified ID Card');
+    const body = encodeURIComponent(`Here's your Hushh unified ID card: ${generatedURL}`);
     window.open(`mailto:?subject=${subject}&body=${body}`);
+  };
+
+  const handleDownloadPass = async () => {
+    try {
+      const uid = sessionStorage.getItem('hushh_uid');
+      if (!uid) {
+        throw new Error('User ID not found');
+      }
+
+      const response = await fetch(`/api/cards/download/${uid}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to download pass');
+      }
+
+      // Download the pass file
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'hushh-id-card.pkpass';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+
+      // Analytics: pass_downloaded
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'unified_pass_downloaded', {
+          event_category: 'pass_generation'
+        });
+      }
+    } catch (error) {
+      console.error('Download error:', error);
+      alert('Failed to download pass. Please try again.');
+    }
   };
 
   const handleBackToDashboard = () => {
@@ -239,11 +254,11 @@ export default function FoodCardPage() {
             </div>
             
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold text-ink">Card Generated!</h2>
+              <h2 className="text-2xl font-bold text-ink">Unified Card Complete!</h2>
               <p className="text-muted">
                 {isIOS === false 
                   ? "Apple Wallet is iPhone-only. Email the link to yourself to open on your iPhone."
-                  : "Your taste card is ready."
+                  : "Your unified hushh ID card is ready with personal & food preferences."
                 }
               </p>
             </div>
@@ -251,13 +266,20 @@ export default function FoodCardPage() {
             <div className="space-y-3">
               {generatedURL && (
                 <div className="space-y-3">
+                  <button
+                    onClick={handleDownloadPass}
+                    className="btn-primary w-full"
+                  >
+                    📱 Add to Apple Wallet
+                  </button>
+
                   <a
                     href={generatedURL}
-                    className="btn-primary w-full"
+                    className="btn-secondary w-full"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Open Card
+                    🔗 View Public Profile
                   </a>
                   
                   <button
