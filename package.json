@@ -32,7 +32,8 @@
     "react-dom": "^18.0.0",
     "react-parallax-tilt": "^1.7.311",
     "tailwindcss": "^3.4.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "husky": "^9.1.7"

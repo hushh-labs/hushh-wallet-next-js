@@ -1,21 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { after } from 'next/server';
 import { ownerTokenManager, shareIdManager, recoveryKeyManager, generateUUID } from '@/lib/tokenization';
 import { getUser, createUser, updateUser, createPublicProfile } from '@/lib/firestore';
 import { HushhCardPayload } from '@/types';
 import { generateHushhIdPass } from '@/lib/hushhIdPassGenerator';
+import { z } from 'zod';
+
+// Route segment config
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const maxDuration = 60;
+
+// Validate request body
+const UpdateBody = z.object({
+  section: z.enum(['personal', 'food']),
+  data: z.record(z.string(), z.any())
+});
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { section, data } = body;
-
-    if (!section || !data) {
+    // Validate request body
+    let body;
+    try {
+      body = UpdateBody.parse(await request.json());
+    } catch {
       return NextResponse.json(
-        { error: 'Section and data are required' },
+        { error: 'Invalid request body. Section and data are required.' },
         { status: 400 }
       );
     }
+
+    const { section, data } = body;
 
     // Check for existing Owner Token
     const cookieStore = await cookies();
@@ -107,16 +123,48 @@ export async function POST(request: NextRequest) {
 
     // Check if both sections are complete for pass generation
     const isComplete = isDataComplete(existingUser);
-    let passBuffer = null;
+    let hasPass = false;
 
+    // If complete but no pass yet, schedule background pass generation
     if (isComplete) {
-      try {
-        // Generate wallet pass
-        passBuffer = await generateHushhIdPass(existingUser);
-      } catch (error) {
-        console.warn('Pass generation failed:', error);
-        // Continue without pass generation
-      }
+      // Check if pass already exists (you may want to store this in the user record)
+      // For now, we'll assume no pass exists and generate it in background
+      
+      const jobId = crypto.randomUUID();
+      console.log(`Scheduling pass generation job ${jobId} for user ${uid}`);
+      
+      // Background job - runs after response is sent
+      after(async () => {
+        try {
+          console.log(`Starting pass generation job ${jobId} for user ${uid}`);
+          const passBuffer = await generateHushhIdPass(existingUser);
+          
+          // Store pass generation completion (you might want to add this to your data model)
+          await updateUser(uid, {
+            ...existingUser,
+            passGeneration: {
+              status: 'completed',
+              completedAt: new Date(),
+              jobId
+            }
+          });
+          
+          console.log(`Pass generation completed for user ${uid}, job ${jobId}`);
+        } catch (error) {
+          console.error(`Pass generation failed for user ${uid}, job ${jobId}:`, error);
+          
+          // Store failure status
+          await updateUser(uid, {
+            ...existingUser,
+            passGeneration: {
+              status: 'failed',
+              failedAt: new Date(),
+              error: error instanceof Error ? error.message : 'Unknown error',
+              jobId
+            }
+          });
+        }
+      });
     }
 
     const response = NextResponse.json({
@@ -129,11 +177,14 @@ export async function POST(request: NextRequest) {
         shareId: existingUser.card.activeShareId,
         shareUrl: shareIdManager.createShareUrl(existingUser.card.activeShareId),
         passSerial: existingUser.card.passSerial,
-        hasPass: !!passBuffer,
+        hasPass,
+        passGenerating: isComplete && !hasPass, // Indicates background job is running
         ...(isFirstTime && { 
           recoveryPhrase: recoveryKeyManager.generateRecoveryPhrase() // Only show on first creation
         })
       }
+    }, { 
+      status: isComplete && !hasPass ? 202 : 200 // 202 Accepted when background work is happening
     });
 
     // Set HttpOnly cookie for new users
@@ -146,18 +197,29 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Set pass download headers if available
-    if (passBuffer && isComplete) {
-      response.headers.set('X-Pass-Available', 'true');
-      response.headers.set('X-Pass-Download-Url', `/api/cards/download/${uid}`);
+    // Set pass headers
+    if (isComplete) {
+      if (hasPass) {
+        response.headers.set('X-Pass-Available', 'true');
+        response.headers.set('X-Pass-Download-Url', `/api/cards/download/${uid}`);
+      } else {
+        response.headers.set('X-Pass-Generating', 'true');
+        response.headers.set('X-Pass-Status-Url', `/api/cards/status/${uid}`);
+      }
     }
 
     return response;
 
   } catch (error) {
     console.error('Card update error:', error);
+    
+    // Don't expose internal error details in production
+    const errorMessage = process.env.NODE_ENV === 'development' 
+      ? (error instanceof Error ? error.message : 'Unknown error')
+      : 'Internal server error';
+    
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

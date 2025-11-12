@@ -14,28 +14,47 @@ interface BrandPassData {
 }
 
 export async function generateBrandAppleWalletPass(passData: BrandPassData): Promise<Buffer> {
+  const startTime = Date.now();
+  console.log('🚀 [BrandPass] Starting brand pass generation process');
+  console.log('📊 [BrandPass] Input data:', JSON.stringify(passData, null, 2));
+  
   // Try to use the existing pass generation infrastructure
   try {
-    console.log('Attempting to generate Brand Preference Card pass...');
+    console.log('🔨 [BrandPass] Attempting to generate Brand Preference Card pass...');
     
     // Use the custom brand template
-    return await generateBrandPassWithCustomTemplate(passData);
+    const result = await generateBrandPassWithCustomTemplate(passData);
+    
+    const totalTime = Date.now() - startTime;
+    console.log('✅ [BrandPass] Brand pass generated successfully in', totalTime, 'ms');
+    console.log('📦 [BrandPass] Buffer size:', result.length, 'bytes');
+    
+    return result;
     
   } catch (error) {
-    console.log('Could not use existing pass generator, trying fallback approach:', error);
+    const errorTime = Date.now() - startTime;
+    console.error('💥 [BrandPass] Error during brand pass generation after', errorTime, 'ms:', error);
+    console.error('💥 [BrandPass] Error details:', error instanceof Error ? error.message : String(error));
     throw new Error('Brand pass generation not yet fully implemented');
   }
 }
 
 async function generateBrandPassWithCustomTemplate(passData: BrandPassData): Promise<Buffer> {
+  console.log('🎨 [BrandPass] Creating brand pass with custom template...');
+  console.log('🏷️ [BrandPass] Generating serial number...');
+  
   // Create the pass JSON structure for brand preferences
+  const serialNumber = generateSerialNumber();
+  console.log('🆔 [BrandPass] Generated serial number:', serialNumber);
+  
+  console.log('📋 [BrandPass] Building pass JSON structure...');
   const passJson = {
     formatVersion: 1,
     passTypeIdentifier: "pass.com.hushh.brand",
     teamIdentifier: "WVDK9JW99C",
     organizationName: "HushOne, Inc.",
     description: "Hushh Brand Preference Card",
-    serialNumber: generateSerialNumber(),
+    serialNumber: serialNumber,
     logoText: "Hushh",
     foregroundColor: "rgb(255, 250, 245)",
     backgroundColor: "rgb(35, 42, 49)", // Slightly lighter for brand card
@@ -122,6 +141,7 @@ async function generateBrandPassWithCustomTemplate(passData: BrandPassData): Pro
     }
   };
 
+  console.log('📦 [BrandPass] Assembling demo pass content...');
   // For now, return a JSON representation as we did with other cards
   // In production, this would use proper certificate signing
   const demoPassContent = {
@@ -133,9 +153,13 @@ async function generateBrandPassWithCustomTemplate(passData: BrandPassData): Pro
     cardType: "BRAND"
   };
 
+  console.log('🔄 [BrandPass] Converting to buffer...');
   // Convert to buffer for consistency with other generators
   const jsonString = JSON.stringify(demoPassContent, null, 2);
-  return Buffer.from(jsonString, 'utf-8');
+  const buffer = Buffer.from(jsonString, 'utf-8');
+  console.log('✅ [BrandPass] Demo pass content created, buffer size:', buffer.length, 'bytes');
+  
+  return buffer;
 }
 
 function generateSerialNumber(): string {

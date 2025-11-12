@@ -8,76 +8,10 @@
   "foregroundColor": "rgb(255, 248, 235)",
   "backgroundColor": "rgb(117, 65, 10)",
   "labelColor": "rgb(216, 178, 111)",
-  "webService": {
-    "webServiceURL": "https://hushh.ai/wallet",
-    "authenticationToken": "vxwxd7J8AlNNFPS8k0a0FfUFtq0ewzFdc"
-  },
   "generic": {
-    "primaryFields": [
-      {
-        "key": "preferredName",
-        "label": "Name",
-        "value": "{{PREFERRED_NAME}}"
-      }
-    ],
-    "secondaryFields": [
-      {
-        "key": "age",
-        "label": "Age",
-        "value": "{{AGE}} years old"
-      }
-    ],
-    "auxiliaryFields": [
-      {
-        "key": "gender",
-        "label": "Gender",
-        "value": "{{GENDER}}"
-      },
-      {
-        "key": "issued",
-        "label": "Issued",
-        "value": "{{ISSUE_DATE}}"
-      }
-    ],
-    "backFields": [
-      {
-        "key": "fullName",
-        "label": "Legal Name",
-        "value": "{{LEGAL_NAME}}"
-      },
-      {
-        "key": "contact",
-        "label": "Phone",
-        "value": "{{MASKED_PHONE}}"
-      },
-      {
-        "key": "birthDate",
-        "label": "Date of Birth",
-        "value": "{{DOB_FORMATTED}}"
-      },
-      {
-        "key": "cardInfo",
-        "label": "About This Card",
-        "value": "Your personal identity card for convenient, privacy-focused identification. Show this card when personal details are needed."
-      },
-      {
-        "key": "privacy",
-        "label": "Privacy Notice",
-        "value": "Your personal information is stored securely and only essential details are shown on the card face. Full details remain private on the back."
-      },
-      {
-        "key": "support",
-        "label": "Support",
-        "value": "Visit hushh.ai for help • Card ID: {{SERIAL_SUFFIX}}"
-      }
-    ]
-  },
-  "relevantDate": "{{ISSUE_DATE_ISO}}",
-  "barcodes": [
-    {
-      "message": "{{SERIAL_NUMBER}}",
-      "format": "PKBarcodeFormatQR",
-      "messageEncoding": "iso-8859-1"
-    }
-  ]
+    "primaryFields": [],
+    "secondaryFields": [],
+    "auxiliaryFields": [],
+    "backFields": []
+  }
 }

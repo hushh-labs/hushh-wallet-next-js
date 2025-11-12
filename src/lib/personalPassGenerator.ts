@@ -14,53 +14,117 @@ interface PersonalPassData {
 }
 
 export async function generatePersonalAppleWalletPass(passData: PersonalPassData): Promise<Buffer> {
+  const startTime = Date.now();
+  console.log('🚀 [PersonalPass] Starting pass generation process');
+  console.log('📊 [PersonalPass] Input data:', JSON.stringify(passData, null, 2));
+  
   try {
     const projectRoot = process.cwd();
+    console.log('📁 [PersonalPass] Project root:', projectRoot);
+
+    // Check certificate file existence
+    const signerCertPath = path.join(projectRoot, 'signerCert.pem');
+    const signerKeyPath = path.join(projectRoot, 'signerKey.pem');
+    const wwdrPath = path.join(projectRoot, 'wwdr.pem');
+
+    console.log('🔍 [PersonalPass] Checking certificate files:');
+    console.log('  - signerCert.pem:', fs.existsSync(signerCertPath) ? '✅ EXISTS' : '❌ MISSING');
+    console.log('  - signerKey.pem:', fs.existsSync(signerKeyPath) ? '✅ EXISTS' : '❌ MISSING');
+    console.log('  - wwdr.pem:', fs.existsSync(wwdrPath) ? '✅ EXISTS' : '❌ MISSING');
+
+    // Read the properly extracted PEM certificates
+    console.log('📖 [PersonalPass] Reading certificate files...');
+    const signerCert = fs.readFileSync(signerCertPath, 'utf8');
+    console.log('✅ [PersonalPass] signerCert loaded, length:', signerCert.length);
     
-    // Read the properly extracted PEM certificates - same as working food card
-    const signerCert = fs.readFileSync(path.join(projectRoot, 'signerCert.pem'), 'utf8');
-    const signerKey = fs.readFileSync(path.join(projectRoot, 'signerKey.pem'), 'utf8');
-    const wwdr = fs.readFileSync(path.join(projectRoot, 'wwdr.pem'), 'utf8');
+    const signerKey = fs.readFileSync(signerKeyPath, 'utf8');
+    console.log('✅ [PersonalPass] signerKey loaded, length:', signerKey.length);
+    
+    const wwdr = fs.readFileSync(wwdrPath, 'utf8');
+    console.log('✅ [PersonalPass] wwdr loaded, length:', wwdr.length);
 
-    console.log('Certificates loaded successfully for Personal Pass');
+    console.log('🎫 [PersonalPass] Certificates loaded successfully');
 
+    const serialNumber = `HUSHH-PERSONAL-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    console.log('🆔 [PersonalPass] Generated serial number:', serialNumber);
+
+    // Check pass model directory
+    const modelPath = path.join(projectRoot, 'passModels', 'personal.pass');
+    console.log('📁 [PersonalPass] Pass model path:', modelPath);
+    console.log('📁 [PersonalPass] Pass model exists:', fs.existsSync(modelPath) ? '✅ YES' : '❌ NO');
+    
+    if (fs.existsSync(modelPath)) {
+      const modelFiles = fs.readdirSync(modelPath);
+      console.log('📋 [PersonalPass] Pass model files:', modelFiles);
+    }
+
+    console.log('🔨 [PersonalPass] Creating PKPass instance...');
+    
     // Use the updated personal pass model with golden design
-    const pass = await PKPass.from({
-      model: path.join(projectRoot, 'passModels', 'personal.pass'),
+    const passConfig = {
+      model: modelPath,
       certificates: {
         wwdr,
         signerCert,
         signerKey,
         signerKeyPassphrase: undefined // Use undefined for unencrypted keys
       }
-    }, {
+    };
+    
+    const passOverrides = {
       // Override pass.json data with personal information
-      serialNumber: `HUSHH-PERSONAL-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      serialNumber: serialNumber,
       description: `${passData.preferredName}'s Personal Data Card`,
       // Apply premium golden color scheme
       backgroundColor: 'rgb(117, 65, 10)', // Deep bronze
       foregroundColor: 'rgb(255, 248, 235)', // Warm cream text
       labelColor: 'rgb(216, 178, 111)', // Golden labels
       logoText: 'Hushh Personal'
-    });
+    };
+    
+    console.log('⚙️ [PersonalPass] Pass config:', JSON.stringify(passConfig, null, 2));
+    console.log('🎨 [PersonalPass] Pass overrides:', JSON.stringify(passOverrides, null, 2));
+    
+    const pass = await PKPass.from(passConfig, passOverrides);
+    console.log('✅ [PersonalPass] PKPass instance created successfully');
 
-    const serialNumber = `HUSHH-PERSONAL-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    // Set relevant date after pass creation
+    console.log('📅 [PersonalPass] Setting relevant date:', passData.issueDate);
+    pass.setRelevantDate(new Date(passData.issueDate));
+    console.log('✅ [PersonalPass] Relevant date set successfully');
 
-    // Add personal fields using the proper passkit-generator API
-    pass.primaryFields.push({
+    console.log('🏷️ [PersonalPass] Adding pass fields...');
+    
+    // Add fields using the proper PKPass methods
+    const primaryField = {
       key: 'preferredName',
       label: 'Name',
       value: passData.preferredName
-    });
+    };
+    console.log('📝 [PersonalPass] Adding primary field:', primaryField);
+    pass.primaryFields.push(primaryField);
 
-    pass.secondaryFields.push({
+    const secondaryField = {
       key: 'age',
       label: 'Age',
       value: `${passData.age} years old`
-    });
+    };
+    console.log('📝 [PersonalPass] Adding secondary field:', secondaryField);
+    pass.secondaryFields.push(secondaryField);
 
     // Add auxiliary fields
-    pass.auxiliaryFields.push({
+    console.log('📝 [PersonalPass] Adding auxiliary fields...');
+    if (passData.gender && passData.gender !== 'prefer_not_to_say') {
+      const genderField = {
+        key: "gender",
+        label: "Gender",
+        value: passData.gender.charAt(0).toUpperCase() + passData.gender.slice(1).replace('_', ' ')
+      };
+      console.log('📝 [PersonalPass] Adding gender field:', genderField);
+      pass.auxiliaryFields.push(genderField);
+    }
+
+    const issuedField = {
       key: 'issued',
       label: 'Issued',
       value: new Date(passData.issueDate).toLocaleDateString('en-US', { 
@@ -68,10 +132,13 @@ export async function generatePersonalAppleWalletPass(passData: PersonalPassData
         day: 'numeric', 
         year: 'numeric' 
       })
-    });
+    };
+    console.log('📝 [PersonalPass] Adding issued field:', issuedField);
+    pass.auxiliaryFields.push(issuedField);
 
     // Add back fields with full information
-    pass.backFields.push(
+    console.log('📝 [PersonalPass] Adding back fields...');
+    const backFields = [
       {
         key: 'fullName',
         label: 'Legal Name',
@@ -106,18 +173,38 @@ export async function generatePersonalAppleWalletPass(passData: PersonalPassData
         label: 'Support',
         value: `Visit hushh.ai for help • Card ID: ${serialNumber.slice(-8)}`
       }
-    );
+    ];
+    
+    console.log('📝 [PersonalPass] Back fields to add:', backFields.length);
+    pass.backFields.push(...backFields);
+    console.log('✅ [PersonalPass] All back fields added successfully');
 
-    console.log('Personal PKPass created successfully using PKPass.from()');
+    // Add barcode for the pass (use simplified API)
+    console.log('📱 [PersonalPass] Setting QR code barcode for serial:', serialNumber);
+    pass.setBarcodes(serialNumber);
+    console.log('✅ [PersonalPass] Barcode set successfully');
+
+    console.log('🎯 [PersonalPass] PKPass configured successfully');
+    console.log('🔄 [PersonalPass] Generating pass buffer...');
 
     // Generate the pass buffer
     const passBuffer = pass.getAsBuffer();
-    console.log('Personal pass buffer generated, size:', passBuffer.length);
+    console.log('✅ [PersonalPass] Pass buffer generated successfully');
+    console.log('� [PersonalPass] Buffer size:', passBuffer.length, 'bytes');
+    console.log('⏱️ [PersonalPass] Total generation time:', Date.now() - startTime, 'ms');
     
     return passBuffer;
     
   } catch (error) {
-    console.error('Error generating personal Apple Wallet pass:', error);
+    const errorTime = Date.now() - startTime;
+    console.error('💥 [PersonalPass] Error during pass generation:');
+    console.error('💥 [PersonalPass] Error message:', error instanceof Error ? error.message : String(error));
+    console.error('💥 [PersonalPass] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+    console.error('💥 [PersonalPass] Error type:', error?.constructor?.name || typeof error);
+    console.error('💥 [PersonalPass] Failed after:', errorTime, 'ms');
+    
+    // Additional error context would be logged here if available
+    
     throw error;
   }
 }

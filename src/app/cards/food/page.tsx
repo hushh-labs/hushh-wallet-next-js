@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { PreferenceSelector } from '@/components/PreferenceSelector';
 import { TastePayload } from '@/types';
+import { postJSON, pollUntil, fetchJSON } from '@/lib/fetchHelper';
 
 enum AppState {
   HERO = 'hero',
@@ -42,29 +43,25 @@ export default function FoodCardPage() {
 
     try {
       // Send food preferences to unified backend
-      const response = await fetch('/api/cards/update', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          section: 'food',
-          data: {
-            foodType: preferences.foodType,
-            spiceLevel: preferences.spice,
-            cuisines: preferences.cuisines || [],
-            dishes: preferences.dishes || [],
-            exclusions: preferences.exclusions || []
-          }
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to save food preferences');
-      }
-
-      const result = await response.json();
+      const result = await postJSON<{
+        success: boolean;
+        data: {
+          uid: string;
+          isComplete: boolean;
+          hasPass: boolean;
+          shareUrl: string;
+          passGenerating?: boolean;
+        };
+      }>('/api/cards/update', {
+        section: 'food',
+        data: {
+          foodType: preferences.foodType,
+          spiceLevel: preferences.spice,
+          cuisines: preferences.cuisines || [],
+          dishes: preferences.dishes || [],
+          exclusions: preferences.exclusions || []
+        }
+      }, { timeout: 15000 }); // 15 second timeout
 
       // Analytics: food_data_saved
       if (typeof window !== 'undefined' && (window as any).gtag) {
@@ -74,31 +71,54 @@ export default function FoodCardPage() {
         });
       }
 
-      if (result.data.isComplete && result.data.hasPass) {
-        // Complete card available - show success with pass download
-        setGeneratedURL(result.data.shareUrl);
-        // Store UID for pass download
-        sessionStorage.setItem('hushh_uid', result.data.uid);
+      // Store UID for later operations
+      sessionStorage.setItem('hushh_uid', result.data.uid);
+      setGeneratedURL(result.data.shareUrl);
 
-        // Analytics: unified_card_generated
-        if (typeof window !== 'undefined' && (window as any).gtag) {
-          (window as any).gtag('event', 'unified_card_generated', {
-            event_category: 'pass_generation'
-          });
-        }
-
-        setAppState(AppState.SUCCESS);
-      } else {
-        // Partial data saved - redirect to personal or dashboard
-        if (result.data.isComplete) {
-          // Both sections complete but pass generation failed
-          setGeneratedURL(result.data.shareUrl);
-          sessionStorage.setItem('hushh_uid', result.data.uid);
+      if (result.data.isComplete) {
+        if (result.data.hasPass) {
+          // Pass is ready immediately
+          // Analytics: unified_card_generated
+          if (typeof window !== 'undefined' && (window as any).gtag) {
+            (window as any).gtag('event', 'unified_card_generated', {
+              event_category: 'pass_generation'
+            });
+          }
           setAppState(AppState.SUCCESS);
+        } else if (result.data.passGenerating) {
+          // Pass is being generated in background - poll for completion
+          try {
+            await pollUntil(
+              () => fetchJSON<any>(`/api/cards/status/${result.data.uid}`),
+              (status) => status.hasPass || status.passGeneration?.status === 'failed',
+              {
+                interval: 3000,
+                maxAttempts: 20, // 1 minute max
+                onProgress: (status, attempt) => {
+                  console.log(`Pass generation check ${attempt}:`, status.passGeneration?.status);
+                }
+              }
+            );
+            
+            // Analytics: unified_card_generated (after polling completes)
+            if (typeof window !== 'undefined' && (window as any).gtag) {
+              (window as any).gtag('event', 'unified_card_generated', {
+                event_category: 'pass_generation'
+              });
+            }
+            setAppState(AppState.SUCCESS);
+          } catch (pollError) {
+            console.warn('Pass generation polling failed:', pollError);
+            // Still show success since data was saved
+            setAppState(AppState.SUCCESS);
+          }
         } else {
-          // Need to complete personal section
-          window.location.href = '/cards/personal';
+          // Both sections complete but no pass generation scheduled
+          setAppState(AppState.SUCCESS);
         }
+      } else {
+        // Need to complete personal section
+        window.location.href = '/cards/personal';
       }
 
     } catch (error) {
@@ -127,7 +147,9 @@ export default function FoodCardPage() {
         throw new Error('User ID not found');
       }
 
-      const response = await fetch(`/api/cards/download/${uid}`);
+      const response = await fetch(`/api/cards/download/${uid}`, {
+        signal: AbortSignal.timeout(15000) // 15 second timeout
+      });
       
       if (!response.ok) {
         throw new Error('Failed to download pass');
