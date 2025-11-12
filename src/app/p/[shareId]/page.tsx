@@ -126,21 +126,49 @@ END:VCARD`;
 
   return (
     <div className="min-h-screen bg-[#14191E]">
-      {/* Header */}
-      <div className="bg-gradient-to-b from-[#1A1F25] to-[#14191E] pt-8 pb-6">
-        <div className="max-w-md mx-auto px-6">
+      {/* Enhanced Header */}
+      <div className="relative bg-gradient-to-br from-[#1A1F25] via-[#14191E] to-[#0F1419] pt-12 pb-8 overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-[#FFD700]/10 to-transparent"></div>
+        </div>
+        
+        <div className="max-w-md mx-auto px-6 relative">
           <div className="text-center">
-            <div className="w-20 h-20 bg-[#FFD700] rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl font-bold text-[#14191E]">
-                {personal.preferredName.charAt(0).toUpperCase()}
-              </span>
+            {/* Brand Header */}
+            <div className="mb-6">
+              <div className="inline-flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-br from-[#FFD700] to-[#FFA500] rounded-lg flex items-center justify-center">
+                  <span className="text-[#14191E] font-bold text-sm">H</span>
+                </div>
+                <span className="text-[#FFD700] font-bold text-sm tracking-wide uppercase">Hushh Signature Card</span>
+              </div>
             </div>
-            <h1 className="text-2xl font-bold text-[#F8F5EB] mb-2">
+
+            {/* Profile Avatar */}
+            <div className="relative mb-6">
+              <div className="w-24 h-24 bg-gradient-to-br from-[#FFD700] to-[#FFA500] rounded-full flex items-center justify-center mx-auto shadow-2xl">
+                <span className="text-3xl font-bold text-[#14191E]">
+                  {personal.preferredName.charAt(0).toUpperCase()}
+                </span>
+              </div>
+              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 border-4 border-[#14191E] rounded-full flex items-center justify-center">
+                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+            </div>
+
+            {/* Name and Status */}
+            <h1 className="text-3xl font-bold text-[#F8F5EB] mb-2 tracking-tight">
               {personal.preferredName}
             </h1>
-            <p className="text-[#B8860B] text-sm">
-              {formatLastUpdated(data.lastUpdated)}
-            </p>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#2A3038]/50 rounded-full border border-[#FFD700]/20">
+              <div className="w-2 h-2 bg-[#FFD700] rounded-full animate-pulse"></div>
+              <span className="text-[#FFD700] text-sm font-medium">
+                {formatLastUpdated(data.lastUpdated)}
+              </span>
+            </div>
           </div>
         </div>
       </div>
