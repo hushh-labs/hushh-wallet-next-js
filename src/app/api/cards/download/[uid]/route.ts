@@ -6,9 +6,10 @@ import { generateHushhIdPass } from '@/lib/hushhIdPassGenerator';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { uid: string } }
+  context: { params: Promise<{ uid: string }> }
 ) {
   try {
+    const params = await context.params;
     const { uid } = params;
 
     // Check for Owner Token to verify access

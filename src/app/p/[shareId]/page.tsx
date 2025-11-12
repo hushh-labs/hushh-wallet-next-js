@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { PublicProfile } from '@/types';
 
 interface PublicViewerProps {
-  params: { shareId: string };
+  params: Promise<{ shareId: string }>;
 }
 
 interface ProfileData {
@@ -17,14 +17,20 @@ export default function PublicViewer({ params }: PublicViewerProps) {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<ProfileData | null>(null);
   const [error, setError] = useState<string>('');
+  const [shareId, setShareId] = useState<string>('');
 
   useEffect(() => {
     async function loadProfile() {
       try {
         setLoading(true);
         setError('');
+
+        // Await params first
+        const resolvedParams = await params;
+        const currentShareId = resolvedParams.shareId;
+        setShareId(currentShareId);
         
-        const response = await fetch(`/api/p/${params.shareId}`);
+        const response = await fetch(`/api/p/${currentShareId}`);
         
         if (!response.ok) {
           const errorData = await response.json();
@@ -42,7 +48,7 @@ export default function PublicViewer({ params }: PublicViewerProps) {
     }
 
     loadProfile();
-  }, [params.shareId]);
+  }, [params]);
 
   const handleDownloadContact = () => {
     if (!data) return;

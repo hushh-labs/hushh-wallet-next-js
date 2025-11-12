@@ -4,9 +4,10 @@ import { shareIdManager } from '@/lib/tokenization';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { shareId: string } }
+  context: { params: Promise<{ shareId: string }> }
 ) {
   try {
+    const params = await context.params;
     const { shareId } = params;
 
     // Validate ShareId format
