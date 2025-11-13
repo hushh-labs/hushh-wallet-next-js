@@ -3,13 +3,10 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  
+  /* Primary font stack for entire app */
+  --font-sans: "Vend Sans", "Saira", system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -19,8 +16,69 @@
   }
 }
 
+/* Make sure entire app uses this */
+html,
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+/* Form Input Styling - Make sure text is visible in black */
+input[type="text"],
+input[type="email"], 
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+textarea,
+select {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+}
+
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="password"]::placeholder,
+input[type="number"]::placeholder,
+input[type="tel"]::placeholder,
+input[type="url"]::placeholder,
+input[type="search"]::placeholder,
+textarea::placeholder {
+  color: #6b7280 !important;
+  opacity: 0.7;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+select:focus {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border-color: #3b82f6 !important;
+  outline: none !important;
+}
+
+/* Helpful utility classes */
+
+.vend-sans {
+  font-family: "Vend Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.saira {
+  font-family: "Saira", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
 }
