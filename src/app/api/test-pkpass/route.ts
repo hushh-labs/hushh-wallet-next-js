@@ -110,8 +110,8 @@ export async function GET(request: NextRequest) {
         }
       };
 
-      // Create temporary clean pass directory
-      const cleanPassDir = path.join(projectRoot, 'temp-clean.pass');
+      // Create temporary clean pass directory in writable /tmp
+      const cleanPassDir = path.join('/tmp', `temp-clean-${Date.now()}.pass`);
       if (!fs.existsSync(cleanPassDir)) {
         fs.mkdirSync(cleanPassDir, { recursive: true });
       }
@@ -288,8 +288,8 @@ export async function POST(request: NextRequest) {
       }
     };
 
-    // Create temporary custom pass directory
-    const customPassDir = path.join(projectRoot, 'temp-custom.pass');
+    // Create temporary custom pass directory in writable /tmp
+    const customPassDir = path.join('/tmp', `temp-custom-${Date.now()}.pass`);
     if (!fs.existsSync(customPassDir)) {
       fs.mkdirSync(customPassDir, { recursive: true });
     }
@@ -338,10 +338,17 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('❌ PKPass generation with custom data failed:', error);
     
-    // Cleanup on error
-    const tempDir = path.join(process.cwd(), 'temp-custom.pass');
-    if (fs.existsSync(tempDir)) {
-      fs.rmSync(tempDir, { recursive: true, force: true });
+    // Cleanup on error - search for any temp custom directories in /tmp
+    try {
+      const tempDirs = fs.readdirSync('/tmp').filter((file: string) => file.startsWith('temp-custom-') && file.endsWith('.pass'));
+      tempDirs.forEach((dir: string) => {
+        const fullPath = path.join('/tmp', dir);
+        if (fs.existsSync(fullPath)) {
+          fs.rmSync(fullPath, { recursive: true, force: true });
+        }
+      });
+    } catch (cleanupError) {
+      console.error('Cleanup error:', cleanupError);
     }
     
     return NextResponse.json({
