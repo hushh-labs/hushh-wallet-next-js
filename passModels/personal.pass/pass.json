@@ -2,6 +2,7 @@
   "formatVersion": 1,
   "passTypeIdentifier": "pass.com.hushh.wallet",
   "teamIdentifier": "WVDK9JW99C",
+  "serialNumber": "{{SERIAL_NUMBER}}",
   "organizationName": "HushOne, Inc.",
   "description": "Hushh Personal Data Card",
   "logoText": "HUSHH PERSONAL",

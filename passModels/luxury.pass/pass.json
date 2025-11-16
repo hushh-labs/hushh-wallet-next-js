@@ -4,6 +4,7 @@
   "organizationName": "HushOne, Inc.",
   "passTypeIdentifier": "pass.com.hushh.wallet",
   "teamIdentifier": "WVDK9JW99C",
+  "serialNumber": "{{SERIAL_NUMBER}}",
   "sharingProhibited": false,
   "backgroundColor": "rgb(20,25,30)",
   "foregroundColor": "rgb(255,250,245)",

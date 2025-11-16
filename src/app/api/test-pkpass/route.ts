@@ -172,10 +172,15 @@ export async function POST(request: NextRequest) {
     const signerKey = fs.readFileSync(path.join(projectRoot, 'signerKey.pem'), 'utf8');
     const wwdr = fs.readFileSync(path.join(projectRoot, 'wwdr.pem'), 'utf8');
     
-    // Load pass model
+    // Load and customize pass model
     const passModelPath = path.join(projectRoot, 'passModels', 'personal.pass');
     
-    // Create PKPass
+    // Generate unique serial number
+    const serialNumber = `HUSHH-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const issueDate = new Date().toLocaleDateString();
+    const issueDateISO = new Date().toISOString();
+    
+    // Create PKPass with only valid property overrides
     const pass = await PKPass.from({
       model: passModelPath,
       certificates: {
@@ -184,43 +189,16 @@ export async function POST(request: NextRequest) {
         signerKey,
         signerKeyPassphrase: undefined
       }
+    }, {
+      // Only override valid pass properties
+      serialNumber: serialNumber,
+      description: `Hushh Personal Card - ${name}`
     });
-    
-    // Customize with provided data
-    pass.primaryFields.push({
-      key: 'name',
-      label: 'Name',
-      value: name
-    });
-    
-    if (email) {
-      pass.secondaryFields.push({
-        key: 'email',
-        label: 'Email',
-        value: email
-      });
-    }
-    
-    if (preferences.length > 0) {
-      pass.auxiliaryFields.push({
-        key: 'preferences',
-        label: 'Preferences',
-        value: preferences.slice(0, 3).join(', ')
-      });
-    }
-    
-    pass.auxiliaryFields.push({
-      key: 'generated',
-      label: 'Generated',
-      value: new Date().toLocaleDateString()
-    });
-    
-    // Set unique serial number
-    const serialNumber = `HUSHH-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    pass.props['serialNumber'] = serialNumber;
     
     // Generate buffer
     const buffer = pass.getAsBuffer();
+    
+    console.log('✅ PKPass with custom data generated successfully');
     
     // Return the pass as download
     return new NextResponse(buffer as any, {
