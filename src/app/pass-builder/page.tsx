@@ -223,14 +223,22 @@ const PassBuilder = () => {
           { key: 'issued', label: 'Issued', value: new Date().toLocaleDateString() },
           { key: 'expires', label: 'Expires', value: '2025-12-31' }
         ]);
+        setHeaderFields([
+          { key: 'department', label: 'Department', value: 'Engineering' },
+          { key: 'level', label: 'Level', value: '5' }
+        ]);
         setBackFields([
           { key: 'info', label: 'Information', value: 'This is your personal identification card for secure access and verification.' },
-          { key: 'support', label: 'Support', value: 'Contact support@hushh.ai for assistance' }
+          { key: 'support', label: 'Support', value: 'Contact support@hushh.ai for assistance' },
+          { key: 'website', label: 'Website', value: 'https://hushh.ai/profile/john-doe' },
+          { key: 'emergency', label: 'Emergency Contact', value: '+1-800-HUSHH-HELP (24/7)' }
         ]);
-        setBarcode({ message: 'HU123456789', format: 'PKBarcodeFormatQR', messageEncoding: 'iso-8859-1' });
+        setBarcode({ message: 'https://hushh.ai/verify/HU123456789', format: 'PKBarcodeFormatQR', messageEncoding: 'iso-8859-1' });
         setHasBarcode(true);
-        setHasLocation(false);
-        setLocations([]);
+        setHasLocation(true);
+        setLocations([{ latitude: 37.7749, longitude: -122.4194, relevantText: 'Welcome to HushOne headquarters!' }]);
+        setRelevantDate(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16));
+        setExpirationDate(new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16));
         break;
 
       case 2: // Airline Boarding Pass
@@ -253,17 +261,29 @@ const PassBuilder = () => {
         ]);
         setAuxiliaryFields([
           { key: 'boarding', label: 'Boarding', value: '2:45 PM' },
-          { key: 'departure', label: 'Departure', value: '3:15 PM' }
+          { key: 'departure', label: 'Departure', value: '3:15 PM' },
+          { key: 'class', label: 'Class', value: 'Business' }
+        ]);
+        setHeaderFields([
+          { key: 'passenger', label: 'Passenger', value: 'JOHN/DOEJOHN MR' },
+          { key: 'status', label: 'Status', value: 'Confirmed' }
         ]);
         setBackFields([
           { key: 'confirmation', label: 'Confirmation', value: 'ABC123DEF' },
           { key: 'baggage', label: 'Baggage', value: 'Checked: 1 bag (23kg)' },
-          { key: 'meal', label: 'Meal', value: 'Vegetarian meal pre-selected' }
+          { key: 'meal', label: 'Meal', value: 'Vegetarian meal pre-selected' },
+          { key: 'checkin', label: 'Online Check-in', value: 'https://skyline.com/checkin/ABC123DEF' },
+          { key: 'frequent', label: 'Frequent Flyer', value: 'SKY Gold Member #987654321' },
+          { key: 'terminal', label: 'Terminal Info', value: 'Departure: Terminal 4\nArrival: Terminal 1' }
         ]);
-        setBarcode({ message: 'SK789NYCLAX20241215ABC123', format: 'PKBarcodeFormatPDF417', altText: 'Boarding Pass SK789' });
+        setBarcode({ message: 'https://skyline.com/flight/SK789/ABC123DEF', format: 'PKBarcodeFormatPDF417', altText: 'Boarding Pass SK789' });
         setHasBarcode(true);
         setHasLocation(true);
-        setLocations([{ latitude: 40.6413, longitude: -73.7781, relevantText: 'Flight SK789 boarding at Gate B12' }]);
+        setLocations([
+          { latitude: 40.6413, longitude: -73.7781, relevantText: 'Flight SK789 boarding at Gate B12' },
+          { latitude: 33.9425, longitude: -118.4081, relevantText: 'Welcome to Los Angeles - LAX Terminal 1' }
+        ]);
+        setRelevantDate(new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16));
         break;
 
       case 3: // Event Ticket
@@ -279,21 +299,36 @@ const PassBuilder = () => {
         ]);
         setSecondaryFields([
           { key: 'attendee', label: 'Attendee', value: 'John Developer' },
-          { key: 'ticket', label: 'Ticket', value: 'VIP Pass' }
+          { key: 'ticket', label: 'Ticket', value: 'VIP Pass' },
+          { key: 'section', label: 'Section', value: 'Front Row' }
         ]);
         setAuxiliaryFields([
           { key: 'date', label: 'Date', value: 'Dec 20-22, 2024' },
-          { key: 'venue', label: 'Venue', value: 'Convention Center' }
+          { key: 'venue', label: 'Venue', value: 'Convention Center' },
+          { key: 'seat', label: 'Seat', value: 'A12' }
+        ]);
+        setHeaderFields([
+          { key: 'tier', label: 'Tier', value: 'VIP Access' },
+          { key: 'badge_id', label: 'Badge ID', value: 'TC24-VIP-001' }
         ]);
         setBackFields([
           { key: 'schedule', label: 'Schedule', value: 'Day 1: Keynotes 9AM\nDay 2: Workshops 10AM\nDay 3: Networking 2PM' },
           { key: 'wifi', label: 'WiFi Access', value: 'Network: TechConf24\nPassword: innovation2024' },
-          { key: 'contact', label: 'Event Contact', value: 'info@techconf24.com\n+1-555-TECH-CONF' }
+          { key: 'contact', label: 'Event Contact', value: 'info@techconf24.com\n+1-555-TECH-CONF' },
+          { key: 'checkin_url', label: 'Event Check-in', value: 'https://techconf24.com/checkin/VIP001' },
+          { key: 'networking', label: 'VIP Networking', value: 'Access to VIP lounge, priority seating, exclusive dinner' },
+          { key: 'sponsors', label: 'Event Sponsors', value: 'Microsoft, Google, Apple, Meta, Amazon' }
         ]);
-        setBarcode({ message: 'TECHCONF2024VIP001', format: 'PKBarcodeFormatQR', altText: 'Event Ticket TC24001' });
+        setBarcode({ message: 'https://techconf24.com/verify/VIP001', format: 'PKBarcodeFormatQR', altText: 'Event Ticket TC24001' });
         setHasBarcode(true);
         setHasLocation(true);
-        setLocations([{ latitude: 37.7749, longitude: -122.4194, relevantText: 'Welcome to TechConf 2024!' }]);
+        setLocations([
+          { latitude: 37.7749, longitude: -122.4194, relevantText: 'Welcome to TechConf 2024!' },
+          { latitude: 37.7849, longitude: -122.4094, relevantText: 'VIP lounge is now open' }
+        ]);
+        setRelevantDate(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16));
+        setWebServiceURL('https://techconf24.com/wallet-service');
+        setAuthenticationToken('tc24-vip-token-001');
         break;
 
       case 4: // Store Loyalty Card
@@ -309,21 +344,35 @@ const PassBuilder = () => {
         ]);
         setSecondaryFields([
           { key: 'member', label: 'Member', value: 'Gold Status' },
-          { key: 'visits', label: 'Visits', value: '47' }
+          { key: 'visits', label: 'Visits', value: '47' },
+          { key: 'tier', label: 'Tier', value: 'Gold' }
         ]);
         setAuxiliaryFields([
           { key: 'nextReward', label: 'Next Reward', value: '250 pts = Free Latte' },
-          { key: 'member_since', label: 'Member Since', value: 'Jan 2023' }
+          { key: 'member_since', label: 'Member Since', value: 'Jan 2023' },
+          { key: 'expires', label: 'Expires', value: 'Never' }
+        ]);
+        setHeaderFields([
+          { key: 'member_id', label: 'Member ID', value: 'BB-GOLD-7891' },
+          { key: 'balance', label: 'Balance', value: '$25.00' }
         ]);
         setBackFields([
           { key: 'rewards', label: 'Rewards Program', value: 'Earn 10 points per $1 spent. 500 points = $5 reward.' },
           { key: 'locations', label: 'Locations', value: 'Downtown, Mall Plaza, Airport Terminal' },
-          { key: 'hours', label: 'Hours', value: 'Mon-Fri: 6AM-9PM\nWeekends: 7AM-10PM' }
+          { key: 'hours', label: 'Hours', value: 'Mon-Fri: 6AM-9PM\nWeekends: 7AM-10PM' },
+          { key: 'mobile_app', label: 'Mobile App', value: 'https://app.beanbrew.com/download' },
+          { key: 'special_offers', label: 'Gold Member Benefits', value: 'Free size upgrades, birthday drink, exclusive offers' },
+          { key: 'contact', label: 'Contact Us', value: 'customer@beanbrew.com\n+1-555-BREW-CAFE' }
         ]);
-        setBarcode({ message: 'BB123456789', format: 'PKBarcodeFormatCode128', altText: 'Loyalty Card BB123456789' });
+        setBarcode({ message: 'https://beanbrew.com/loyalty/BB-GOLD-7891', format: 'PKBarcodeFormatCode128', altText: 'Loyalty Card BB123456789' });
         setHasBarcode(true);
         setHasLocation(true);
-        setLocations([{ latitude: 40.7580, longitude: -73.9855, relevantText: 'Earn double points today at Bean & Brew!' }]);
+        setLocations([
+          { latitude: 40.7580, longitude: -73.9855, relevantText: 'Earn double points today at Bean & Brew!' },
+          { latitude: 40.7614, longitude: -73.9776, relevantText: 'Welcome to Bean & Brew Downtown!' }
+        ]);
+        setWebServiceURL('https://beanbrew.com/wallet-service');
+        setAuthenticationToken('bb-loyalty-token-7891');
         break;
 
       case 5: // Discount Coupon
@@ -339,23 +388,38 @@ const PassBuilder = () => {
         ]);
         setSecondaryFields([
           { key: 'code', label: 'Code', value: 'SAVE25' },
-          { key: 'valid', label: 'Valid Until', value: 'Dec 31, 2024' }
+          { key: 'valid', label: 'Valid Until', value: 'Dec 31, 2024' },
+          { key: 'type', label: 'Type', value: 'Flash Sale' }
         ]);
         setAuxiliaryFields([
           { key: 'min_purchase', label: 'Min Purchase', value: '$50' },
-          { key: 'category', label: 'Category', value: 'All Items' }
+          { key: 'category', label: 'Category', value: 'All Items' },
+          { key: 'max_discount', label: 'Max Discount', value: '$100' }
+        ]);
+        setHeaderFields([
+          { key: 'coupon_id', label: 'Coupon ID', value: 'FS-SAVE25-2024' },
+          { key: 'tier', label: 'Tier', value: 'Premium Offer' }
         ]);
         setBackFields([
           { key: 'terms', label: 'Terms & Conditions', value: 'Valid for in-store and online purchases. Cannot be combined with other offers. Excludes sale items.' },
-          { key: 'store_info', label: 'Store Information', value: 'Fashion Store - Premium clothing and accessories' }
+          { key: 'store_info', label: 'Store Information', value: 'Fashion Store - Premium clothing and accessories' },
+          { key: 'redeem_online', label: 'Redeem Online', value: 'https://fashionstore.com/redeem/SAVE25' },
+          { key: 'store_locations', label: 'Store Locations', value: 'Downtown Mall, City Center, Fashion District' },
+          { key: 'customer_service', label: 'Customer Service', value: 'help@fashionstore.com\n+1-555-FASHION' },
+          { key: 'exclusions', label: 'Exclusions', value: 'Designer bags, luxury watches, clearance items' }
         ]);
-        setBarcode({ message: 'SAVE25FASHION2024', format: 'PKBarcodeFormatQR', altText: 'Coupon Code SAVE25' });
+        setBarcode({ message: 'https://fashionstore.com/coupon/SAVE25FASHION2024', format: 'PKBarcodeFormatQR', altText: 'Coupon Code SAVE25' });
         setHasBarcode(true);
-        setHasLocation(false);
-        setLocations([]);
+        setHasLocation(true);
+        setLocations([
+          { latitude: 40.7505, longitude: -73.9934, relevantText: 'Fashion Store nearby - Use your 25% off coupon!' },
+          { latitude: 40.7589, longitude: -73.9851, relevantText: 'Fashion Store City Center - Flash sale active!' }
+        ]);
         const expDate = new Date();
         expDate.setMonth(expDate.getMonth() + 1);
         setExpirationDate(expDate.toISOString().slice(0, 16));
+        setWebServiceURL('https://fashionstore.com/wallet-service');
+        setAuthenticationToken('fs-coupon-token-save25');
         break;
     }
   };
