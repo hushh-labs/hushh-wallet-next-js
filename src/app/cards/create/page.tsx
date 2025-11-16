@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { HushhCardPayload } from '@/types';
 import { PreferenceChip } from '@/components/PreferenceChip';
-import { HushhCardPreview } from '@/components/HushhCardPreview';
 
 enum AppState {
   HERO = 'hero',
@@ -21,7 +20,6 @@ export default function CreateHushhCard() {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [recoveryPhrase, setRecoveryPhrase] = useState<string[]>([]);
   const [cardData, setCardData] = useState<Partial<HushhCardPayload>>({});
-  const [cardResponse, setCardResponse] = useState<any>(null);
 
   // Device detection
   useEffect(() => {
@@ -68,7 +66,6 @@ export default function CreateHushhCard() {
 
       const result = await response.json();
       setRecoveryPhrase(result.data.recoveryPhrase.words);
-      setCardResponse(result.data);
       setAppState(AppState.SUCCESS);
 
       // Analytics
@@ -212,8 +209,6 @@ export default function CreateHushhCard() {
     return (
       <SuccessSection
         recoveryPhrase={recoveryPhrase}
-        cardData={cardData as HushhCardPayload}
-        cardResponse={cardResponse}
         onBackToDashboard={handleBackToDashboard}
         isIOS={isIOS}
       />
@@ -769,19 +764,14 @@ function PreviewSection({
 // Success Section
 function SuccessSection({ 
   recoveryPhrase, 
-  cardData,
-  cardResponse,
   onBackToDashboard, 
   isIOS 
 }: {
   recoveryPhrase: string[];
-  cardData: HushhCardPayload;
-  cardResponse: any;
   onBackToDashboard: () => void;
   isIOS: boolean | null;
 }) {
   const [copied, setCopied] = useState(false);
-  const [showRecovery, setShowRecovery] = useState(false);
 
   const handleCopyPhrase = async () => {
     try {
@@ -793,29 +783,10 @@ function SuccessSection({
     }
   };
 
-  // Transform cardData to HushhCardPreview format
-  const cardPreviewData = {
-    personal: {
-      preferredName: cardData.preferredName,
-      legalName: cardData.legalName,
-      phone: cardData.phone,
-      dob: cardData.dob,
-      gender: cardData.gender
-    },
-    food: {
-      cuisinePreferences: cardData.cuisines,
-      allergies: cardData.exclusions,
-      dietaryRestrictions: cardData.exclusions,
-      spiceLevel: cardData.spiceLevel
-    },
-    shareUrl: cardResponse?.shareUrl || `${window.location.origin}/p/${cardResponse?.shareId}`,
-    uid: cardResponse?.uid || 'card-preview'
-  };
-
   return (
     <div className="min-h-screen bg-[#14191E]">
       <div className="py-16">
-        <div className="max-w-4xl mx-auto px-6">
+        <div className="max-w-2xl mx-auto px-6">
           <div className="text-center mb-12 space-y-6">
             <div className="w-20 h-20 bg-[#FFD700] rounded-full flex items-center justify-center mx-auto">
               <svg className="w-10 h-10 text-[#14191E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -823,70 +794,72 @@ function SuccessSection({
               </svg>
             </div>
             <h1 className="text-4xl font-bold text-[#F8F5EB]">
-              Your <span className="text-[#FFD700]">Hushh</span> Signature Card is Ready!
+              Your <span className="text-[#FFD700]">hushh</span> ID Card is Ready!
             </h1>
             <p className="text-[#B8860B]">
-              Your unified identity card has been created successfully. Scan the QR code to share or add to Apple Wallet.
+              Your card has been created successfully. Save your recovery phrase and add to Apple Wallet.
             </p>
           </div>
 
-          {/* Beautiful Card Preview */}
-          <HushhCardPreview cardData={cardPreviewData} className="mb-8" />
-
-          <div className="max-w-2xl mx-auto space-y-6">
-            {/* Recovery Phrase - Initially Hidden */}
-            <div className="bg-[#1A1F25] rounded-xl border border-[#2A3038]">
-              <button
-                onClick={() => setShowRecovery(!showRecovery)}
-                className="w-full p-6 text-left hover:bg-[#2A3038]/30 transition-colors rounded-xl"
-              >
-                <div className="flex justify-between items-center">
-                  <h3 className="text-[#FFD700] font-semibold text-lg">
-                    🔐 Recovery Phrase {showRecovery ? '' : '(Click to Show)'}
-                  </h3>
-                  <svg 
-                    className={`w-5 h-5 text-[#FFD700] transform transition-transform ${showRecovery ? 'rotate-180' : ''}`} 
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
-                {!showRecovery && (
-                  <p className="text-[#B8860B] text-sm mt-2">
-                    Important: Save your recovery phrase to restore access if needed.
-                  </p>
-                )}
-              </button>
-              
-              {showRecovery && (
-                <div className="px-6 pb-6">
-                  <p className="text-[#B8860B] text-sm mb-4">
-                    This 12-word phrase can restore access to your card if you lose your device. Write it down and store it safely.
-                  </p>
-                  <div className="grid grid-cols-3 gap-3 mb-4">
-                    {recoveryPhrase.map((word, index) => (
-                      <div key={index} className="bg-[#2A3038] p-3 rounded-lg border border-[#3A4048]">
-                        <div className="text-xs text-[#666] mb-1">{index + 1}</div>
-                        <div className="text-[#F8F5EB] font-medium">{word}</div>
-                      </div>
-                    ))}
+          <div className="space-y-8">
+            {/* Recovery Phrase */}
+            <div className="bg-[#1A1F25] rounded-xl p-6 border border-[#2A3038]">
+              <h3 className="text-[#FFD700] font-semibold text-lg mb-4">
+                🔐 Recovery Phrase (Save This!)
+              </h3>
+              <p className="text-[#B8860B] text-sm mb-4">
+                This 12-word phrase can restore access to your card if you lose your device. Write it down and store it safely.
+              </p>
+              <div className="grid grid-cols-3 gap-3 mb-4">
+                {recoveryPhrase.map((word, index) => (
+                  <div key={index} className="bg-[#2A3038] p-3 rounded-lg border border-[#3A4048]">
+                    <div className="text-xs text-[#666] mb-1">{index + 1}</div>
+                    <div className="text-[#F8F5EB] font-medium">{word}</div>
                   </div>
+                ))}
+              </div>
+              <button
+                onClick={handleCopyPhrase}
+                className="w-full py-3 bg-[#2A3038] text-[#F8F5EB] rounded-lg hover:bg-[#3A4048] transition-colors"
+              >
+                {copied ? '✅ Copied to Clipboard!' : '📋 Copy Recovery Phrase'}
+              </button>
+            </div>
+
+            {/* Add to Wallet */}
+            <div className="bg-[#1A1F25] rounded-xl p-6 border border-[#2A3038]">
+              <h3 className="text-[#FFD700] font-semibold text-lg mb-4">
+                📱 Add to Apple Wallet
+              </h3>
+              {isIOS ? (
+                <div className="space-y-4">
+                  <p className="text-[#B8860B] text-sm">
+                    Your card is ready to be added to Apple Wallet. Tap the button below to add it.
+                  </p>
                   <button
-                    onClick={handleCopyPhrase}
-                    className="w-full py-3 bg-[#2A3038] text-[#F8F5EB] rounded-lg hover:bg-[#3A4048] transition-colors"
+                    onClick={() => {
+                      // This would trigger pass download in real implementation
+                      alert('Pass download would start here');
+                    }}
+                    className="w-full py-4 bg-black text-white rounded-lg font-medium flex items-center justify-center hover:bg-gray-800 transition-colors"
                   >
-                    {copied ? '✅ Copied to Clipboard!' : '📋 Copy Recovery Phrase'}
+                    <svg className="w-6 h-6 mr-3" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                    </svg>
+                    Add to Apple Wallet
                   </button>
                 </div>
+              ) : (
+                <p className="text-[#B8860B] text-sm">
+                  Open this page on an iPhone to add your card to Apple Wallet.
+                </p>
               )}
             </div>
 
-            <div className="pt-4">
+            <div className="pt-8">
               <button
                 onClick={onBackToDashboard}
-                className="w-full py-4 px-6 bg-[#2A3038] text-[#F8F5EB] rounded-lg hover:bg-[#3A4048] transition-colors font-medium"
+                className="w-full py-4 px-6 bg-[#2A3038] text-[#F8F5EB] rounded-lg hover:bg-[#3A4048] transition-colors"
               >
                 Go to Dashboard
               </button>

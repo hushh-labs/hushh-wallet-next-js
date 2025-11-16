@@ -52,13 +52,6 @@ export type UserRecord = {
     visibility: "public_minimal" | "public_full" | "private";
     redactionPolicy?: object;
   };
-  passGeneration?: {
-    status: "pending" | "processing" | "completed" | "failed";
-    jobId?: string;
-    completedAt?: Date;
-    failedAt?: Date;
-    error?: string;
-  };
 };
 
 export type PublicProfile = {

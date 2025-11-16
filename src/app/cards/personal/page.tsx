@@ -3,9 +3,7 @@
 import { useState, useEffect } from 'react';
 import { PersonalDataSelector } from '@/components/PersonalDataSelector';
 import { CardPreview } from '@/components/CardPreview';
-import { ProgressIndicator } from '@/components/ProgressIndicator';
 import { PersonalPayload } from '@/types';
-import { postJSON, pollUntil, fetchJSON } from '@/lib/fetchHelper';
 
 enum AppState {
   HERO = 'hero',
@@ -21,67 +19,6 @@ export default function PersonalCardPage() {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [generatedURL, setGeneratedURL] = useState<string>('');
   const [personalData, setPersonalData] = useState<PersonalPayload | null>(null);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [progressComplete, setProgressComplete] = useState(false);
-
-  // Define detailed progress steps
-  const progressSteps = [
-    {
-      id: 'validation',
-      title: 'Validating Information',
-      description: 'Checking your personal information for completeness and format compliance.',
-      details: [
-        'Verifying name format and character limits',
-        'Validating phone number format and country code',
-        'Checking date of birth for valid range',
-        'Ensuring all required fields are complete'
-      ]
-    },
-    {
-      id: 'security',
-      title: 'Securing Your Data',
-      description: 'Applying privacy protection and encryption to safeguard your information.',
-      details: [
-        'Encrypting sensitive personal information',
-        'Generating unique secure identifier',
-        'Setting up privacy protection layers',
-        'Preparing secure data storage'
-      ]
-    },
-    {
-      id: 'qr-generation',
-      title: 'Generating QR Code',
-      description: 'Creating your personalized QR code with encoded information.',
-      details: [
-        'Encoding your information securely',
-        'Generating high-quality QR matrix',
-        'Optimizing code for wallet applications',
-        'Adding error correction capabilities'
-      ]
-    },
-    {
-      id: 'pass-creation',
-      title: 'Creating Apple Wallet Pass',
-      description: 'Building your digital pass with Apple Wallet formatting and security.',
-      details: [
-        'Designing card layout with your details',
-        'Adding Apple security certificates',
-        'Preparing .pkpass file format',
-        'Configuring wallet presentation settings'
-      ]
-    },
-    {
-      id: 'finalization',
-      title: 'Finalizing Your Card',
-      description: 'Running final checks and preparing your card for download.',
-      details: [
-        'Running comprehensive quality checks',
-        'Verifying pass integrity and security',
-        'Preparing secure download link',
-        'Card ready for Apple Wallet integration'
-      ]
-    }
-  ];
 
   // Device detection (same as food card)
   useEffect(() => {
@@ -101,65 +38,37 @@ export default function PersonalCardPage() {
     setAppState(AppState.FORM);
   };
 
-  // Simulate progress steps
-  useEffect(() => {
-    if (appState === AppState.GENERATING) {
-      setCurrentStep(0);
-      setProgressComplete(false);
-      
-      const stepTimers: NodeJS.Timeout[] = [];
-      
-      // Progress through each step with realistic timing
-      const stepDurations = [3000, 2500, 3500, 4000, 2000]; // milliseconds for each step
-      
-      let totalDelay = 0;
-      stepDurations.forEach((duration, index) => {
-        totalDelay += duration;
-        stepTimers.push(
-          setTimeout(() => {
-            setCurrentStep(index + 1);
-          }, totalDelay)
-        );
-      });
-      
-      // Complete progress after all steps
-      stepTimers.push(
-        setTimeout(() => {
-          setProgressComplete(true);
-        }, totalDelay + 1000)
-      );
-      
-      return () => {
-        stepTimers.forEach(timer => clearTimeout(timer));
-      };
-    }
-  }, [appState]);
-
-  // Handle progress completion
-  const handleProgressComplete = async () => {
-    if (!personalData) return;
+  // Form submission -> Direct generation (no preview)
+  const handleFormSubmit = async (data: PersonalPayload) => {
+    setPersonalData(data);
+    setAppState(AppState.GENERATING);
+    setErrorMessage('');
 
     try {
       // Send personal data to unified backend
-      const result = await postJSON<{
-        success: boolean;
-        data: {
-          uid: string;
-          isComplete: boolean;
-          hasPass: boolean;
-          shareUrl: string;
-          passGenerating?: boolean;
-        };
-      }>('/api/cards/update', {
-        section: 'personal',
-        data: {
-          preferredName: personalData.preferredName,
-          legalName: personalData.legalName,
-          phone: personalData.phone,
-          dob: personalData.dob,
-          gender: personalData.gender
-        }
-      }); // Use default 30 second timeout
+      const response = await fetch('/api/cards/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          section: 'personal',
+          data: {
+            preferredName: data.preferredName,
+            legalName: data.legalName,
+            phone: data.phone,
+            dob: data.dob,
+            gender: data.gender
+          }
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to save personal data');
+      }
+
+      const result = await response.json();
 
       // Analytics: personal_data_saved
       if (typeof window !== 'undefined' && (window as any).gtag) {
@@ -169,41 +78,23 @@ export default function PersonalCardPage() {
         });
       }
 
-      // Store UID for later operations
-      sessionStorage.setItem('hushh_uid', result.data.uid);
-      setGeneratedURL(result.data.shareUrl);
-
-      if (result.data.isComplete) {
-        if (result.data.hasPass) {
-          // Pass is ready immediately
-          setAppState(AppState.SUCCESS);
-        } else if (result.data.passGenerating) {
-          // Pass is being generated in background - poll for completion
-          try {
-            await pollUntil(
-              () => fetchJSON<any>(`/api/cards/status/${result.data.uid}`),
-              (status) => status.hasPass || status.passGeneration?.status === 'failed',
-              {
-                interval: 3000,
-                maxAttempts: 20, // 1 minute max
-                onProgress: (status, attempt) => {
-                  console.log(`Pass generation check ${attempt}:`, status.passGeneration?.status);
-                }
-              }
-            );
-            setAppState(AppState.SUCCESS);
-          } catch (pollError) {
-            console.warn('Pass generation polling failed:', pollError);
-            // Still show success since data was saved
-            setAppState(AppState.SUCCESS);
-          }
-        } else {
-          // Both sections complete but no pass generation scheduled
-          setAppState(AppState.SUCCESS);
-        }
+      if (result.data.isComplete && result.data.hasPass) {
+        // Complete card available - show success with pass download
+        setGeneratedURL(result.data.shareUrl);
+        // Store UID for pass download
+        sessionStorage.setItem('hushh_uid', result.data.uid);
+        setAppState(AppState.SUCCESS);
       } else {
-        // Need to complete food section
-        window.location.href = '/cards/food';
+        // Partial data saved - redirect to food preferences or dashboard
+        if (result.data.isComplete) {
+          // Both sections complete but pass generation failed
+          setGeneratedURL(result.data.shareUrl);
+          sessionStorage.setItem('hushh_uid', result.data.uid);
+          setAppState(AppState.SUCCESS);
+        } else {
+          // Need to complete food section
+          window.location.href = '/cards/food';
+        }
       }
 
     } catch (error) {
@@ -211,13 +102,6 @@ export default function PersonalCardPage() {
       setErrorMessage(error instanceof Error ? error.message : 'Failed to save personal data');
       setAppState(AppState.ERROR);
     }
-  };
-
-  // Form submission -> Direct generation (no preview)
-  const handleFormSubmit = async (data: PersonalPayload) => {
-    setPersonalData(data);
-    setAppState(AppState.GENERATING);
-    setErrorMessage('');
   };
 
   const handleReset = () => {
@@ -239,9 +123,7 @@ export default function PersonalCardPage() {
         throw new Error('User ID not found');
       }
 
-      const response = await fetch(`/api/cards/download/${uid}`, {
-        signal: AbortSignal.timeout(30000) // 30 second timeout
-      });
+      const response = await fetch(`/api/cards/download/${uid}`);
       
       if (!response.ok) {
         throw new Error('Failed to download pass');
@@ -337,24 +219,20 @@ export default function PersonalCardPage() {
               </div>
 
               {/* Personal Data Selector */}
-              {appState === AppState.FORM && (
-                <div>
-                  <PersonalDataSelector 
-                    onGenerate={handleFormSubmit}
-                    isGenerating={false}
-                  />
-                </div>
-              )}
+              <div className={`${appState === AppState.GENERATING ? 'loading' : ''}`}>
+                <PersonalDataSelector 
+                  onGenerate={handleFormSubmit}
+                  isGenerating={appState === AppState.GENERATING}
+                />
+              </div>
 
-              {/* Progress Indicator for Generating State */}
+              {/* Generating State Indicator */}
               {appState === AppState.GENERATING && (
-                <div className="mt-8">
-                  <ProgressIndicator 
-                    currentStep={currentStep}
-                    steps={progressSteps}
-                    isComplete={progressComplete}
-                    onComplete={handleProgressComplete}
-                  />
+                <div className="mt-8 text-center">
+                  <div className="inline-flex items-center space-x-2 text-muted">
+                    <div className="w-4 h-4 border-2 border-gold border-t-transparent rounded-full animate-spin"></div>
+                    <span>Saving your personal information...</span>
+                  </div>
                 </div>
               )}
 
