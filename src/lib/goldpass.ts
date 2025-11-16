@@ -364,11 +364,22 @@ export function buildGoldPassPayload(user: User): any {
       }
     ],
     
-    // QR code to public profile
+    // QR code with proper Apple Wallet format
+    barcodes: [
+      {
+        message: user.links.publicUrl,
+        format: 'PKBarcodeFormatQR',
+        messageEncoding: 'iso-8859-1',
+        altText: user.uid
+      }
+    ],
+    
+    // Legacy support for iOS 8.x
     barcode: {
       message: user.links.publicUrl,
-      format: 'PKBarcodeFormatQR',
-      messageEncoding: 'utf-8'
+      format: 'PKBarcodeFormatQR', 
+      messageEncoding: 'iso-8859-1',
+      altText: user.uid
     },
     
     // Security settings
