@@ -1,8 +1,142 @@
-# 🎫 HUSHH Wallet Integration - Unified ID Card System
+# 🎫 HUSHH Wallet Integration - Complete Apple Wallet System
 
 ## 📋 Project Overview
 
-Modern Next.js application for creating and managing unified digital identity cards with seamless Apple Wallet integration. Features a privacy-first, auth-less tokenization system that combines personal identity and food preferences into a single elegant card.
+Comprehensive Next.js application for creating and managing Apple Wallet passes with advanced capabilities. Features:
+
+1. **🆔 Unified ID Card System** - Privacy-first digital identity cards with food preferences
+2. **🏗️ Universal Pass Builder** - Complete Apple Wallet pass generation for all pass types
+3. **🎛️ Interactive Dashboard** - Visual pass builder with pre-filled templates
+
+## 🚀 **NEW: Universal Apple Wallet Pass Builder (Production Ready)**
+
+### 🎯 **Complete Pass Generation System**
+
+**Universal Endpoint**: Single API handles ALL Apple Wallet features:
+- ✅ **All Pass Types**: Generic, boarding pass, event ticket, store card, coupon
+- ✅ **QR Codes**: QR, PDF417, Aztec, Code128 formats with custom messages  
+- ✅ **Location Notifications**: GPS-triggered pass display near coordinates
+- ✅ **Visual Customization**: Background colors, logos, branding
+- ✅ **Rich Content**: Primary, secondary, auxiliary, back fields with formatting
+- ✅ **Advanced Features**: Dates, expiration, web services, sharing controls
+
+### 🎛️ **Interactive Pass Builder Dashboard**
+
+**Live Dashboard**: `/pass-builder` with instant template loading:
+- **Option 1**: Personal ID Card (Generic with QR code)
+- **Option 2**: Flight Boarding Pass (Air transit with location)  
+- **Option 3**: Event Ticket (Conference with venue info)
+- **Option 4**: Loyalty Card (Coffee shop with points)
+- **Option 5**: Discount Coupon (Fashion store with expiry)
+
+### 🔗 **Production URLs**
+
+#### 🌐 **Live System**
+```
+Main Site: https://hushh-wallet-hz9j8hkjt-ankit-kumar-singhs-projects-390074cd.vercel.app
+Pass Builder: https://hushh-wallet-hz9j8hkjt-ankit-kumar-singhs-projects-390074cd.vercel.app/pass-builder
+Universal API: https://hushh-wallet-hz9j8hkjt-ankit-kumar-singhs-projects-390074cd.vercel.app/api/passes/universal/create
+```
+
+### 📱 **API Usage Examples**
+
+#### Generate Flight Boarding Pass:
+```bash
+curl -X POST "https://hushh-wallet-hz9j8hkjt-ankit-kumar-singhs-projects-390074cd.vercel.app/api/passes/universal/create" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "passType": "boardingPass",
+    "transitType": "PKTransitTypeAir",
+    "primaryFields": [{"key": "origin", "value": "NYC"}, {"key": "destination", "value": "LAX"}],
+    "secondaryFields": [{"key": "gate", "value": "B12"}, {"key": "seat", "value": "15A"}],
+    "barcode": {"message": "AA123456", "format": "PKBarcodeFormatPDF417"},
+    "locations": [{"latitude": 40.6413, "longitude": -73.7781, "relevantText": "Flight boarding now"}],
+    "backgroundColor": "rgb(0, 116, 217)"
+  }' \
+  -o flight-pass.pkpass
+```
+
+#### Generate Event Ticket with QR:
+```bash
+curl -X POST "https://hushh-wallet-hz9j8hkjt-ankit-kumar-singhs-projects-390074cd.vercel.app/api/passes/universal/create" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "passType": "eventTicket", 
+    "primaryFields": [{"key": "event", "value": "Tech Conference 2024"}],
+    "secondaryFields": [{"key": "venue", "value": "Convention Center"}, {"key": "time", "value": "2PM"}],
+    "barcode": {"message": "TICKET-789", "format": "PKBarcodeFormatQR"},
+    "locations": [{"latitude": 37.7749, "longitude": -122.4194, "relevantText": "You have arrived at the venue"}]
+  }' \
+  -o event-pass.pkpass
+```
+
+### 🔧 **Universal API Documentation**
+
+#### Endpoint: `POST /api/passes/universal/create`
+
+**Complete Parameter Reference:**
+```typescript
+{
+  // Pass Type (Required)
+  passType: 'generic' | 'boardingPass' | 'eventTicket' | 'storeCard' | 'coupon';
+  transitType?: 'PKTransitTypeAir' | 'PKTransitTypeBus' | 'PKTransitTypeTrain' | 'PKTransitTypeBoat' | 'PKTransitTypeGeneric';
+  
+  // Content Fields
+  organizationName?: string;
+  description?: string;
+  primaryFields?: Array<{key: string, label?: string, value: string}>;
+  secondaryFields?: Array<{key: string, label?: string, value: string}>;  
+  auxiliaryFields?: Array<{key: string, label?: string, value: string}>;
+  backFields?: Array<{key: string, label?: string, value: string}>;
+  
+  // Visual Customization
+  backgroundColor?: string;      // "rgb(255, 0, 0)" or "rgba(255, 0, 0, 0.5)"
+  foregroundColor?: string;
+  labelColor?: string;
+  logoText?: string;
+  
+  // Barcode/QR Configuration
+  barcode?: {
+    message: string;            // QR content
+    format: 'PKBarcodeFormatQR' | 'PKBarcodeFormatPDF417' | 'PKBarcodeFormatAztec' | 'PKBarcodeFormatCode128';
+    altText?: string;
+  };
+  
+  // Location Notifications
+  locations?: Array<{
+    latitude: number;           // GPS coordinates
+    longitude: number;
+    altitude?: number;
+    relevantText?: string;      // Notification text
+  }>;
+  
+  // Dates & Expiration
+  relevantDate?: string;        // ISO 8601 format
+  expirationDate?: string;
+  
+  // Advanced Features
+  webServiceURL?: string;       // For pass updates
+  authenticationToken?: string;
+  maxDistance?: number;         // Location trigger distance
+  sharingProhibited?: boolean;  // Disable pass sharing
+}
+```
+
+### 📊 **System Capabilities**
+
+**Complete Apple Wallet Feature Set:**
+- ✅ **5 Pass Types**: All Apple Wallet pass types supported
+- ✅ **QR/Barcode**: 4 different formats with custom content
+- ✅ **Locations**: GPS notifications with custom messages
+- ✅ **Visual Design**: Colors, branding, typography control
+- ✅ **Content Layout**: Multi-level field hierarchy (primary/secondary/auxiliary/back)
+- ✅ **Dates/Time**: Relevance and expiration handling
+- ✅ **Web Services**: Integration with external systems
+- ✅ **Security**: Proper pass signing and validation
+- ✅ **Error Handling**: Comprehensive validation and user feedback
+- ✅ **Documentation**: Complete API reference with examples
+
+---
 
 ## 🆔 **NEW: Unified Hushh ID Card System (87% Complete)**
 
