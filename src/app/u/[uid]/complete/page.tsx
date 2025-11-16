@@ -12,9 +12,9 @@ import {
 } from '@/lib/goldpass';
 
 interface ProfileCompleteProps {
-  params: {
+  params: Promise<{
     uid: string;
-  };
+  }>;
 }
 
 interface ProfileData {
@@ -37,6 +37,7 @@ export default function ProfileCompletePage({ params }: ProfileCompleteProps) {
   const searchParams = useSearchParams();
   const token = searchParams?.get('token');
   
+  const [uid, setUid] = useState<string>('');
   const [formData, setFormData] = useState<ProfileData>({
     city: '',
     state: '',
@@ -50,15 +51,21 @@ export default function ProfileCompletePage({ params }: ProfileCompleteProps) {
   const [response, setResponse] = useState<ProfileResponse | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
-  // Check for token on mount
+  // Resolve params and check for token on mount
   useEffect(() => {
+    const resolveParams = async () => {
+      const resolvedParams = await params;
+      setUid(resolvedParams.uid);
+    };
+    resolveParams();
+    
     if (!token) {
       setResponse({
         success: false,
         error: 'Invalid or missing authentication token'
       });
     }
-  }, [token]);
+  }, [params, token]);
 
   // Real-time validation
   const validateForm = () => {
@@ -133,7 +140,7 @@ export default function ProfileCompletePage({ params }: ProfileCompleteProps) {
     
     try {
       const submitData = {
-        uid: params.uid,
+        uid: uid,
         token,
         city: formData.city.trim(),
         state: formData.state,
@@ -436,7 +443,7 @@ export default function ProfileCompletePage({ params }: ProfileCompleteProps) {
             {/* Action Buttons */}
             <div className="space-y-3">
               <a
-                href={`/u/${params.uid}`}
+                href={`/u/${uid}`}
                 className="block w-full bg-gradient-to-r from-amber-600 to-orange-600 text-white text-center py-3 px-6 rounded-lg font-semibold hover:from-amber-700 hover:to-orange-700 transition-all duration-200"
               >
                 🏆 View My Gold Profile

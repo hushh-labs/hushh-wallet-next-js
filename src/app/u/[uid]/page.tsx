@@ -6,9 +6,9 @@ import { db } from '@/lib/firebase';
 import { buildPassUrl, type User } from '@/lib/goldpass';
 
 interface PublicPageProps {
-  params: {
+  params: Promise<{
     uid: string;
-  };
+  }>;
 }
 
 interface UserData {
@@ -19,14 +19,18 @@ interface UserData {
 }
 
 export default function PublicVerificationPage({ params }: PublicPageProps) {
+  const [uid, setUid] = useState<string>('');
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const resolveParamsAndFetchData = async () => {
       try {
-        const userRef = doc(db, 'users', params.uid);
+        const resolvedParams = await params;
+        setUid(resolvedParams.uid);
+        
+        const userRef = doc(db, 'users', resolvedParams.uid);
         const userDoc = await getDoc(userRef);
         
         if (!userDoc.exists()) {
@@ -52,11 +56,11 @@ export default function PublicVerificationPage({ params }: PublicPageProps) {
       }
     };
 
-    fetchUserData();
-  }, [params.uid]);
+    resolveParamsAndFetchData();
+  }, [params]);
 
   const handleAddToWallet = () => {
-    const passUrl = buildPassUrl(params.uid);
+    const passUrl = buildPassUrl(uid);
     window.open(passUrl, '_blank');
   };
 
@@ -141,7 +145,7 @@ export default function PublicVerificationPage({ params }: PublicPageProps) {
                   Member ID
                 </span>
                 <span className="text-gray-800 font-mono text-sm">
-                  {params.uid}
+                  {uid}
                 </span>
               </div>
               
