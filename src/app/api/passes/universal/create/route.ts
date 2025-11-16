@@ -144,12 +144,23 @@ export async function POST(request: NextRequest) {
       passData[passRequest.passType].transitType = passRequest.transitType;
     }
     
-    // Add barcode/QR code
+    // Add barcode/QR code with proper encoding
     if (passRequest.barcode) {
-      passData.barcode = passRequest.barcode;
+      // Ensure proper encoding for QR codes
+      const barcodeData = {
+        ...passRequest.barcode,
+        messageEncoding: passRequest.barcode.messageEncoding || 'utf-8'
+      };
+      
+      // Use barcodes array instead of single barcode (deprecated)
+      passData.barcodes = [barcodeData];
     }
     if (passRequest.barcodes) {
-      passData.barcodes = passRequest.barcodes;
+      // Ensure all barcodes have proper encoding
+      passData.barcodes = passRequest.barcodes.map(barcode => ({
+        ...barcode,
+        messageEncoding: barcode.messageEncoding || 'utf-8'
+      }));
     }
     
     // Add location-based features

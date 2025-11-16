@@ -53,7 +53,7 @@ const PassBuilder = () => {
   const [barcode, setBarcode] = useState<PassBarcode>({
     message: 'SAMPLE123456',
     format: 'PKBarcodeFormatQR',
-    messageEncoding: 'iso-8859-1'
+    messageEncoding: 'utf-8'
   });
   
   // Location
@@ -421,6 +421,50 @@ const PassBuilder = () => {
         setWebServiceURL('https://fashionstore.com/wallet-service');
         setAuthenticationToken('fs-coupon-token-save25');
         break;
+
+      case 6: // Driver's License 
+        setPassType('generic');
+        setDescription("Driver's License");
+        setOrganizationName('Department of Motor Vehicles');
+        setLogoText('DMV');
+        setBackgroundColor('#6B73FF');
+        setForegroundColor('#FFFFFF');
+        setLabelColor('#E0E7FF');
+        setPrimaryFields([
+          { key: 'name', label: 'Name', value: 'Kelly G.' }
+        ]);
+        setSecondaryFields([
+          { key: 'license_number', label: 'License No.', value: 'D123-456-789' },
+          { key: 'class', label: 'Class', value: 'Class C' },
+          { key: 'restrictions', label: 'Restrictions', value: 'None' }
+        ]);
+        setAuxiliaryFields([
+          { key: 'dob', label: 'DOB', value: '01/15/1990' },
+          { key: 'issued', label: 'Issued', value: new Date().toLocaleDateString() },
+          { key: 'expires', label: 'Expires', value: '01/15/2028' }
+        ]);
+        setHeaderFields([
+          { key: 'state', label: 'State', value: 'California' },
+          { key: 'status', label: 'Status', value: 'Valid' }
+        ]);
+        setBackFields([
+          { key: 'address', label: 'Address', value: '123 Mountain View Dr\nSan Francisco, CA 94102' },
+          { key: 'height_weight', label: 'Physical Info', value: 'Height: 5\'6"\nWeight: 140 lbs\nEyes: Brown\nHair: Brown' },
+          { key: 'organ_donor', label: 'Organ Donor', value: 'Yes - Heart, Liver, Kidneys' },
+          { key: 'emergency_contact', label: 'Emergency Contact', value: 'John Doe\n+1-555-EMERGENCY' },
+          { key: 'legal_notice', label: 'Legal Notice', value: 'This license is property of the State of California. Unlawful use is subject to penalties under Vehicle Code Section 14610.' },
+          { key: 'verification', label: 'Verification', value: 'Scan QR code to verify authenticity at dmv.ca.gov/verify' }
+        ]);
+        setBarcode({ message: 'https://dmv.ca.gov/verify/DL123456789', format: 'PKBarcodeFormatQR', messageEncoding: 'utf-8' });
+        setHasBarcode(true);
+        setHasLocation(false);
+        setLocations([]);
+        const licenseExpiry = new Date('2028-01-15');
+        setExpirationDate(licenseExpiry.toISOString().slice(0, 16));
+        setWebServiceURL('https://dmv.ca.gov/wallet-service');
+        setAuthenticationToken('dmv-license-token-123');
+        setSharingProhibited(true); // License sharing should be prohibited
+        break;
     }
   };
 
@@ -524,7 +568,7 @@ const PassBuilder = () => {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
             <button
               onClick={() => loadTemplate(1)}
               className="p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 text-left transition-colors"
@@ -563,6 +607,14 @@ const PassBuilder = () => {
             >
               <div className="font-medium text-gray-900">Option 5: Coupon</div>
               <div className="text-sm text-gray-600 mt-1">Discount coupon with expiry</div>
+            </button>
+
+            <button
+              onClick={() => loadTemplate(6)}
+              className="p-4 border border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 text-left transition-colors"
+            >
+              <div className="font-medium text-gray-900">Option 6: Driver's License</div>
+              <div className="text-sm text-gray-600 mt-1">Official driver's license card</div>
             </button>
           </div>
         </div>
