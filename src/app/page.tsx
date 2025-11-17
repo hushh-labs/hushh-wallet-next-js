@@ -217,43 +217,58 @@ export default function HomePage() {
                 </p>
               </form>
             ) : (
-              <div className="space-y-6">
-                <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-center">
-                  <p className="text-emerald-100 font-semibold saira-royal text-lg">
-                    {result.existing ? 'Welcome back.' : 'You’re in.'}
+              <div className="space-y-6 text-center">
+                <div className="rounded-[26px] border border-[#1f3b20] bg-[#081f11] px-6 py-5 text-white/80">
+                  <p className="text-sm uppercase tracking-[0.45em] text-white/40 mb-2">Claim</p>
+                  <h3 className="text-3xl font-semibold text-white saira-royal mb-1">
+                    Your Gold Identity
+                  </h3>
+                  <p className="text-sm text-white/60">
+                    HUSHH uses Apple Wallet security, so you can complete this in under ten seconds.
                   </p>
-                  <p className="text-sm text-white/70 mt-2">
-                    Your HUSHH Gold Pass is ready to drop into Apple Wallet.
-                  </p>
+                  <div className="mt-5 rounded-2xl border border-[#2f5a32] bg-[#0d3416] px-6 py-4">
+                    <p className="text-lg font-semibold text-emerald-100">
+                      {result.existing ? 'Welcome back.' : 'You’re in.'}
+                    </p>
+                    <p className="text-sm text-white/70 mt-1">
+                      Your HUSHH Gold Pass is ready to drop into Apple Wallet.
+                    </p>
+                  </div>
                 </div>
 
                 {isIOS() ? (
                   <a
                     href={result.addToWalletUrl}
-                    className="w-full inline-flex items-center justify-center gap-3 rounded-2xl bg-black/80 border border-white/10 py-4 text-white font-semibold hover:bg-black transition-all duration-200"
+                    className="w-full inline-flex items-center justify-between rounded-2xl border border-white/10 bg-black/90 px-5 py-4 text-base font-semibold text-white hover:bg-black"
                   >
-                    <span>📱 Add to Apple Wallet</span>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <span className="flex items-center gap-2">
+                      <span role="img" aria-label="iphone">📱</span>
+                      Add to Apple Wallet
+                    </span>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5 12h14M12 5l7 7-7 7"></path>
                     </svg>
                   </a>
                 ) : (
                   <div className="space-y-3">
-                    <p className="text-sm text-white/60 text-center">
+                    <p className="text-sm text-white/60">
                       Open this link on your iPhone to add directly to Apple Wallet:
                     </p>
                     <a
                       href={result.addToWalletUrl}
-                      className="w-full inline-flex items-center justify-center gap-3 rounded-2xl bg-white/10 border border-white/20 py-4 text-white font-semibold hover:bg-white/20 transition-all duration-200"
+                      className="w-full inline-flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-base font-semibold hover:bg-white/10"
                     >
-                      Download Pass File
+                      <span>Download Pass File</span>
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5 12h14M12 5l7 7-7 7"></path>
+                      </svg>
                     </a>
                   </div>
                 )}
 
                 <a
                   href={result.profileUrl}
-                  className="block w-full rounded-2xl border border-white/10 bg-white/5 py-4 text-center text-white/80 hover:bg-white/10 transition"
+                  className="block w-full rounded-2xl border border-white/10 bg-transparent py-4 text-center text-white/80 hover:bg-white/5 transition"
                 >
                   Complete your profile later
                 </a>
@@ -263,7 +278,7 @@ export default function HomePage() {
                     setResult(null);
                     setFormData({ name: '', email: '', phone: '' });
                   }}
-                  className="w-full text-xs text-white/50 underline hover:text-white/80"
+                  className="text-xs text-white/50 underline hover:text-white/80"
                 >
                   Start another pass
                 </button>
