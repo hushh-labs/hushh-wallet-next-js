@@ -333,10 +333,6 @@ export async function GET(
                   ${member.pass_status.toUpperCase()}
                 </div>
               </div>
-              <div class="tech-item">
-                <div class="detail-label">Public URL</div>
-                <div class="detail-value">${member.public_url}</div>
-              </div>
             </div>
 
             <!-- Activity Timeline -->
