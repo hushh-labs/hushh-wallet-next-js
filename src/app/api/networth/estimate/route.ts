@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { fredAPI, determineAgeGroup } from '@/lib/fredAPI';
 
 // Log event helper
 async function logEvent(uid: string, type: string, meta: any = {}) {
@@ -46,7 +47,7 @@ function checkProfileCompleteness(member: any): { complete: boolean; missing: st
   };
 }
 
-// Placeholder for Layer-1 Net Worth Engine
+// Enhanced Layer-1 Net Worth Engine with FRED API Integration
 async function calculateLayer1Estimate(member: any): Promise<{
   networth_low_usd: number;
   networth_high_usd: number;
@@ -59,79 +60,144 @@ async function calculateLayer1Estimate(member: any): Promise<{
   const state = member.profile_state;
   const hasAddress = !!member.profile_street1;
 
-  // Federal Reserve SCF 2022 data by age (simplified)
-  const netWorthByAge: Record<string, { median: number; p80: number; p90: number }> = {
-    '18-34': { median: 39000, p80: 170000, p90: 400000 },
-    '35-44': { median: 135000, p80: 550000, p90: 1040000 },
-    '45-54': { median: 246000, p80: 850000, p90: 1960000 },
-    '55-64': { median: 364000, p80: 1200000, p90: 2800000 },
-    '65-74': { median: 410000, p80: 1300000, p90: 3200000 },
-    '75+': { median: 335000, p80: 950000, p90: 2400000 }
-  };
+  // Determine age band using helper function
+  const ageBand = determineAgeGroup(age);
 
-  // Determine age band
-  let ageBand = '35-44';
-  if (age < 35) ageBand = '18-34';
-  else if (age < 45) ageBand = '35-44';
-  else if (age < 55) ageBand = '45-54';
-  else if (age < 65) ageBand = '55-64';
-  else if (age < 75) ageBand = '65-74';
-  else ageBand = '75+';
+  try {
+    // Get enhanced Federal Reserve data
+    const [netWorthData, geoData] = await Promise.all([
+      fredAPI.getNationalNetWorthData(),
+      fredAPI.calculateEnhancedGeoMultiplier(state)
+    ]);
 
-  const ageData = netWorthByAge[ageBand];
+    // Find matching age group data
+    const ageData = netWorthData.find(data => data.age_group === ageBand);
+    
+    if (!ageData) {
+      throw new Error(`No data found for age group: ${ageBand}`);
+    }
 
-  // Basic geographic adjustment (simplified)
-  // High-income states get a boost
-  const highIncomeStates = ['CA', 'NY', 'MA', 'CT', 'NJ', 'WA', 'MD'];
-  const moderateStates = ['TX', 'FL', 'VA', 'CO', 'IL', 'NC'];
-  
-  let geoMultiplier = 1.0;
-  if (highIncomeStates.includes(state)) {
-    geoMultiplier = 1.4;
-  } else if (moderateStates.includes(state)) {
-    geoMultiplier = 1.1;
+    // Use enhanced geographic multiplier from FRED API
+    const geoMultiplier = geoData.multiplier;
+    const geoFactors = geoData.factors;
+
+    // Address premium (property ownership proxy)
+    let addressMultiplier = 1.0;
+    if (hasAddress) {
+      addressMultiplier = 1.3; // Homeowners typically have higher net worth
+    }
+
+    // Calculate enhanced estimate using real FRED data
+    const baseMedian = ageData.median_net_worth * geoMultiplier * addressMultiplier;
+    const baseP90 = ageData.p90_net_worth * geoMultiplier * addressMultiplier;
+
+    // Create range using percentile data
+    const low = Math.round(ageData.p25_net_worth * geoMultiplier * addressMultiplier);
+    const high = Math.round(baseP90 * 1.1); // Slight adjustment for upper bound
+    const mid = Math.round((baseMedian + ageData.p75_net_worth * geoMultiplier * addressMultiplier) / 2);
+
+    // Enhanced confidence calculation
+    let confidence = 0.4; // Higher base confidence with real data
+    if (age && state) confidence += 0.2;
+    if (zip) confidence += 0.1;
+    if (hasAddress) confidence += 0.2;
+    if (member.profile_city) confidence += 0.1;
+    
+    // Bonus confidence for real-time FRED data availability
+    if (geoFactors.median_income) confidence += 0.1;
+    if (geoFactors.unemployment_rate) confidence += 0.05;
+
+    const signals = {
+      age_band: ageBand,
+      nw_median_age: ageData.median_net_worth,
+      nw_p25_age: ageData.p25_net_worth,
+      nw_p75_age: ageData.p75_net_worth,
+      nw_p90_age: ageData.p90_net_worth,
+      geo_multiplier: geoMultiplier,
+      geo_factors: geoFactors,
+      address_multiplier: addressMultiplier,
+      has_address: hasAddress,
+      state: state,
+      zip: zip,
+      data_source: ageData.source,
+      data_year: ageData.year,
+      fred_enhanced: true
+    };
+
+    return {
+      networth_low_usd: low,
+      networth_high_usd: high,
+      networth_mid_usd: mid,
+      confidence_0_1: Math.min(confidence, 0.8), // Cap at 80%
+      signals
+    };
+
+  } catch (error) {
+    console.error('FRED API error, falling back to static data:', error);
+    
+    // Fallback to static SCF 2022 data if FRED API fails
+    const staticNetWorthByAge: Record<string, { median: number; p80: number; p90: number }> = {
+      '18-34': { median: 39000, p80: 170000, p90: 400000 },
+      '35-44': { median: 135000, p80: 550000, p90: 1040000 },
+      '45-54': { median: 246000, p80: 850000, p90: 1960000 },
+      '55-64': { median: 364000, p80: 1200000, p90: 2800000 },
+      '65-74': { median: 410000, p80: 1300000, p90: 3200000 },
+      '75+': { median: 335000, p80: 950000, p90: 2400000 }
+    };
+
+    const ageData = staticNetWorthByAge[ageBand];
+    
+    // Basic geographic adjustment (fallback)
+    const highIncomeStates = ['CA', 'NY', 'MA', 'CT', 'NJ', 'WA', 'MD'];
+    const moderateStates = ['TX', 'FL', 'VA', 'CO', 'IL', 'NC'];
+    
+    let geoMultiplier = 1.0;
+    if (highIncomeStates.includes(state)) {
+      geoMultiplier = 1.4;
+    } else if (moderateStates.includes(state)) {
+      geoMultiplier = 1.1;
+    }
+
+    let addressMultiplier = 1.0;
+    if (hasAddress) {
+      addressMultiplier = 1.3;
+    }
+
+    const baseMedian = ageData.median * geoMultiplier * addressMultiplier;
+    const baseP80 = ageData.p80 * geoMultiplier * addressMultiplier;
+
+    const low = Math.round(baseMedian * 0.7);
+    const high = Math.round(baseP80 * 1.2);
+    const mid = Math.round((low + high) / 2);
+
+    let confidence = 0.3; // Lower confidence for static data
+    if (age && state) confidence += 0.2;
+    if (zip) confidence += 0.1;
+    if (hasAddress) confidence += 0.2;
+    if (member.profile_city) confidence += 0.1;
+
+    const signals = {
+      age_band: ageBand,
+      nw_median_age: ageData.median,
+      nw_p80_age: ageData.p80,
+      geo_multiplier: geoMultiplier,
+      address_multiplier: addressMultiplier,
+      has_address: hasAddress,
+      state: state,
+      zip: zip,
+      data_source: 'SCF_2022_FALLBACK',
+      fred_enhanced: false,
+      fallback_reason: error instanceof Error ? error.message : 'Unknown error'
+    };
+
+    return {
+      networth_low_usd: low,
+      networth_high_usd: high,
+      networth_mid_usd: mid,
+      confidence_0_1: Math.min(confidence, 0.8),
+      signals
+    };
   }
-
-  // Address premium (property ownership proxy)
-  let addressMultiplier = 1.0;
-  if (hasAddress) {
-    addressMultiplier = 1.3; // Homeowners typically have higher net worth
-  }
-
-  // Calculate base estimate
-  const baseMedian = ageData.median * geoMultiplier * addressMultiplier;
-  const baseP80 = ageData.p80 * geoMultiplier * addressMultiplier;
-
-  // Create range around median-p80
-  const low = Math.round(baseMedian * 0.7);
-  const high = Math.round(baseP80 * 1.2);
-  const mid = Math.round((low + high) / 2);
-
-  // Confidence based on data availability
-  let confidence = 0.3; // Base confidence
-  if (age && state) confidence += 0.2;
-  if (zip) confidence += 0.1;
-  if (hasAddress) confidence += 0.2;
-  if (member.profile_city) confidence += 0.1;
-
-  const signals = {
-    age_band: ageBand,
-    nw_median_age: ageData.median,
-    nw_p80_age: ageData.p80,
-    geo_multiplier: geoMultiplier,
-    address_multiplier: addressMultiplier,
-    has_address: hasAddress,
-    state: state,
-    zip: zip
-  };
-
-  return {
-    networth_low_usd: low,
-    networth_high_usd: high,
-    networth_mid_usd: mid,
-    confidence_0_1: Math.min(confidence, 0.8), // Cap at 80%
-    signals
-  };
 }
 
 // Claude AI Layer-2 Enhancement
@@ -356,11 +422,17 @@ export async function GET(request: NextRequest) {
     // Check if profile is complete enough
     const profileCheck = checkProfileCompleteness(member);
     if (!profileCheck.complete) {
+      // Enhanced profile completion with redirect logic
+      const requiredFields = profileCheck.missing.join(',');
+      const redirectUrl = `/complete/${uid}?required=${requiredFields}&return=/networth/${uid}`;
+      
       return NextResponse.json(
         { 
           error: 'Profile incomplete', 
           message: `Please complete your profile first. Missing: ${profileCheck.missing.join(', ')}`,
-          missing_fields: profileCheck.missing
+          missing_fields: profileCheck.missing,
+          redirect_url: redirectUrl,
+          action: 'redirect_to_profile'
         },
         { status: 400 }
       );
