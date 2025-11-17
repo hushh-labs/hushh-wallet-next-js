@@ -1,5 +1,5 @@
 import { supabaseAdmin } from './supabase';
-import { generateUID } from './uid';
+import { generateUID, canonicalizeIdentity } from './uid';
 import { User } from './supabase';
 import crypto from 'crypto';
 
@@ -27,7 +27,11 @@ export class SupabaseUserService {
     }
     
     // Generate deterministic UID
-    const uid = generateUID(normalizedEmail, phoneE164, normalizedName);
+    const canonical = canonicalizeIdentity({ name, email, phone });
+    if (!canonical) {
+        throw new Error('Invalid identity data');
+    }
+    const uid = generateUID(canonical);
     
     try {
       // Check if user already exists
