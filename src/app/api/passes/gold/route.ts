@@ -96,13 +96,15 @@ export async function GET(request: NextRequest) {
           key: "profile",
           label: "Complete your profile",
           value: member.profile_url,
-          dataDetectorTypes: ["PKDataDetectorTypeLink"] // Makes URL clickable
+          dataDetectorTypes: ["PKDataDetectorTypeLink"],
+          textAlignment: "PKTextAlignmentLeft"
         },
         {
           key: "verify",
           label: "Verification",
           value: member.public_url,
-          dataDetectorTypes: ["PKDataDetectorTypeLink"] // Makes URL clickable
+          dataDetectorTypes: ["PKDataDetectorTypeLink"],
+          textAlignment: "PKTextAlignmentLeft"
         }
       ],
       
@@ -124,7 +126,7 @@ export async function GET(request: NextRequest) {
 
     try {
       // Call Hushh Wallet API
-      const walletApiUrl = process.env.HUSHH_WALLET_API_URL || 'https://hushh-wallet.vercel.app/api/passes/universal/create';
+      const walletApiUrl = process.env.HUSHH_WALLET_API_URL || 'http://localhost:3001/api/passes/universal/create';
       
       const walletResponse = await fetch(walletApiUrl, {
         method: 'POST',

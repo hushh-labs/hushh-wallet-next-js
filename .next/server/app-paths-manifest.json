@@ -1,9 +1,3 @@
 {
-  "/_not-found": "app/_not-found.js",
-  "/api/claim/route": "app/api/claim/route.js",
-  "/api/passes/gold/route": "app/api/passes/gold/route.js",
-  "/api/profile/complete/route": "app/api/profile/complete/route.js",
-  "/u/[uid]/route": "app/u/[uid]/route.js",
-  "/page": "app/page.js",
-  "/complete/[uid]/page": "app/complete/[uid]/page.js"
+  "/page": "app/page.js"
 }
