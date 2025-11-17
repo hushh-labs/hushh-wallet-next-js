@@ -121,6 +121,13 @@ export async function GET(request: NextRequest) {
           textAlignment: "PKTextAlignmentLeft"
         },
         {
+          key: "networth",
+          label: "Know your net worth",
+          value: sanitizeUrlForAppleWallet(`${baseUrl}/networth/${uid}`),
+          dataDetectorTypes: ["PKDataDetectorTypeLink"],
+          textAlignment: "PKTextAlignmentLeft"
+        },
+        {
           key: "verify",
           label: "Verification",
           value: sanitizeUrlForAppleWallet(member.public_url),
