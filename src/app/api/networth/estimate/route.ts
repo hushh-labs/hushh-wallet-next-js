@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { fredAPI, determineAgeGroup } from '@/lib/fredAPI';
+import { censusAPI, validateZipCode } from '@/lib/censusAPI';
 
 // Log event helper
 async function logEvent(uid: string, type: string, meta: any = {}) {
@@ -64,10 +65,14 @@ async function calculateLayer1Estimate(member: any): Promise<{
   const ageBand = determineAgeGroup(age);
 
   try {
-    // Get enhanced Federal Reserve data
-    const [netWorthData, geoData] = await Promise.all([
+    // Validate and clean ZIP code for Census API
+    const validZip = validateZipCode(zip);
+
+    // Get enhanced Federal Reserve data and ZIP-level Census data
+    const [netWorthData, geoData, zipData] = await Promise.all([
       fredAPI.getNationalNetWorthData(),
-      fredAPI.calculateEnhancedGeoMultiplier(state)
+      fredAPI.calculateEnhancedGeoMultiplier(state),
+      validZip ? censusAPI.calculateZipBasedMultiplier(validZip) : null
     ]);
 
     // Find matching age group data
@@ -77,9 +82,23 @@ async function calculateLayer1Estimate(member: any): Promise<{
       throw new Error(`No data found for age group: ${ageBand}`);
     }
 
-    // Use enhanced geographic multiplier from FRED API
-    const geoMultiplier = geoData.multiplier;
-    const geoFactors = geoData.factors;
+    // Enhanced geographic multiplier calculation
+    // Priority: ZIP-level Census data > State-level FRED data > Basic state multiplier
+    let geoMultiplier = geoData.multiplier;
+    let geoFactors = geoData.factors;
+    let zipFactors = null;
+
+    if (zipData && zipData.factors.confidence_level && zipData.factors.confidence_level > 0.3) {
+      // Use ZIP-level data if confidence is high enough
+      geoMultiplier = zipData.multiplier;
+      zipFactors = zipData.factors;
+      
+      // Blend with state-level data for additional context
+      if (geoData.factors.unemployment_rate && geoData.factors.median_income) {
+        // Weighted average: 70% ZIP data, 30% state data for final multiplier
+        geoMultiplier = (zipData.multiplier * 0.7) + (geoData.multiplier * 0.3);
+      }
+    }
 
     // Address premium (property ownership proxy)
     let addressMultiplier = 1.0;
@@ -106,6 +125,12 @@ async function calculateLayer1Estimate(member: any): Promise<{
     // Bonus confidence for real-time FRED data availability
     if (geoFactors.median_income) confidence += 0.1;
     if (geoFactors.unemployment_rate) confidence += 0.05;
+    
+    // Additional confidence for ZIP-level Census data
+    if (zipFactors) {
+      confidence += 0.15; // Major boost for granular ZIP-level data
+      if (zipFactors.affluence_score && zipFactors.affluence_score > 0.5) confidence += 0.05;
+    }
 
     const signals = {
       age_band: ageBand,
@@ -115,13 +140,16 @@ async function calculateLayer1Estimate(member: any): Promise<{
       nw_p90_age: ageData.p90_net_worth,
       geo_multiplier: geoMultiplier,
       geo_factors: geoFactors,
+      zip_factors: zipFactors,
       address_multiplier: addressMultiplier,
       has_address: hasAddress,
       state: state,
       zip: zip,
+      valid_zip: validZip,
       data_source: ageData.source,
       data_year: ageData.year,
-      fred_enhanced: true
+      fred_enhanced: true,
+      census_enhanced: !!zipFactors
     };
 
     return {
