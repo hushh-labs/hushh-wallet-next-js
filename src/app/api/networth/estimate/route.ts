@@ -134,7 +134,7 @@ async function calculateLayer1Estimate(member: any): Promise<{
   };
 }
 
-// Placeholder for Claude AI Layer-2 Enhancement
+// Claude AI Layer-2 Enhancement
 async function enhanceWithClaudeAI(layer1Result: any, member: any): Promise<{
   final_estimate_low: number;
   final_estimate_high: number;
@@ -143,9 +143,6 @@ async function enhanceWithClaudeAI(layer1Result: any, member: any): Promise<{
   confidence_0_1: number;
   disclaimer: string;
 }> {
-  // For now, return enhanced version of Layer-1 with reasoning
-  // TODO: Integrate with actual Claude API
-  
   const { networth_low_usd, networth_high_usd, confidence_0_1, signals } = layer1Result;
   
   // Format band label
@@ -159,7 +156,105 @@ async function enhanceWithClaudeAI(layer1Result: any, member: any): Promise<{
     return `${formatMoney(low)} - ${formatMoney(high)}`;
   };
 
-  // Generate reasoning based on signals
+  // Try Claude AI enhancement if API key is available
+  const claudeApiKey = process.env.CLAUDE_API_KEY;
+  
+  if (claudeApiKey) {
+    try {
+      // Prepare context for Claude
+      const context = {
+        profile: {
+          age: member.profile_age,
+          state: member.profile_state,
+          zip: member.profile_zip,
+          city: member.profile_city,
+          has_address: signals.has_address
+        },
+        layer1_estimate: {
+          low: networth_low_usd,
+          high: networth_high_usd,
+          confidence: confidence_0_1
+        },
+        signals: signals
+      };
+
+      const systemPrompt = `You are a financial estimation engine for HUSHH. Analyze the provided demographic and statistical data to refine a net worth estimate.
+
+CONTEXT: You have Layer-1 statistical data based on Federal Reserve SCF data, age demographics, and geographic indicators.
+
+TASK: Provide a refined estimate with human-readable reasoning.
+
+CONSTRAINTS:
+- Always provide a range, never a point estimate
+- Base reasoning on demographic patterns and economic indicators
+- Include confidence assessment
+- Be transparent about limitations
+- Keep reasoning concise but informative
+
+Respond with JSON only:
+{
+  "final_estimate_low": number,
+  "final_estimate_high": number,
+  "band_label": "string like $X-$Y",
+  "reasoning_summary": "concise explanation",
+  "confidence_0_1": 0.1-0.8,
+  "disclaimer": "standard disclaimer"
+}`;
+
+      const userPrompt = `Profile: Age ${context.profile.age}, ${context.profile.state} state${context.profile.has_address ? ', homeowner indicator' : ''}
+Layer-1 estimate: $${(context.layer1_estimate.low / 1000).toFixed(0)}k - $${(context.layer1_estimate.high / 1000).toFixed(0)}k
+Signals: ${JSON.stringify(context.signals)}
+
+Refine this estimate and provide reasoning.`;
+
+      // Call Claude API
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': claudeApiKey,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-3-haiku-20240307',
+          max_tokens: 1000,
+          system: systemPrompt,
+          messages: [{
+            role: 'user',
+            content: userPrompt
+          }]
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const claudeResponse = data.content[0].text;
+        
+        // Parse Claude's JSON response
+        try {
+          const parsed = JSON.parse(claudeResponse);
+          
+          // Validate the response structure
+          if (parsed.final_estimate_low && parsed.final_estimate_high && parsed.reasoning_summary) {
+            return {
+              final_estimate_low: Math.round(parsed.final_estimate_low),
+              final_estimate_high: Math.round(parsed.final_estimate_high),
+              band_label: parsed.band_label || formatBand(parsed.final_estimate_low, parsed.final_estimate_high),
+              reasoning_summary: parsed.reasoning_summary,
+              confidence_0_1: Math.min(Math.max(parsed.confidence_0_1 || confidence_0_1, 0.1), 0.8),
+              disclaimer: parsed.disclaimer || "This is an AI-powered estimate based on demographic and regional data, not your actual financial accounts. Individual circumstances vary significantly. Not financial advice."
+            };
+          }
+        } catch (parseError) {
+          console.error('Failed to parse Claude response:', parseError);
+        }
+      }
+    } catch (error) {
+      console.error('Claude API error:', error);
+    }
+  }
+
+  // Fallback to Layer-1 with enhanced reasoning if Claude fails
   let reasoning = `Based on your age (${member.profile_age}) and location (${member.profile_state}), `;
   reasoning += `you fall into the ${signals.age_band} demographic where median net worth is around `;
   reasoning += `$${(signals.nw_median_age / 1000).toFixed(0)}k. `;
