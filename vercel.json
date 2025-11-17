@@ -1,5 +1,4 @@
 {
-  "name": "hushh-wallet",
   "headers": [
     {
       "source": "/(.*)\\.pkpass",
