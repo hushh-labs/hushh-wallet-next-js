@@ -470,7 +470,7 @@ export default function NetWorthPage() {
                 const success = callData?.called;
                 let signalNote: string | null = null;
 
-                if (success && callData?.data) {
+                if (success && api.key !== 'claude_api' && callData && 'data' in callData && callData.data) {
                   if (api.key === 'fred_api' && callData.data.geo_multiplier) {
                     signalNote = `Geographic multiplier ${callData.data.geo_multiplier.toFixed(2)}x`;
                   } else if (api.key === 'census_api' && callData.data.affluence_score) {
