@@ -5,7 +5,9 @@ import {
   generateUID, 
   generateEditToken, 
   hashEditToken,
-  generateMemberUrls 
+  generateMemberUrls,
+  generateShortId,
+  generateShortUrl
 } from '@/lib/uid';
 
 // Rate limiting helper
@@ -147,6 +149,10 @@ export async function POST(request: NextRequest) {
         });
       }
 
+      // Generate short URL for Apple Wallet (no hyphens, no breaking)
+      const shortId = generateShortId();
+      const shortUrl = generateShortUrl(shortId);
+
       // Create new member
       const { error: insertError } = await supabaseAdmin
         .from('members')
@@ -157,7 +163,7 @@ export async function POST(request: NextRequest) {
           phone_e164: canonical.phone_e164,
           edit_token_hash: editTokenHash,
           public_url: urls.public_url,
-          profile_url: urls.profile_url,
+          profile_url: shortUrl, // Use short URL for Apple Wallet
           pass_status: 'active'
         });
 
@@ -168,6 +174,15 @@ export async function POST(request: NextRequest) {
           { status: 500 }
         );
       }
+
+      // Create short URL mapping
+      await supabaseAdmin
+        .from('short_urls')
+        .insert({
+          short_id: shortId,
+          uid,
+          token: editToken // Store plaintext token for redirect
+        });
 
       // Log successful claim
       await logEvent(uid, 'claim_submitted', {

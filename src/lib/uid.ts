@@ -93,6 +93,12 @@ export function generateEditToken(): string {
   return randomBytes(8).toString('hex'); // 64-bit token (16 chars)
 }
 
+// Generate short URL-safe ID for Apple Wallet (no hyphens, no breaking)
+export function generateShortId(): string {
+  // Use base36 (0-9, a-z) - URL safe, no special chars, short
+  return randomBytes(4).toString('hex'); // 8 chars, no hyphens possible
+}
+
 // Hash edit token for storage
 export function hashEditToken(token: string): string {
   return createHash('sha256').update(token).digest('hex');
@@ -103,7 +109,7 @@ export function verifyEditToken(token: string, hash: string): boolean {
   return hashEditToken(token) === hash;
 }
 
-// Generate URLs for member
+// Generate URLs for member (with short URL for Apple Wallet)
 export function generateMemberUrls(uid: string, editToken: string) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://hushh-gold-pass-mvp.vercel.app';
   
@@ -111,4 +117,10 @@ export function generateMemberUrls(uid: string, editToken: string) {
     public_url: `${baseUrl}/u/${uid}`,
     profile_url: `${baseUrl}/complete/${uid}?token=${editToken}`
   };
+}
+
+// Generate short URL for Apple Wallet (no hyphens, no breaking)
+export function generateShortUrl(shortId: string) {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://hushh-gold-pass-mvp.vercel.app';
+  return `${baseUrl}/s/${shortId}`;
 }
