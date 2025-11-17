@@ -69,16 +69,62 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify edit token with fallback for Apple Wallet broken tokens
-    const isValidToken = verifyEditToken(token, member.edit_token_hash);
-    const isValidBrokenToken = verifyEditToken(token.replace(/-/g, ''), member.edit_token_hash);
+    // Enhanced token verification with multiple Apple Wallet fallback strategies
+    let tokenVerified = false;
+    const originalToken = token;
     
-    if (!isValidToken && !isValidBrokenToken) {
+    // Strategy 1: Try original token
+    if (verifyEditToken(token, member.edit_token_hash)) {
+      tokenVerified = true;
+    }
+    
+    // Strategy 2: Remove hyphens (Apple Wallet common break pattern)
+    if (!tokenVerified && verifyEditToken(token.replace(/-/g, ''), member.edit_token_hash)) {
+      tokenVerified = true;
+    }
+    
+    // Strategy 3: Remove all non-alphanumeric chars (aggressive fallback)
+    if (!tokenVerified && verifyEditToken(token.replace(/[^a-zA-Z0-9]/g, ''), member.edit_token_hash)) {
+      tokenVerified = true;
+    }
+    
+    // Strategy 4: Try first 16 chars (in case of truncation)
+    if (!tokenVerified && token.length > 16) {
+      const truncatedToken = token.substring(0, 16);
+      if (verifyEditToken(truncatedToken, member.edit_token_hash)) {
+        tokenVerified = true;
+      }
+    }
+    
+    // Strategy 5: Try without last few chars (line break issues)
+    if (!tokenVerified && token.length > 10) {
+      for (let i = 1; i <= 3; i++) {
+        const trimmedToken = token.slice(0, -i);
+        if (verifyEditToken(trimmedToken, member.edit_token_hash)) {
+          tokenVerified = true;
+          break;
+        }
+      }
+    }
+    
+    if (!tokenVerified) {
+      // Log the failed token for debugging
+      await logEvent(uid, 'token_verification_failed', {
+        original_token: originalToken,
+        user_agent: request.headers.get('user-agent')
+      });
+      
       return NextResponse.json(
         { error: 'Invalid or expired token.' },
         { status: 403 }
       );
     }
+    
+    // Log successful token verification with strategy used
+    await logEvent(uid, 'token_verified', {
+      user_agent: request.headers.get('user-agent'),
+      had_token_issues: originalToken !== token
+    });
 
     // Validate profile data if provided
     const updates: any = {};
