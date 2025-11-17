@@ -16,6 +16,27 @@ async function logEvent(uid: string, type: string, meta: any = {}) {
   }
 }
 
+// URL sanitization helper for Apple Wallet compatibility
+function sanitizeUrlForAppleWallet(url: string): string {
+  if (!url) return '';
+  
+  // Remove all whitespace characters (spaces, newlines, tabs, etc.)
+  // and ensure it's a single continuous string
+  const cleanUrl = url.replace(/\s+/g, '').trim();
+  
+  // Validate that it's a proper HTTPS URL
+  try {
+    const urlObj = new URL(cleanUrl);
+    if (urlObj.protocol === 'https:') {
+      return cleanUrl;
+    }
+  } catch (error) {
+    console.error('Invalid URL format:', cleanUrl);
+  }
+  
+  return cleanUrl; // Return even if validation fails, but cleaned
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = request.nextUrl;
@@ -95,14 +116,14 @@ export async function GET(request: NextRequest) {
         {
           key: "profile",
           label: "Complete your profile",
-          value: member.profile_url,
+          value: sanitizeUrlForAppleWallet(member.profile_url),
           dataDetectorTypes: ["PKDataDetectorTypeLink"],
           textAlignment: "PKTextAlignmentLeft"
         },
         {
           key: "verify",
           label: "Verification",
-          value: member.public_url,
+          value: sanitizeUrlForAppleWallet(member.public_url),
           dataDetectorTypes: ["PKDataDetectorTypeLink"],
           textAlignment: "PKTextAlignmentLeft"
         }
@@ -110,9 +131,9 @@ export async function GET(request: NextRequest) {
       
       // Barcode/QR Code
       barcode: {
-        message: member.public_url,
+        message: sanitizeUrlForAppleWallet(member.public_url),
         format: "PKBarcodeFormatQR",
-        messageEncoding: "iso-8859-1",
+        messageEncoding: "utf-8",
         altText: `HUSHH Gold Pass - ${uid}`
       },
       
