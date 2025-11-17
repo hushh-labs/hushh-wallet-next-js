@@ -88,9 +88,9 @@ export function generateUID(canonical: CanonicalIdentity): string {
   return bigInt.toString(36);
 }
 
-// Generate random token for profile completion
+// Generate random token for profile completion (shorter to avoid Apple Wallet line breaks)
 export function generateEditToken(): string {
-  return randomBytes(16).toString('hex'); // 128-bit token
+  return randomBytes(8).toString('hex'); // 64-bit token (16 chars)
 }
 
 // Hash edit token for storage

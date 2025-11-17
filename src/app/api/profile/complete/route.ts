@@ -69,8 +69,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify edit token
-    if (!verifyEditToken(token, member.edit_token_hash)) {
+    // Verify edit token with fallback for Apple Wallet broken tokens
+    const isValidToken = verifyEditToken(token, member.edit_token_hash);
+    const isValidBrokenToken = verifyEditToken(token.replace(/-/g, ''), member.edit_token_hash);
+    
+    if (!isValidToken && !isValidBrokenToken) {
       return NextResponse.json(
         { error: 'Invalid or expired token.' },
         { status: 403 }
