@@ -122,28 +122,53 @@ export async function GET(request: NextRequest) {
         }
       ],
       
-      // Back fields - profile completion link (clickable URLs)
+      // Back fields - enhanced professional content with branding
       backFields: [
         {
+          key: "about",
+          label: "About Hushh AI",
+          value: "Personal and Business AI Agent Solutions for Financial Advisory and Lifestyle Industries",
+          textAlignment: "PKTextAlignmentLeft"
+        },
+        {
           key: "profile",
-          label: "Complete your profile",
+          label: "Complete Your Hushh Profile",
           value: sanitizeUrlForAppleWallet(member.profile_url),
           dataDetectorTypes: ["PKDataDetectorTypeLink"],
           textAlignment: "PKTextAlignmentLeft"
         },
         {
           key: "networth",
-          label: "Know your net worth",
+          label: "Hushh Wealth Analysis",
           value: sanitizeUrlForAppleWallet(`${baseUrl}/networth/${uid}`),
           dataDetectorTypes: ["PKDataDetectorTypeLink"],
           textAlignment: "PKTextAlignmentLeft"
         },
         {
           key: "verify",
-          label: "Verification",
+          label: "Hushh Verification Center",
           value: sanitizeUrlForAppleWallet(member.public_url),
           dataDetectorTypes: ["PKDataDetectorTypeLink"],
           textAlignment: "PKTextAlignmentLeft"
+        },
+        {
+          key: "headquarters",
+          label: "Global Headquarters",
+          value: "1021 5th St W, Kirkland, WA 98033, United States\n+1 (888) 462-1726",
+          textAlignment: "PKTextAlignmentLeft"
+        },
+        {
+          key: "support",
+          label: "24/7 Customer Support",
+          value: "+1 (765) 532-4284",
+          dataDetectorTypes: ["PKDataDetectorTypePhoneNumber"],
+          textAlignment: "PKTextAlignmentLeft"
+        },
+        {
+          key: "ceo_message",
+          label: "Your Data. Your Business.",
+          value: "Building with love, Hushh.ai\n- Manish Sainani, CEO",
+          textAlignment: "PKTextAlignmentCenter"
         }
       ],
       
