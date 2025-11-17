@@ -500,7 +500,7 @@ export default function NetWorthPage() {
                       </span>
                     </div>
                     {signalNote && <p className="text-xs text-white/80">{signalNote}</p>}
-                    {api.key === 'claude_api' && callData?.enhanced && (
+                    {api.key === 'claude_api' && callData && 'enhanced' in callData && callData.enhanced && (
                       <p className="text-xs text-emerald-200">Estimate enhanced ✓</p>
                     )}
                   </div>
