@@ -114,6 +114,21 @@ export async function POST(request: NextRequest) {
     const serialNumber = `HUSHH-${timestamp}-${randomSuffix}`;
     const issueDate = new Date().toISOString();
     
+    // Helper function to process fields and ensure dataDetectorTypes are properly formatted
+    const processFields = (fields: PassField[] | undefined): any[] => {
+      if (!fields) return [];
+      return fields.map(field => {
+        const processedField: any = { ...field };
+        
+        // Ensure dataDetectorTypes is properly formatted for Apple Wallet
+        if (field.dataDetectorTypes && Array.isArray(field.dataDetectorTypes)) {
+          processedField.dataDetectorTypes = field.dataDetectorTypes;
+        }
+        
+        return processedField;
+      });
+    };
+
     // Build pass data structure
     const passData: any = {
       formatVersion: 1,
@@ -129,13 +144,13 @@ export async function POST(request: NextRequest) {
       backgroundColor: passRequest.backgroundColor || "rgb(117, 65, 10)",
       labelColor: passRequest.labelColor || "rgb(216, 178, 111)",
       
-      // Pass type specific structure
+      // Pass type specific structure with properly processed fields
       [passRequest.passType]: {
-        primaryFields: passRequest.primaryFields || [],
-        secondaryFields: passRequest.secondaryFields || [],
-        auxiliaryFields: passRequest.auxiliaryFields || [],
-        headerFields: passRequest.headerFields || [],
-        backFields: passRequest.backFields || [],
+        primaryFields: processFields(passRequest.primaryFields),
+        secondaryFields: processFields(passRequest.secondaryFields),
+        auxiliaryFields: processFields(passRequest.auxiliaryFields),
+        headerFields: processFields(passRequest.headerFields),
+        backFields: processFields(passRequest.backFields),
       }
     };
     
