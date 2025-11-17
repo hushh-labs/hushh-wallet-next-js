@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { fredAPI, determineAgeGroup } from '@/lib/fredAPI';
 import { censusAPI, validateZipCode } from '@/lib/censusAPI';
+import { blsAPI, mapUserAgeToAgeBand, calculateAgeIncomeEffect } from '@/lib/blsAPI';
 
 // Log event helper
 async function logEvent(uid: string, type: string, meta: any = {}) {
@@ -67,12 +68,16 @@ async function calculateLayer1Estimate(member: any): Promise<{
   try {
     // Validate and clean ZIP code for Census API
     const validZip = validateZipCode(zip);
+    
+    // Map age to BLS age band for earnings data
+    const blsAgeBand = mapUserAgeToAgeBand(age);
 
-    // Get enhanced Federal Reserve data and ZIP-level Census data
-    const [netWorthData, geoData, zipData] = await Promise.all([
+    // Get enhanced Federal Reserve, Census, and BLS data
+    const [netWorthData, geoData, zipData, ageEarningsData] = await Promise.all([
       fredAPI.getNationalNetWorthData(),
       fredAPI.calculateEnhancedGeoMultiplier(state),
-      validZip ? censusAPI.calculateZipBasedMultiplier(validZip) : null
+      validZip ? censusAPI.calculateZipBasedMultiplier(validZip) : null,
+      blsAPI.getAgeEarnings(blsAgeBand)
     ]);
 
     // Find matching age group data
@@ -100,20 +105,30 @@ async function calculateLayer1Estimate(member: any): Promise<{
       }
     }
 
+    // BLS age-income multiplier (optional enhancement)
+    let ageIncomeMultiplier = 1.0;
+    let ageEarningsFactors = null;
+    
+    if (ageEarningsData) {
+      ageIncomeMultiplier = calculateAgeIncomeEffect(ageEarningsData.age_income_index);
+      ageEarningsFactors = blsAPI.analyzeAgeIncome(age, ageEarningsData);
+    }
+
     // Address premium (property ownership proxy)
     let addressMultiplier = 1.0;
     if (hasAddress) {
       addressMultiplier = 1.3; // Homeowners typically have higher net worth
     }
 
-    // Calculate enhanced estimate using real FRED data
-    const baseMedian = ageData.median_net_worth * geoMultiplier * addressMultiplier;
-    const baseP90 = ageData.p90_net_worth * geoMultiplier * addressMultiplier;
+    // Calculate enhanced estimate using real FRED + BLS + Census data
+    const allMultipliers = geoMultiplier * addressMultiplier * Math.pow(ageIncomeMultiplier, 0.25);
+    const baseMedian = ageData.median_net_worth * allMultipliers;
+    const baseP90 = ageData.p90_net_worth * allMultipliers;
 
     // Create range using percentile data
-    const low = Math.round(ageData.p25_net_worth * geoMultiplier * addressMultiplier);
+    const low = Math.round(ageData.p25_net_worth * allMultipliers);
     const high = Math.round(baseP90 * 1.1); // Slight adjustment for upper bound
-    const mid = Math.round((baseMedian + ageData.p75_net_worth * geoMultiplier * addressMultiplier) / 2);
+    const mid = Math.round((baseMedian + ageData.p75_net_worth * allMultipliers) / 2);
 
     // Enhanced confidence calculation
     let confidence = 0.4; // Higher base confidence with real data
@@ -131,6 +146,12 @@ async function calculateLayer1Estimate(member: any): Promise<{
       confidence += 0.15; // Major boost for granular ZIP-level data
       if (zipFactors.affluence_score && zipFactors.affluence_score > 0.5) confidence += 0.05;
     }
+    
+    // BLS age-earnings data confidence boost
+    if (ageEarningsFactors) {
+      confidence += 0.05; // Boost for age-specific earnings data
+      if (ageEarningsFactors.confidence > 0.8) confidence += 0.05; // Official BLS data
+    }
 
     const signals = {
       age_band: ageBand,
@@ -141,6 +162,8 @@ async function calculateLayer1Estimate(member: any): Promise<{
       geo_multiplier: geoMultiplier,
       geo_factors: geoFactors,
       zip_factors: zipFactors,
+      age_income_multiplier: ageIncomeMultiplier,
+      age_earnings_factors: ageEarningsFactors,
       address_multiplier: addressMultiplier,
       has_address: hasAddress,
       state: state,
@@ -149,7 +172,8 @@ async function calculateLayer1Estimate(member: any): Promise<{
       data_source: ageData.source,
       data_year: ageData.year,
       fred_enhanced: true,
-      census_enhanced: !!zipFactors
+      census_enhanced: !!zipFactors,
+      bls_enhanced: !!ageEarningsFactors
     };
 
     return {
