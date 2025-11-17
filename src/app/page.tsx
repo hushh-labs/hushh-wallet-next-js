@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 export default function HomePage() {
   const [formData, setFormData] = useState({
@@ -11,6 +11,18 @@ export default function HomePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string>('');
+
+  const featureHighlights = useMemo(() => ([
+    { label: 'Verified Tastemakers', value: '32,118', detail: 'Curated across the US' },
+    { label: 'Private experiences', value: '180+', detail: 'Dining, galleries, ateliers' },
+    { label: 'Concierge response', value: '< 15m', detail: 'Avg. member request' }
+  ]), []);
+
+  const promisePillars = [
+    'Biometric-grade verification and Wallet-native security',
+    'Concierge onboarding with zero logins required',
+    'Net worth insights delivered privately to your Wallet'
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,149 +61,216 @@ export default function HomePage() {
   };
 
   const isIOS = () => {
+    if (typeof navigator === 'undefined') return false;
     return /iPad|iPhone|iPod/.test(navigator.userAgent);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-900 via-yellow-800 to-yellow-600">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-md mx-auto bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl p-8 border border-white/20">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-white mb-2">HUSHH</h1>
-            <p className="text-xl text-yellow-200 font-semibold">Gold Pass</p>
-            <p className="text-sm text-white/80 mt-4">
-              Exclusive access to premium experiences
-            </p>
+    <div className="relative min-h-screen overflow-hidden bg-[#050203] text-cream">
+      <div className="absolute inset-0">
+        <div className="absolute -top-24 -right-10 w-[420px] h-[420px] bg-[#f4b65c] opacity-40 blur-[140px]" />
+        <div className="absolute -bottom-20 -left-10 w-[360px] h-[360px] bg-[#d27928] opacity-30 blur-[120px]" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full border border-white/5 opacity-30" />
+      </div>
+
+      <div className="relative z-10 max-w-6xl mx-auto px-6 py-12">
+        <header className="mb-12 space-y-6 text-center md:text-left">
+          <p className="uppercase text-xs tracking-[0.45em] text-white/50 saira-royal">Royal society access</p>
+          <h1 className="text-4xl md:text-6xl font-semibold saira-royal leading-tight">
+            HUSHH Gold Pass
+          </h1>
+          <p className="max-w-3xl text-lg text-white/70 mx-auto md:mx-0 open-sans-clarity">
+            An Apple Wallet identity for ultra-high intent circles. Claim the pass in under ten
+            seconds and finish your profile whenever you wish—no apps, no logins, just a private,
+            immutable proof of access.
+          </p>
+        </header>
+
+        <section className="grid gap-10 md:grid-cols-[1.1fr_0.9fr] items-start">
+          <div className="space-y-8">
+            <div className="glass-card p-8 space-y-6">
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="px-4 py-1 rounded-full border border-white/10 text-sm text-white/70 stack-sans-notch-crest">
+                  <span className="text-[#f7c66a]">Apple Wallet-first</span> access
+                </div>
+                <div className="px-4 py-1 rounded-full border border-white/10 text-sm text-white/70 stack-sans-notch-crest">
+                  Invite-only • US verified
+                </div>
+              </div>
+              <p className="text-2xl text-white/90 leading-relaxed open-sans-clarity">
+                Designed for luxury homes, private member clubs, and royal families who need
+                an irrefutable credential without friction. Every field is optional, but every
+                detail unlocks more bespoke privileges.
+              </p>
+              <div className="grid gap-4 sm:grid-cols-3">
+                {featureHighlights.map((item) => (
+                  <div key={item.label} className="rounded-2xl border border-white/5 bg-white/5 px-4 py-5">
+                    <div className="text-2xl font-semibold text-[#f7c66a] saira-royal">{item.value}</div>
+                    <p className="text-sm text-white/80">{item.label}</p>
+                    <p className="text-xs text-white/50 mt-1">{item.detail}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              {promisePillars.map((pillar) => (
+                <div key={pillar} className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-[#f7c66a]">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  </div>
+                  <p className="text-white/80 open-sans-clarity">{pillar}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {!result ? (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label htmlFor="name" className="block text-white font-medium mb-2">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                  placeholder="Enter your full name"
-                />
-              </div>
+          <div className="glass-card p-8">
+            <div className="text-center mb-8">
+              <p className="text-sm uppercase tracking-[0.5em] text-white/50 mb-4 saira-royal">Claim</p>
+              <h2 className="text-3xl font-semibold text-white saira-royal">Your Gold Identity</h2>
+              <p className="text-sm text-white/60 mt-3">
+                HUSHH uses Apple Wallet security, so you can complete this in under ten seconds.
+              </p>
+            </div>
 
-              <div>
-                <label htmlFor="email" className="block text-white font-medium mb-2">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                  placeholder="Enter your email"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="phone" className="block text-white font-medium mb-2">
-                  US Phone Number
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                  placeholder="(555) 123-4567"
-                />
-              </div>
-
-              {error && (
-                <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-4">
-                  <p className="text-white text-sm">{error}</p>
+            {!result ? (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="space-y-2">
+                  <label htmlFor="name" className="text-sm text-white/70">Full Name</label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    required
+                    className="input-field"
+                    placeholder="Enter the name to print on the pass"
+                  />
                 </div>
-              )}
 
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-gradient-to-r from-yellow-400 to-amber-500 text-amber-900 font-bold py-4 px-6 rounded-lg shadow-lg hover:from-yellow-300 hover:to-amber-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02]"
-              >
-                {isSubmitting ? (
-                  <span className="flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Creating your pass...
-                  </span>
-                ) : (
-                  'Get My Gold Pass'
-                )}
-              </button>
-            </form>
-          ) : (
-            <div className="text-center space-y-6">
-              <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4">
-                <p className="text-white font-medium">
-                  {result.existing ? 'Welcome back!' : 'Success!'} Your HUSHH Gold Pass is ready.
-                </p>
-              </div>
+                <div className="space-y-2">
+                  <label htmlFor="email" className="text-sm text-white/70">Email Address</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                    className="input-field"
+                    placeholder="you@example.com"
+                  />
+                </div>
 
-              {isIOS() ? (
-                <a
-                  href={result.addToWalletUrl}
-                  className="block w-full bg-black text-white font-bold py-4 px-6 rounded-lg shadow-lg hover:bg-gray-800 transition-all duration-200 transform hover:scale-[1.02]"
-                >
-                  📱 Add to Apple Wallet
-                </a>
-              ) : (
-                <div className="space-y-4">
-                  <p className="text-white/80 text-sm">
-                    To add to Apple Wallet, open this link on your iPhone:
+                <div className="space-y-2">
+                  <label htmlFor="phone" className="text-sm text-white/70">US Phone Number</label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    required
+                    className="input-field"
+                    placeholder="(555) 123-4567"
+                  />
+                  <p className="text-xs text-white/50">
+                    We use SMS only for secure download links—no marketing blasts.
                   </p>
+                </div>
+
+                {error && (
+                  <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-200">
+                    {error}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="btn-primary w-full flex items-center justify-center gap-3 text-base"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <svg className="w-5 h-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Creating your pass
+                    </>
+                  ) : (
+                    <>
+                      <span>Get my Gold Pass</span>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5 12h14M12 5l7 7-7 7"></path>
+                      </svg>
+                    </>
+                  )}
+                </button>
+
+                <p className="text-center text-xs text-white/50">
+                  Powered by HUSHH • Premium membership platform
+                </p>
+              </form>
+            ) : (
+              <div className="space-y-6">
+                <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-center">
+                  <p className="text-emerald-100 font-semibold saira-royal text-lg">
+                    {result.existing ? 'Welcome back.' : 'You’re in.'}
+                  </p>
+                  <p className="text-sm text-white/70 mt-2">
+                    Your HUSHH Gold Pass is ready to drop into Apple Wallet.
+                  </p>
+                </div>
+
+                {isIOS() ? (
                   <a
                     href={result.addToWalletUrl}
-                    className="block w-full bg-blue-600 text-white font-bold py-4 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-200"
+                    className="w-full inline-flex items-center justify-center gap-3 rounded-2xl bg-black/80 border border-white/10 py-4 text-white font-semibold hover:bg-black transition-all duration-200"
                   >
-                    Download Pass File
+                    <span>📱 Add to Apple Wallet</span>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
                   </a>
-                </div>
-              )}
+                ) : (
+                  <div className="space-y-3">
+                    <p className="text-sm text-white/60 text-center">
+                      Open this link on your iPhone to add directly to Apple Wallet:
+                    </p>
+                    <a
+                      href={result.addToWalletUrl}
+                      className="w-full inline-flex items-center justify-center gap-3 rounded-2xl bg-white/10 border border-white/20 py-4 text-white font-semibold hover:bg-white/20 transition-all duration-200"
+                    >
+                      Download Pass File
+                    </a>
+                  </div>
+                )}
 
-              <a
-                href={result.profileUrl}
-                className="block w-full bg-white/20 border border-white/30 text-white font-medium py-3 px-6 rounded-lg hover:bg-white/30 transition-all duration-200"
-              >
-                Complete Your Profile
-              </a>
+                <a
+                  href={result.profileUrl}
+                  className="block w-full rounded-2xl border border-white/10 bg-white/5 py-4 text-center text-white/80 hover:bg-white/10 transition"
+                >
+                  Complete your profile later
+                </a>
 
-              <button
-                onClick={() => {
-                  setResult(null);
-                  setFormData({ name: '', email: '', phone: '' });
-                }}
-                className="text-white/60 hover:text-white text-sm underline"
-              >
-                Create another pass
-              </button>
-            </div>
-          )}
-        </div>
-
-        <div className="text-center mt-8">
-          <p className="text-white/60 text-sm">
-            Powered by HUSHH • Premium membership platform
-          </p>
-        </div>
+                <button
+                  onClick={() => {
+                    setResult(null);
+                    setFormData({ name: '', email: '', phone: '' });
+                  }}
+                  className="w-full text-xs text-white/50 underline hover:text-white/80"
+                >
+                  Start another pass
+                </button>
+              </div>
+            )}
+          </div>
+        </section>
       </div>
     </div>
   );

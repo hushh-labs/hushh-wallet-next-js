@@ -3,21 +3,115 @@
 @tailwind utilities;
 
 @layer base {
-  html {
-    font-family: system-ui, sans-serif;
+  :root {
+    --lux-deep: #050203;
+    --lux-card: rgba(26, 15, 6, 0.85);
+    --lux-cream: #fff8ea;
+    --lux-gold-start: #f7c66a;
+    --lux-gold-end: #d8922e;
+    --lux-amber: #f2ab5d;
   }
+
+  html {
+    font-family: "Vend Sans", "Open Sans", sans-serif;
+    background-color: var(--lux-deep);
+    color: var(--lux-cream);
+  }
+
+  body {
+    min-height: 100vh;
+    background: radial-gradient(circle at top, rgba(255, 220, 157, 0.12), transparent 45%),
+      #050203;
+    color: var(--lux-cream);
+    font-family: "Vend Sans", "Open Sans", sans-serif;
+  }
+}
+
+.vend-sans-elegant {
+  font-family: "Vend Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.saira-royal {
+  font-family: "Saira", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+.stack-sans-notch-crest {
+  font-family: "Stack Sans Notch", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.noto-sans-refined {
+  font-family: "Noto Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+.exo-2-kinetic {
+  font-family: "Exo 2", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.open-sans-clarity {
+  font-family: "Open Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+.tektur-vanguard {
+  font-family: "Tektur", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.bg-deep-lux {
+  background-color: var(--lux-deep);
+}
+
+.text-cream {
+  color: var(--lux-cream);
+}
+
+.gold-highlight {
+  background: linear-gradient(135deg, var(--lux-gold-start), var(--lux-gold-end));
+  color: #2b1402;
+}
+
+.glass-card {
+  background: var(--lux-card);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 30px 60px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(24px);
+  border-radius: 28px;
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-gradient-to-r from-yellow-400 to-amber-500 text-amber-900 font-bold py-3 px-6 rounded-lg shadow-lg hover:from-yellow-300 hover:to-amber-400 transition-all duration-200 transform hover:scale-[1.02];
+    @apply bg-gradient-to-r from-[#f7c66a] to-[#d8922e] text-[#331600] font-semibold py-3 px-6 rounded-2xl shadow-lg shadow-amber-900/40 hover:from-[#ffd38b] hover:to-[#f4a64a] transition-all duration-200 transform hover:translate-y-[-1px];
   }
   
   .card {
-    @apply bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20;
+    @apply glass-card;
   }
   
   .input-field {
-    @apply w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent;
+    @apply w-full px-5 py-4 rounded-2xl bg-white/5 border border-white/10 text-cream placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#f7c66a]/60 focus:border-transparent transition-all duration-200;
   }
 }
