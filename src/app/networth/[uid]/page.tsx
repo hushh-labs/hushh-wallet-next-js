@@ -13,6 +13,34 @@ interface NetWorthEstimate {
   disclaimer: string;
   lastUpdated: string;
   cached?: boolean;
+  calculation_breakdown?: {
+    cached?: boolean;
+    layer1_estimate?: {
+      low: number;
+      high: number;
+      mid: number;
+      confidence: number;
+    };
+    api_calls?: {
+      fred_api: { called: boolean; timestamp: string; data?: any };
+      census_api: { called: boolean; timestamp: string; data?: any };
+      bls_api: { called: boolean; timestamp: string; data?: any };
+      claude_api: { called: boolean; timestamp: string; enhanced?: boolean };
+    };
+    multipliers?: {
+      geographic: number;
+      age_income: number;
+      address: number;
+      total: number;
+    };
+    base_data?: {
+      age_band: string;
+      median_networth: number;
+      data_source: string;
+      data_year: number;
+    };
+  };
+  debug_signals?: any;
 }
 
 interface LoadingStep {
@@ -256,7 +284,23 @@ export default function NetWorthPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="max-width-4xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-8 relative">
+            {/* Refresh Icon - Top Right */}
+            <button
+              onClick={() => {
+                setLoading(true);
+                setCurrentStep(0);
+                setLoadingSteps(prev => prev.map(step => ({ ...step, completed: false })));
+                fetchNetWorthEstimate();
+              }}
+              className="absolute top-0 right-0 w-10 h-10 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full border border-white/20 flex items-center justify-center transition-all duration-200 group"
+              title="Refresh Analysis"
+            >
+              <svg className="w-5 h-5 text-white group-hover:text-yellow-300 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+            </button>
+
             <div className="flex items-center justify-center space-x-2 mb-4">
               <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -297,6 +341,177 @@ export default function NetWorthPage() {
               </p>
             </div>
           </div>
+
+          {/* API Analysis Transparency */}
+          {estimate.calculation_breakdown && (
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl p-8 border border-white/20 mb-8">
+              <h2 className="text-2xl font-bold text-white mb-6">API Analysis Transparency</h2>
+              <p className="text-white/80 mb-6">See exactly which data sources were used and how your estimate was calculated:</p>
+              
+              {/* API Call Status */}
+              <div className="grid md:grid-cols-2 gap-6 mb-8">
+                <div className="space-y-4">
+                  <div className={`flex items-start space-x-3 p-4 rounded-xl ${
+                    estimate.calculation_breakdown.api_calls?.fred_api.called 
+                      ? 'bg-green-500/20 border border-green-400/30' 
+                      : 'bg-red-500/20 border border-red-400/30'
+                  }`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${
+                      estimate.calculation_breakdown.api_calls?.fred_api.called ? 'bg-green-500' : 'bg-red-500'
+                    }`}>
+                      {estimate.calculation_breakdown.api_calls?.fred_api.called ? '✓' : '✗'}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-white font-semibold">🏦 Federal Reserve (FRED)</h3>
+                        <span className="text-xs text-white/60">
+                          {estimate.calculation_breakdown.api_calls?.fred_api.timestamp && 
+                            new Date(estimate.calculation_breakdown.api_calls.fred_api.timestamp).toLocaleTimeString()}
+                        </span>
+                      </div>
+                      <p className="text-white/70 text-sm mb-2">Real-time economic indicators</p>
+                      {estimate.calculation_breakdown.api_calls?.fred_api.called && estimate.calculation_breakdown.api_calls.fred_api.data && (
+                        <div className="text-xs text-green-200">
+                          Geographic Multiplier: {estimate.calculation_breakdown.api_calls.fred_api.data.geo_multiplier?.toFixed(2)}x
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className={`flex items-start space-x-3 p-4 rounded-xl ${
+                    estimate.calculation_breakdown.api_calls?.census_api.called 
+                      ? 'bg-green-500/20 border border-green-400/30' 
+                      : 'bg-red-500/20 border border-red-400/30'
+                  }`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${
+                      estimate.calculation_breakdown.api_calls?.census_api.called ? 'bg-green-500' : 'bg-red-500'
+                    }`}>
+                      {estimate.calculation_breakdown.api_calls?.census_api.called ? '✓' : '✗'}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-white font-semibold">🏛️ Census Bureau (ACS)</h3>
+                        <span className="text-xs text-white/60">
+                          {estimate.calculation_breakdown.api_calls?.census_api.timestamp && 
+                            new Date(estimate.calculation_breakdown.api_calls.census_api.timestamp).toLocaleTimeString()}
+                        </span>
+                      </div>
+                      <p className="text-white/70 text-sm mb-2">ZIP-level income analysis</p>
+                      {estimate.calculation_breakdown.api_calls?.census_api.called && estimate.calculation_breakdown.api_calls.census_api.data && (
+                        <div className="text-xs text-green-200">
+                          Affluence Score: {estimate.calculation_breakdown.api_calls.census_api.data.affluence_score?.toFixed(2)}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className={`flex items-start space-x-3 p-4 rounded-xl ${
+                    estimate.calculation_breakdown.api_calls?.bls_api.called 
+                      ? 'bg-green-500/20 border border-green-400/30' 
+                      : 'bg-red-500/20 border border-red-400/30'
+                  }`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${
+                      estimate.calculation_breakdown.api_calls?.bls_api.called ? 'bg-green-500' : 'bg-red-500'
+                    }`}>
+                      {estimate.calculation_breakdown.api_calls?.bls_api.called ? '✓' : '✗'}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-white font-semibold">📊 Bureau of Labor Statistics</h3>
+                        <span className="text-xs text-white/60">
+                          {estimate.calculation_breakdown.api_calls?.bls_api.timestamp && 
+                            new Date(estimate.calculation_breakdown.api_calls.bls_api.timestamp).toLocaleTimeString()}
+                        </span>
+                      </div>
+                      <p className="text-white/70 text-sm mb-2">Age-specific earnings data</p>
+                      {estimate.calculation_breakdown.api_calls?.bls_api.called && estimate.calculation_breakdown.api_calls.bls_api.data && (
+                        <div className="text-xs text-green-200">
+                          Age Income Index: {estimate.calculation_breakdown.api_calls.bls_api.data.age_income_index?.toFixed(2)}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className={`flex items-start space-x-3 p-4 rounded-xl ${
+                    estimate.calculation_breakdown.api_calls?.claude_api.called 
+                      ? 'bg-green-500/20 border border-green-400/30' 
+                      : 'bg-red-500/20 border border-red-400/30'
+                  }`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${
+                      estimate.calculation_breakdown.api_calls?.claude_api.called ? 'bg-green-500' : 'bg-red-500'
+                    }`}>
+                      {estimate.calculation_breakdown.api_calls?.claude_api.called ? '✓' : '✗'}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-white font-semibold">🤖 Claude AI Enhancement</h3>
+                        <span className="text-xs text-white/60">
+                          {estimate.calculation_breakdown.api_calls?.claude_api.timestamp && 
+                            new Date(estimate.calculation_breakdown.api_calls.claude_api.timestamp).toLocaleTimeString()}
+                        </span>
+                      </div>
+                      <p className="text-white/70 text-sm mb-2">Advanced reasoning & refinement</p>
+                      {estimate.calculation_breakdown.api_calls?.claude_api.enhanced && (
+                        <div className="text-xs text-green-200">
+                          Estimate Enhanced ✓
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Calculation Breakdown */}
+              {estimate.calculation_breakdown.multipliers && (
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-4">Calculation Multipliers</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div className="text-center p-4 bg-white/5 rounded-xl">
+                      <div className="text-2xl font-bold text-yellow-400">
+                        {estimate.calculation_breakdown.multipliers.geographic.toFixed(2)}x
+                      </div>
+                      <div className="text-white/70 text-sm">Geographic</div>
+                    </div>
+                    <div className="text-center p-4 bg-white/5 rounded-xl">
+                      <div className="text-2xl font-bold text-blue-400">
+                        {estimate.calculation_breakdown.multipliers.age_income.toFixed(2)}x
+                      </div>
+                      <div className="text-white/70 text-sm">Age Income</div>
+                    </div>
+                    <div className="text-center p-4 bg-white/5 rounded-xl">
+                      <div className="text-2xl font-bold text-green-400">
+                        {estimate.calculation_breakdown.multipliers.address.toFixed(2)}x
+                      </div>
+                      <div className="text-white/70 text-sm">Address</div>
+                    </div>
+                    <div className="text-center p-4 bg-gradient-to-br from-yellow-400/20 to-amber-500/20 rounded-xl border border-yellow-400/30">
+                      <div className="text-2xl font-bold text-yellow-300">
+                        {estimate.calculation_breakdown.multipliers.total.toFixed(2)}x
+                      </div>
+                      <div className="text-yellow-200 text-sm font-semibold">Total</div>
+                    </div>
+                  </div>
+
+                  {/* Base Data */}
+                  {estimate.calculation_breakdown.base_data && (
+                    <div className="bg-white/5 rounded-xl p-4">
+                      <h4 className="text-white font-semibold mb-2">Base Demographics</h4>
+                      <div className="text-sm text-white/80 space-y-1">
+                        <div>Age Group: <span className="text-yellow-300">{estimate.calculation_breakdown.base_data.age_band}</span></div>
+                        <div>Median Net Worth: <span className="text-yellow-300">${(estimate.calculation_breakdown.base_data.median_networth / 1000).toFixed(0)}k</span></div>
+                        <div>Data Source: <span className="text-yellow-300">{estimate.calculation_breakdown.base_data.data_source}</span></div>
+                        {estimate.calculation_breakdown.base_data.data_year && (
+                          <div>Data Year: <span className="text-yellow-300">{estimate.calculation_breakdown.base_data.data_year}</span></div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Enhanced Methodology */}
           <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl p-8 border border-white/20 mb-8">

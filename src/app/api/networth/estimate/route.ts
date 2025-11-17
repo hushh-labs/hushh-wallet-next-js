@@ -56,6 +56,7 @@ async function calculateLayer1Estimate(member: any): Promise<{
   networth_mid_usd: number;
   confidence_0_1: number;
   signals: any;
+  pipeline_status: any;
 }> {
   const age = member.profile_age || 30;
   const zip = member.profile_zip;
@@ -176,12 +177,38 @@ async function calculateLayer1Estimate(member: any): Promise<{
       bls_enhanced: !!ageEarningsFactors
     };
 
+    // Branded Pipeline Status
+    const pipeline_status = {
+      "hushh_ai_fred_alpha_pipeline": {
+        status: "completed",
+        message: "Hushh AI FRED Alpha Pipeline running",
+        timestamp: new Date().toISOString(),
+        success: true,
+        data: geoFactors
+      },
+      "hushh_ai_census_acs_alpha": {
+        status: zipFactors ? "completed" : "skipped",
+        message: zipFactors ? "Hushh AI Census ACS Alpha running" : "Hushh AI Census ACS Alpha - insufficient ZIP data",
+        timestamp: new Date().toISOString(),
+        success: !!zipFactors,
+        data: zipFactors
+      },
+      "hushh_ai_bls_alpha_pipeline": {
+        status: ageEarningsFactors ? "completed" : "skipped", 
+        message: ageEarningsFactors ? "Hushh AI BLS Alpha Pipeline running" : "Hushh AI BLS Alpha Pipeline - no age data",
+        timestamp: new Date().toISOString(),
+        success: !!ageEarningsFactors,
+        data: ageEarningsFactors
+      }
+    };
+
     return {
       networth_low_usd: low,
       networth_high_usd: high,
       networth_mid_usd: mid,
       confidence_0_1: Math.min(confidence, 0.8), // Cap at 80%
-      signals
+      signals,
+      pipeline_status
     };
 
   } catch (error) {
@@ -242,12 +269,38 @@ async function calculateLayer1Estimate(member: any): Promise<{
       fallback_reason: error instanceof Error ? error.message : 'Unknown error'
     };
 
+    // Fallback Pipeline Status (all failed)
+    const pipeline_status = {
+      "hushh_ai_fred_alpha_pipeline": {
+        status: "failed",
+        message: "Hushh AI FRED Alpha Pipeline - API failure, using fallback",
+        timestamp: new Date().toISOString(),
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      },
+      "hushh_ai_census_acs_alpha": {
+        status: "failed",
+        message: "Hushh AI Census ACS Alpha - API failure, using fallback",
+        timestamp: new Date().toISOString(),
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      },
+      "hushh_ai_bls_alpha_pipeline": {
+        status: "failed",
+        message: "Hushh AI BLS Alpha Pipeline - API failure, using fallback",
+        timestamp: new Date().toISOString(),
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      }
+    };
+
     return {
       networth_low_usd: low,
       networth_high_usd: high,
       networth_mid_usd: mid,
       confidence_0_1: Math.min(confidence, 0.8),
-      signals
+      signals,
+      pipeline_status
     };
   }
 }
@@ -513,7 +566,17 @@ export async function GET(request: NextRequest) {
         reasoning: existingEstimate.reasoning,
         disclaimer: existingEstimate.disclaimer,
         lastUpdated: existingEstimate.estimated_at,
-        cached: true
+        cached: true,
+        // Include cached breakdown if available
+        calculation_breakdown: existingEstimate.layer1_signals_json ? {
+          cached: true,
+          layer1_estimate: {
+            low: existingEstimate.layer1_low,
+            high: existingEstimate.layer1_high,
+            confidence: existingEstimate.layer1_confidence
+          }
+        } : null,
+        debug_signals: existingEstimate.layer1_signals_json
       });
     }
 
@@ -531,7 +594,7 @@ export async function GET(request: NextRequest) {
       band: layer2Result.band_label
     });
 
-    // Return the estimate
+    // Return enhanced estimate with detailed breakdown
     return NextResponse.json({
       uid,
       estimateLow: layer2Result.final_estimate_low,
@@ -541,7 +604,68 @@ export async function GET(request: NextRequest) {
       reasoning: layer2Result.reasoning_summary,
       disclaimer: layer2Result.disclaimer,
       lastUpdated: new Date().toISOString(),
-      cached: false
+      cached: false,
+      // Enhanced transparency data
+      calculation_breakdown: {
+        layer1_estimate: {
+          low: layer1Result.networth_low_usd,
+          high: layer1Result.networth_high_usd,
+          mid: layer1Result.networth_mid_usd,
+          confidence: layer1Result.confidence_0_1
+        },
+        api_calls: {
+          fred_api: {
+            called: !!layer1Result.signals.fred_enhanced,
+            timestamp: new Date().toISOString(),
+            data: layer1Result.signals.fred_enhanced ? {
+              geo_multiplier: layer1Result.signals.geo_multiplier,
+              factors: layer1Result.signals.geo_factors
+            } : null
+          },
+          census_api: {
+            called: !!layer1Result.signals.census_enhanced,
+            timestamp: new Date().toISOString(),
+            data: layer1Result.signals.zip_factors
+          },
+          bls_api: {
+            called: !!layer1Result.signals.bls_enhanced,
+            timestamp: new Date().toISOString(),
+            data: layer1Result.signals.age_earnings_factors
+          },
+          claude_api: {
+            called: !!process.env.CLAUDE_API_KEY,
+            timestamp: new Date().toISOString(),
+            enhanced: layer2Result.confidence_0_1 > layer1Result.confidence_0_1
+          }
+        },
+        // Branded Pipeline Status with Sequential Messaging
+        pipeline_status: {
+          ...layer1Result.pipeline_status,
+          "hushh_intelligence_pi": {
+            status: !!process.env.CLAUDE_API_KEY ? "completed" : "skipped",
+            message: !!process.env.CLAUDE_API_KEY ? "Hushh Intelligence Pi running" : "Hushh Intelligence Pi - no API key",
+            timestamp: new Date().toISOString(),
+            success: !!process.env.CLAUDE_API_KEY,
+            enhanced: layer2Result.confidence_0_1 > layer1Result.confidence_0_1,
+            data: !!process.env.CLAUDE_API_KEY ? { enhanced: layer2Result.confidence_0_1 > layer1Result.confidence_0_1 } : null
+          }
+        },
+        multipliers: {
+          geographic: layer1Result.signals.geo_multiplier,
+          age_income: layer1Result.signals.age_income_multiplier,
+          address: layer1Result.signals.address_multiplier,
+          total: layer1Result.signals.geo_multiplier * 
+                layer1Result.signals.age_income_multiplier * 
+                layer1Result.signals.address_multiplier
+        },
+        base_data: {
+          age_band: layer1Result.signals.age_band,
+          median_networth: layer1Result.signals.nw_median_age,
+          data_source: layer1Result.signals.data_source,
+          data_year: layer1Result.signals.data_year
+        }
+      },
+      debug_signals: layer1Result.signals
     });
 
   } catch (error) {

@@ -1,5 +1,8 @@
 // Census ACS (American Community Survey) API Integration
 // ZIP-level income and demographic data for enhanced net worth estimation
+// Enhanced for HUSHH Networth Layer-1 specifications with FRED integration
+
+import { fredAPI } from './fredAPI';
 
 interface CensusResponse {
   data?: string[][];
@@ -46,16 +49,37 @@ interface AffluenceMetrics {
   comparison_to_national: {
     median_income_ratio: number; // Local median / National median
     percentile_rank: number; // Where this ZIP ranks nationally
+    uses_fred_baseline: boolean;
   };
 }
 
 class CensusACSClient {
   private baseUrl = 'https://api.census.gov/data/2023/acs/acs5';
   private apiKey: string | null;
-  private nationalMedian = 70000; // Approximate US median household income 2023
+  private fallbackNationalMedian = 80000; // Fallback if FRED unavailable
 
   constructor() {
     this.apiKey = process.env.CENSUS_API_KEY || null;
+  }
+
+  // Get current national median from FRED for Layer-1 calculations
+  private async getNationalMedian(): Promise<{ value: number; source: string }> {
+    try {
+      const fredMedian = await fredAPI.getCurrentMUsNominal();
+      if (fredMedian && fredMedian > 0) {
+        return {
+          value: fredMedian,
+          source: 'FRED_REAL_TIME'
+        };
+      }
+    } catch (error) {
+      console.warn('Failed to get FRED national median, using fallback:', error);
+    }
+
+    return {
+      value: this.fallbackNationalMedian,
+      source: 'FALLBACK_STATIC'
+    };
   }
 
   private buildUrl(endpoint: string, params: Record<string, string>): string {
@@ -248,9 +272,12 @@ class CensusACSClient {
     };
   }
 
-  // Calculate affluence metrics from ZIP income data
-  calculateAffluenceMetrics(zipData: ZipIncomeData): AffluenceMetrics {
-    const medianIncome = zipData.median_household_income || this.nationalMedian;
+  // Calculate affluence metrics from ZIP income data (enhanced with FRED baseline)
+  async calculateAffluenceMetrics(zipData: ZipIncomeData): Promise<AffluenceMetrics> {
+    const nationalData = await this.getNationalMedian();
+    const nationalMedian = nationalData.value;
+    
+    const medianIncome = zipData.median_household_income || nationalMedian;
     const distribution = zipData.income_distribution;
     const totalHouseholds = Object.values(distribution).reduce((a, b) => a + b, 0);
 
@@ -264,8 +291,9 @@ class CensusACSClient {
     const veryHighIncomeRate = totalHouseholds > 0 ? veryHighIncomeHouseholds / totalHouseholds : 0;
     const aboveMedianRate = totalHouseholds > 0 ? aboveMedianHouseholds / totalHouseholds : 0.5;
 
-    // Calculate affluence score (0-1 scale)
-    const incomeRatio = medianIncome / this.nationalMedian;
+    // Core Layer-1 calculation: affluence_index_zip = M_zip / M_us_nominal
+    const incomeRatio = medianIncome / nationalMedian;
+    
     const wealthIndicator = (highIncomeRate * 0.4) + (veryHighIncomeRate * 0.6);
     const giniBonus = zipData.quintiles.gini_index ? 
                       Math.max(0, (zipData.quintiles.gini_index - 0.4) * 2) : 0; // Higher inequality often correlates with high earners
@@ -288,13 +316,14 @@ class CensusACSClient {
         gini_coefficient: zipData.quintiles.gini_index || 0.4
       },
       comparison_to_national: {
-        median_income_ratio: incomeRatio,
-        percentile_rank: percentileRank
+        median_income_ratio: incomeRatio, // This is the core Layer-1 affluence_index_zip
+        percentile_rank: percentileRank,
+        uses_fred_baseline: nationalData.source === 'FRED_REAL_TIME'
       }
     };
   }
 
-  // Enhanced ZIP-based multiplier calculation
+  // Enhanced ZIP-based multiplier calculation with FRED Layer-1 integration
   async calculateZipBasedMultiplier(zipCode: string): Promise<{
     multiplier: number;
     factors: {
@@ -302,7 +331,10 @@ class CensusACSClient {
       affluence_score?: number;
       high_income_rate?: number;
       confidence_level?: number;
+      affluence_index_zip?: number; // Layer-1 core metric
+      m_us_nominal?: number; // FRED baseline
       data_source: string;
+      uses_fred_baseline?: boolean;
     };
   }> {
     try {
@@ -312,13 +344,21 @@ class CensusACSClient {
         // Fallback to basic median income lookup
         const medianIncome = await this.getZipMedianIncome(zipCode);
         if (medianIncome) {
-          const incomeMultiplier = Math.sqrt(medianIncome / this.nationalMedian);
+          const nationalData = await this.getNationalMedian();
+          
+          // Layer-1 core calculation: affluence_index_zip = M_zip / M_us_nominal
+          const affluenceIndexZip = medianIncome / nationalData.value;
+          const incomeMultiplier = Math.sqrt(affluenceIndexZip); // Apply square root to moderate extreme adjustments
+          
           return {
             multiplier: Math.max(0.6, Math.min(2.5, incomeMultiplier)),
             factors: {
               median_income: medianIncome,
+              affluence_index_zip: affluenceIndexZip,
+              m_us_nominal: nationalData.value,
               confidence_level: 0.3,
-              data_source: 'CENSUS_ACS_BASIC'
+              data_source: 'CENSUS_ACS_BASIC',
+              uses_fred_baseline: nationalData.source === 'FRED_REAL_TIME'
             }
           };
         }
@@ -327,24 +367,26 @@ class CensusACSClient {
         return this.estimateFromZipPattern(zipCode);
       }
 
-      // Full ACS data available - calculate comprehensive multiplier
-      const affluenceMetrics = this.calculateAffluenceMetrics(zipData);
+      // Full ACS data available - calculate comprehensive multiplier with Layer-1 integration
+      const affluenceMetrics = await this.calculateAffluenceMetrics(zipData);
       
-      // Base multiplier from income ratio
+      // Core Layer-1 multiplier: based on affluence_index_zip = M_zip / M_us_nominal
       let multiplier = Math.sqrt(affluenceMetrics.comparison_to_national.median_income_ratio);
       
-      // Enhance with affluence indicators
+      // Enhance with affluence indicators per Layer-1 spec
       multiplier *= (1 + affluenceMetrics.affluence_score * 0.5); // Up to 50% boost for very affluent areas
       
-      // High earner concentration bonus
+      // High earner concentration bonus (Layer-1 "POSH ZIP" logic)
       if (affluenceMetrics.wealth_indicators.very_high_income_rate > 0.15) {
         multiplier *= 1.3; // Significant boost for areas with >15% of households earning >$200k
       } else if (affluenceMetrics.wealth_indicators.high_income_rate > 0.25) {
         multiplier *= 1.15; // Moderate boost for areas with >25% earning >$150k
       }
 
-      // Cap the multiplier to reasonable bounds
-      const finalMultiplier = Math.max(0.5, Math.min(3.0, multiplier));
+      // Cap the multiplier to Layer-1 bounds (0.5 to 2.0 per specification)
+      const finalMultiplier = Math.max(0.5, Math.min(2.0, multiplier));
+
+      const nationalData = await this.getNationalMedian();
 
       return {
         multiplier: finalMultiplier,
@@ -353,7 +395,10 @@ class CensusACSClient {
           affluence_score: affluenceMetrics.affluence_score,
           high_income_rate: affluenceMetrics.wealth_indicators.high_income_rate,
           confidence_level: zipData.confidence_level,
-          data_source: 'CENSUS_ACS_COMPREHENSIVE'
+          affluence_index_zip: affluenceMetrics.comparison_to_national.median_income_ratio, // Core Layer-1 metric
+          m_us_nominal: nationalData.value,
+          data_source: 'CENSUS_ACS_COMPREHENSIVE',
+          uses_fred_baseline: affluenceMetrics.comparison_to_national.uses_fred_baseline
         }
       };
 
@@ -392,6 +437,41 @@ class CensusACSClient {
       }
     };
   }
+
+  // Layer-1 function: Calculate pure affluence_index_zip for a given ZIP
+  async calculateAffluenceIndexZip(zipCode: string): Promise<{
+    affluence_index_zip: number;
+    m_zip: number | null;
+    m_us_nominal: number;
+    confidence: number;
+    uses_fred_baseline: boolean;
+  } | null> {
+    try {
+      const [medianIncome, nationalData] = await Promise.all([
+        this.getZipMedianIncome(zipCode),
+        this.getNationalMedian()
+      ]);
+
+      if (!medianIncome) {
+        return null;
+      }
+
+      // Core Layer-1 calculation: affluence_index_zip = clamp(M_zip / M_us_nominal, 0.5, 2.0)
+      const rawIndex = medianIncome / nationalData.value;
+      const clampedIndex = Math.max(0.5, Math.min(2.0, rawIndex));
+
+      return {
+        affluence_index_zip: clampedIndex,
+        m_zip: medianIncome,
+        m_us_nominal: nationalData.value,
+        confidence: medianIncome > 0 ? 0.8 : 0.2,
+        uses_fred_baseline: nationalData.source === 'FRED_REAL_TIME'
+      };
+    } catch (error) {
+      console.error(`Error calculating affluence index for ZIP ${zipCode}:`, error);
+      return null;
+    }
+  }
 }
 
 // Singleton instance
@@ -409,3 +489,6 @@ export function zipToZCTA(zip: string): string {
   // with a lookup table for edge cases where they differ
   return validateZipCode(zip) || zip;
 }
+
+// Type exports for Layer-1 integration
+export type { ZipIncomeData, AffluenceMetrics };

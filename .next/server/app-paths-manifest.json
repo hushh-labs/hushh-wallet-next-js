@@ -1,3 +1,13 @@
 {
+  "/_not-found": "app/_not-found.js",
+  "/api/networth/estimate/route": "app/api/networth/estimate/route.js",
+  "/api/claim/route": "app/api/claim/route.js",
+  "/api/passes/gold/route": "app/api/passes/gold/route.js",
+  "/api/profile/complete/route": "app/api/profile/complete/route.js",
+  "/networth/[uid]/page": "app/networth/[uid]/page.js",
+  "/api/claude/test/route": "app/api/claude/test/route.js",
+  "/complete/[uid]/page": "app/complete/[uid]/page.js",
+  "/s/[shortId]/route": "app/s/[shortId]/route.js",
+  "/u/[uid]/route": "app/u/[uid]/route.js",
   "/page": "app/page.js"
 }
