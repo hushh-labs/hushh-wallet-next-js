@@ -141,10 +141,22 @@ export async function POST(request: NextRequest) {
           user_agent: request.headers.get('user-agent')
         });
 
+        // For existing users, get their existing short URL or create one
+        const { data: existingShortUrl } = await supabaseAdmin
+          .from('short_urls')
+          .select('short_id')
+          .eq('uid', uid)
+          .single();
+
+        let profileUrl = urls.profile_url;
+        if (existingShortUrl) {
+          profileUrl = generateShortUrl(existingShortUrl.short_id);
+        }
+
         return NextResponse.json({
           uid,
           addToWalletUrl: `/api/passes/gold?uid=${uid}`,
-          profileUrl: urls.profile_url,
+          profileUrl,
           existing: true
         });
       }
@@ -196,7 +208,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         uid,
         addToWalletUrl: `/api/passes/gold?uid=${uid}`,
-        profileUrl: urls.profile_url,
+        profileUrl: shortUrl, // Return short URL for Apple Wallet safety
         existing: false
       });
 
