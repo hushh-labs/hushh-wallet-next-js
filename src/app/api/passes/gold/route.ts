@@ -76,29 +76,35 @@ export async function GET(request: NextRequest) {
     const passPayload = {
       passType: "storeCard",
       organizationName: "HUSHH",
-      description: "HUSHH Gold Pass",
+      description: "HUSHH Royal Gold Pass",
       serialNumber: `gold-${uid}`,
       teamIdentifier: "HUSHH",
-      backgroundColor: "rgb(117, 65, 10)", // Royal gold
-      foregroundColor: "rgb(255, 248, 235)", // Light cream
-      labelColor: "rgb(216, 178, 111)", // Gold accent
+      backgroundColor: "rgb(212, 175, 55)", // Bright luxury gold for shine effect #D4AF37
+      foregroundColor: "rgb(255, 255, 255)", // Pure white for maximum contrast
+      labelColor: "rgb(255, 223, 0)", // Bright gold labels #FFDF00  
       logoText: "HUSHH",
+      suppressStripShine: false, // Enable shine effect for luxury feel
       
-      // Header field - right-aligned HUSHH branding
+      // Header field - luxury branding
       headerFields: [
         {
           key: "brand",
           value: "HUSHH",
+          textAlignment: "PKTextAlignmentLeft"
+        },
+        {
+          key: "status",
+          value: "ROYAL MEMBER",
           textAlignment: "PKTextAlignmentRight"
         }
       ],
       
-      // Primary fields (minimal front face)
+      // Primary fields - prominent tier display
       primaryFields: [
         {
           key: "tier",
           label: "TIER",
-          value: "GOLD"
+          value: "ROYAL GOLD"
         }
       ],
       
@@ -108,6 +114,11 @@ export async function GET(request: NextRequest) {
           key: "member",
           label: "MEMBER",
           value: member.name
+        },
+        {
+          key: "issued",
+          label: "ISSUED",
+          value: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
         }
       ],
       

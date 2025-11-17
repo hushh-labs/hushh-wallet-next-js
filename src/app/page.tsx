@@ -2,6 +2,26 @@
 
 import { useMemo, useState } from 'react';
 
+const QR_MATRIX = [
+  '111110011011111',
+  '100010010010001',
+  '101110011011101',
+  '101000000000101',
+  '101011111110101',
+  '100010010010001',
+  '111110011011111',
+  '000000100000000',
+  '111011101110111',
+  '001000010000100',
+  '111011101110111',
+  '001000010000100',
+  '111110011011111',
+  '100010010010001',
+  '101110011011101',
+  '100000000000001',
+  '111111111111111'
+];
+
 export default function HomePage() {
   const [formData, setFormData] = useState({
     name: '',
@@ -23,6 +43,14 @@ export default function HomePage() {
     'Concierge onboarding with zero logins required',
     'Net worth insights delivered privately to your Wallet'
   ];
+
+  const mintedLabel = useMemo(() => {
+    return new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' }).format(new Date());
+  }, []);
+
+  const memberName = formData.name?.trim() || 'HUSHH Member';
+  const qrColumns = QR_MATRIX[0].length;
+  const qrRows = QR_MATRIX.length;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,6 +92,14 @@ export default function HomePage() {
     if (typeof navigator === 'undefined') return false;
     return /iPad|iPhone|iPod/.test(navigator.userAgent);
   };
+
+  const WalletIcon = () => (
+    <span className="flex flex-col justify-between w-9 h-9 rounded-xl bg-black/80 border border-white/15 p-1.5 shadow-inner shadow-black/60">
+      <span className="block h-1 rounded-full bg-gradient-to-r from-[#ff8a8a] via-[#ffc776] to-[#ffe66d]" />
+      <span className="block h-1 rounded-full bg-gradient-to-r from-[#b6ffdb] via-[#6ed4f7] to-[#7f9dff]" />
+      <span className="block h-1 rounded-full bg-gradient-to-r from-[#ffffff] via-[#d5d7ff] to-[#9ae1ff]" />
+    </span>
+  );
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#050203] text-cream">
@@ -217,32 +253,88 @@ export default function HomePage() {
                 </p>
               </form>
             ) : (
-              <div className="space-y-6 text-center">
-                <div className="rounded-[26px] border border-[#1f3b20] bg-[#081f11] px-6 py-5 text-white/80">
-                  <p className="text-sm uppercase tracking-[0.45em] text-white/40 mb-2">Claim</p>
-                  <h3 className="text-3xl font-semibold text-white saira-royal mb-1">
-                    Your Gold Identity
-                  </h3>
-                  <p className="text-sm text-white/60">
-                    HUSHH uses Apple Wallet security, so you can complete this in under ten seconds.
-                  </p>
-                  <div className="mt-5 rounded-2xl border border-[#2f5a32] bg-[#0d3416] px-6 py-4">
-                    <p className="text-lg font-semibold text-emerald-100">
-                      {result.existing ? 'Welcome back.' : 'You’re in.'}
-                    </p>
-                    <p className="text-sm text-white/70 mt-1">
-                      Your HUSHH Gold Pass is ready to drop into Apple Wallet.
-                    </p>
+              <div className="space-y-7">
+                <div className="royal-gold-pass-card">
+                  <div className="relative z-10 flex flex-col gap-6">
+                    <div className="flex items-start justify-between">
+                      <div className="text-[0.75rem] uppercase tracking-[0.6em] text-white/90 font-semibold">
+                        HUSHH
+                      </div>
+                      <div className="text-[0.6rem] uppercase tracking-[0.4em] text-white/60">
+                        ROYAL MEMBER
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div>
+                        <p className="text-[4rem] leading-none font-bold tracking-[0.15em] text-white drop-shadow-lg">GOLD</p>
+                        <p className="text-sm uppercase tracking-[0.6em] text-white/80 mt-1 font-medium">TIER</p>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-[0.7rem] uppercase tracking-[0.5em] text-white/75 font-medium">MEMBER</p>
+                      <p className="text-2xl font-bold saira-royal text-white drop-shadow-sm">{memberName}</p>
+                    </div>
+                    <div className="royal-gold-divider" />
+                    <div className="flex flex-wrap items-center justify-between gap-4">
+                      <div className="space-y-1">
+                        <p className="text-[0.65rem] uppercase tracking-[0.4em] text-white/70 font-medium">STATUS</p>
+                        <p className="text-sm text-white/90">{result.existing ? 'VERIFIED' : 'PREMIUM'}</p>
+                      </div>
+                      <div className="space-y-1 text-right">
+                        <p className="text-[0.65rem] uppercase tracking-[0.4em] text-white/70 font-medium">ISSUED</p>
+                        <p className="text-sm text-white/90">{mintedLabel}</p>
+                      </div>
+                    </div>
+                    <div className="royal-gold-qr">
+                      <svg
+                        viewBox={`0 0 ${qrColumns} ${qrRows}`}
+                        xmlns="http://www.w3.org/2000/svg"
+                        shapeRendering="crispEdges"
+                        role="img"
+                        aria-label="Stylized QR code preview"
+                        className="royal-qr-code"
+                      >
+                        {QR_MATRIX.map((row, rowIndex) =>
+                          row.split('').map((cell, cellIndex) =>
+                            cell === '1' ? (
+                              <rect
+                                key={`${rowIndex}-${cellIndex}`}
+                                x={cellIndex}
+                                y={rowIndex}
+                                width="1"
+                                height="1"
+                                fill="#1a0f06"
+                              />
+                            ) : null
+                          )
+                        )}
+                      </svg>
+                      <div className="royal-qr-label">
+                        <p className="font-bold">HUSHH GOLD PASS</p>
+                        <p className="text-[0.6rem] opacity-80">{result.uid ? `ID: ${result.uid.slice(0, 12).toUpperCase()}` : 'PENDING VERIFICATION'}</p>
+                      </div>
+                    </div>
                   </div>
+                </div>
+
+                <div className="rounded-[26px] border border-white/10 bg-white/5 px-6 py-5 text-left text-white/80 space-y-3">
+                  <p className="text-xs uppercase tracking-[0.55em] text-white/50">Claim confirmed</p>
+                  <h3 className="text-2xl font-semibold text-white saira-royal">
+                    Your Wallet-ready identity is live
+                  </h3>
+                  <p className="text-sm text-white/70">
+                    {result.existing ? 'Welcome back to the royal registry.' : 'You’re officially inside.'} Tap the
+                    button below on your iPhone to drop this credential directly into Apple Wallet.
+                  </p>
                 </div>
 
                 {isIOS() ? (
                   <a
                     href={result.addToWalletUrl}
-                    className="w-full inline-flex items-center justify-between rounded-2xl border border-white/10 bg-black/90 px-5 py-4 text-base font-semibold text-white hover:bg-black"
+                    className="w-full inline-flex items-center justify-between rounded-2xl border border-white/10 bg-black/90 px-5 py-4 text-base font-semibold text-white hover:bg-black transition"
                   >
-                    <span className="flex items-center gap-2">
-                      <span role="img" aria-label="iphone">📱</span>
+                    <span className="flex items-center gap-3">
+                      <WalletIcon />
                       Add to Apple Wallet
                     </span>
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -256,9 +348,12 @@ export default function HomePage() {
                     </p>
                     <a
                       href={result.addToWalletUrl}
-                      className="w-full inline-flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-base font-semibold hover:bg-white/10"
+                      className="w-full inline-flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-base font-semibold hover:bg-white/10 transition"
                     >
-                      <span>Download Pass File</span>
+                      <span className="flex items-center gap-3">
+                        <WalletIcon />
+                        Download Pass File
+                      </span>
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5 12h14M12 5l7 7-7 7"></path>
                       </svg>

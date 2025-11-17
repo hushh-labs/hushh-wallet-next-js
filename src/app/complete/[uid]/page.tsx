@@ -136,13 +136,34 @@ export default function ProfileCompletePage({ params }: { params: { uid: string 
       <div className="relative max-w-5xl mx-auto px-4 py-12 lg:px-0">
         <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#d27928] opacity-40 blur-[150px]" />
         <div className="relative z-10 grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="glass-card p-10 space-y-6 self-start">
-            <p className="text-xs uppercase tracking-[0.45em] text-white/50 saira-royal">Complete profile</p>
-            <h1 className="text-4xl font-semibold saira-royal text-white">Unlock Concierge Precision</h1>
-            <p className="text-white/70 leading-relaxed">
-              Share only what you’re comfortable with. Your location and demographic signals help us
-              pre-load venues, valuations, and experiences before you ever arrive.
-            </p>
+          <div className="glass-card p-10 space-y-8 self-start">
+            <div className="space-y-3">
+              <p className="text-xs uppercase tracking-[0.45em] text-white/50 saira-royal">Complete profile</p>
+              <h1 className="text-4xl font-semibold saira-royal text-white">Unlock Concierge Precision</h1>
+              <p className="text-white/70 leading-relaxed">
+                Share only what you’re comfortable with. Your location and demographic signals help us
+                pre-load venues, valuations, and experiences before you ever arrive.
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="rounded-2xl border border-white/5 bg-gradient-to-br from-white/20 via-white/5 to-transparent p-5">
+                <p className="text-xs uppercase tracking-[0.35em] text-white/60">Concierge readiness</p>
+                <p className="text-3xl font-semibold text-white">72%</p>
+                <p className="text-xs text-white/60 mt-1">Based on the intelligence already on file.</p>
+              </div>
+              <div className="rounded-2xl border border-white/5 bg-gradient-to-br from-[#fcd9a7]/10 via-transparent to-white/5 p-5 space-y-2">
+                <p className="text-xs uppercase tracking-[0.35em] text-white/60">Lifestyle lanes</p>
+                <div className="flex flex-wrap gap-2 text-xs text-cream/80">
+                  {['Fine Dining', 'Members Clubs', 'Immersive Travel', 'Wellbeing'].map(item => (
+                    <span key={item} className="px-3 py-1 rounded-full border border-white/10 bg-white/5">
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             <div className="rounded-2xl border border-white/5 bg-white/5 p-6 space-y-3">
               <p className="text-sm text-white/60">What this powers</p>
               <ul className="space-y-2 text-sm text-white/80 open-sans-clarity">
@@ -150,6 +171,18 @@ export default function ProfileCompletePage({ params }: { params: { uid: string 
                 <li>• Net-worth calibration via HUSHH Net Worth layer</li>
                 <li>• White-glove verification for in-person hosts</li>
               </ul>
+            </div>
+
+            <div className="rounded-2xl border border-white/5 bg-gradient-to-r from-white/5 to-transparent p-6 space-y-3">
+              <p className="text-sm text-white/60">Luxury data pledge</p>
+              <p className="text-sm text-white/70 leading-relaxed">
+                Your entries are encrypted, never resold, and only visible to your concierge pod. Every update
+                sharpens our ability to stage-arrive perks, transport, and private access exactly when you need it.
+              </p>
+              <div className="flex items-center gap-3 text-xs text-white/60">
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10">★</span>
+                <span>ISO-grade storage • SOC 2 infrastructure • Zero marketing spam</span>
+              </div>
             </div>
           </div>
 

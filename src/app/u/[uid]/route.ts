@@ -76,6 +76,34 @@ export async function GET(
           .filter(field => field).length / 5 * 100
       );
 
+      const formattedGender = member.profile_gender
+        ? member.profile_gender.charAt(0).toUpperCase() + member.profile_gender.slice(1)
+        : null;
+      const locationDisplay = member.profile_city && member.profile_state
+        ? `${member.profile_city}, ${member.profile_state}`
+        : member.profile_city || member.profile_state || 'Awaiting city signal';
+      const demographicDisplay = formattedGender && member.profile_age
+        ? `${formattedGender}, ${member.profile_age}`
+        : formattedGender || (member.profile_age ? `${member.profile_age} yrs` : 'Awaiting demographic signal');
+      const readinessScore = Math.max(55, Math.min(97, Math.round(profileCompletionPercent * 0.65 + 45)));
+      const readinessNarrative = profileCompletionPercent >= 80
+        ? 'Concierge pod is fully calibrated.'
+        : profileCompletionPercent >= 50
+          ? 'Core verification is online; add more signals for bespoke prep.'
+          : 'Limited signals on file — encourage profile completion.';
+      const passStatusLabel = (member.pass_status || 'pending').toUpperCase();
+      const verificationCopy = member.pass_status === 'active'
+        ? 'Live Gold pass confirmed for presentation.'
+        : 'Pass currently inactive. Route guest to concierge for assistance.';
+      const hostGuidance = member.pass_status === 'active'
+        ? 'Hosts may grant Gold privileges once this pass is scanned alongside ID verification.'
+        : 'Do not grant access. Ask the guest to contact concierge for reactivation.';
+      const membershipDate = new Date(member.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      const lastSeenDisplay = member.last_seen_at
+        ? new Date(member.last_seen_at).toLocaleString()
+        : 'Just now';
+      const conciergeEmailLink = `mailto:concierge@hushh.club?subject=${encodeURIComponent(`HUSHH Gold ${member.uid}`)}`;
+
       // Return comprehensive HTML response for MVP
       const htmlResponse = `
         <!DOCTYPE html>
@@ -162,6 +190,64 @@ export async function GET(
               color: rgba(255, 255, 255, 0.7);
               font-weight: 500;
             }
+            .aura-card {
+              position: relative;
+              overflow: hidden;
+              background: linear-gradient(140deg, rgba(117, 65, 10, 0.35), rgba(158, 107, 35, 0.2), rgba(255, 255, 255, 0.04));
+              border: 1px solid rgba(255, 255, 255, 0.25);
+            }
+            .aura-card::after {
+              content: '';
+              position: absolute;
+              inset: 0;
+              background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.25), transparent 55%);
+              opacity: 0.6;
+              pointer-events: none;
+            }
+            .aura-card > * {
+              position: relative;
+              z-index: 1;
+            }
+            .insights-grid {
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+              gap: 12px;
+              margin-top: 16px;
+            }
+            .stat-card {
+              padding: 14px;
+              border-radius: 16px;
+              background: rgba(0, 0, 0, 0.25);
+              border: 1px solid rgba(255, 255, 255, 0.15);
+            }
+            .stat-label {
+              font-size: 11px;
+              text-transform: uppercase;
+              letter-spacing: 0.25em;
+              color: rgba(255, 255, 255, 0.55);
+            }
+            .stat-value {
+              font-size: 26px;
+              font-weight: 700;
+              margin: 4px 0;
+            }
+            .stat-hint {
+              font-size: 12px;
+              color: rgba(255, 255, 255, 0.7);
+            }
+            .tag-row {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 8px;
+              margin-top: 18px;
+            }
+            .tag {
+              padding: 8px 14px;
+              border-radius: 999px;
+              border: 1px solid rgba(255, 255, 255, 0.2);
+              font-size: 12px;
+              background: rgba(0, 0, 0, 0.2);
+            }
             .details-grid {
               display: grid;
               grid-template-columns: 1fr 1fr;
@@ -184,6 +270,11 @@ export async function GET(
               font-weight: 600;
               letter-spacing: 0.5px;
               margin-bottom: 4px;
+            }
+            .detail-subtext {
+              font-size: 13px;
+              color: rgba(255, 255, 255, 0.65);
+              margin-bottom: 12px;
             }
             .detail-value {
               font-size: 16px;
@@ -223,6 +314,35 @@ export async function GET(
               border-radius: 8px;
               border: 1px solid rgba(255, 255, 255, 0.08);
             }
+            .observation-card {
+              border: 1px solid rgba(255, 255, 255, 0.2);
+              background: rgba(0, 0, 0, 0.25);
+            }
+            .observation-list {
+              list-style: none;
+              padding: 0;
+              margin: 16px 0 0 0;
+            }
+            .observation-list li {
+              display: flex;
+              justify-content: space-between;
+              gap: 12px;
+              padding: 10px 0;
+              border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            }
+            .observation-list li:last-child {
+              border-bottom: none;
+            }
+            .observation-list .label {
+              font-size: 12px;
+              text-transform: uppercase;
+              letter-spacing: 0.2em;
+              color: rgba(255, 255, 255, 0.5);
+            }
+            .observation-list .value {
+              font-weight: 600;
+              color: #fff;
+            }
             .tech-details {
               margin-top: 8px;
             }
@@ -233,6 +353,41 @@ export async function GET(
               margin-bottom: 8px;
               font-family: 'Monaco', 'Menlo', monospace;
               font-size: 12px;
+            }
+            .note-card {
+              border-radius: 16px;
+              border: 1px dashed rgba(255, 255, 255, 0.3);
+              background: rgba(255, 255, 255, 0.04);
+              padding: 16px;
+              margin-top: 16px;
+            }
+            .host-note {
+              font-size: 13px;
+              color: rgba(255, 255, 255, 0.75);
+            }
+            .cta-row {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 12px;
+              margin-top: 18px;
+            }
+            .cta-button {
+              flex: 1;
+              text-align: center;
+              padding: 12px 18px;
+              border-radius: 12px;
+              background: rgba(244, 206, 138, 0.15);
+              border: 1px solid rgba(244, 206, 138, 0.4);
+              color: #fff;
+              font-weight: 600;
+              text-decoration: none;
+            }
+            .cta-link {
+              padding: 12px 18px;
+              border-radius: 12px;
+              border: 1px solid rgba(255, 255, 255, 0.2);
+              color: rgba(255, 255, 255, 0.9);
+              text-decoration: none;
             }
             .timestamp-footer {
               text-align: center;
@@ -261,12 +416,47 @@ export async function GET(
               <h1 class="brand-title">HUSHH</h1>
               <div class="tier-badge">GOLD PASS</div>
               <div class="member-name">${member.name}</div>
-              <div class="member-since">Member since ${new Date(member.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+              <div class="member-since">Member since ${membershipDate}</div>
+            </div>
+
+            <!-- Verification Snapshot -->
+            <div class="card aura-card">
+              <h2 style="margin: 0; font-size: 18px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255,255,255,0.7);">Verification Snapshot</h2>
+              <p style="margin: 8px 0 0 0; color: rgba(255,255,255,0.75);">Concierge view refreshed upon scan.</p>
+              <div class="insights-grid">
+                <div class="stat-card">
+                  <div class="stat-label">Concierge readiness</div>
+                  <div class="stat-value">${readinessScore}%</div>
+                  <div class="stat-hint">${readinessNarrative}</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">Profile depth</div>
+                  <div class="stat-value">${profileCompletionPercent}%</div>
+                  <div class="stat-hint">${profileComplete ? 'All priority signals in place.' : 'Invite member to finalize remaining details.'}</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">Verification</div>
+                  <div class="stat-value">${passStatusLabel}</div>
+                  <div class="stat-hint">${verificationCopy}</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">Last seen</div>
+                  <div class="stat-value" style="font-size:18px;">${lastSeenDisplay}</div>
+                  <div class="stat-hint">Automatic audit trail from QR.</div>
+                </div>
+              </div>
+              <p class="stat-hint">Primary locale: ${locationDisplay}. Demographic cue: ${demographicDisplay}.</p>
+              <div class="tag-row">
+                <div class="tag">UID ${member.uid}</div>
+                <div class="tag">${profileComplete ? 'Profile locked-in' : 'Awaiting more context'}</div>
+                <div class="tag">${member.pass_status === 'active' ? 'Instant entry ready' : 'Activation required'}</div>
+              </div>
             </div>
 
             <!-- Contact Information -->
             <div class="card">
               <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #d4b26f;">📋 Contact Information</h2>
+              <p class="detail-subtext">Cross-check these details with the Apple Wallet pass before granting in-person privileges.</p>
               <div class="details-grid">
                 <div class="detail-item">
                   <div class="detail-label">Email Address</div>
@@ -320,6 +510,36 @@ export async function GET(
               </div>
             </div>
 
+            <!-- Concierge Observations -->
+            <div class="card observation-card">
+              <h2 style="margin: 0 0 12px 0; font-size: 18px; color: #d4b26f;">🪄 Concierge Observations</h2>
+              <ul class="observation-list">
+                <li>
+                  <div class="label">Locale focus</div>
+                  <div class="value">${locationDisplay}</div>
+                </li>
+                <li>
+                  <div class="label">Demographic cue</div>
+                  <div class="value">${demographicDisplay}</div>
+                </li>
+                <li>
+                  <div class="label">Pass prep</div>
+                  <div class="value">${member.pass_status === 'active' ? 'Apple Wallet • Verified' : 'Pending concierge action'}</div>
+                </li>
+                <li>
+                  <div class="label">Signals logged</div>
+                  <div class="value">${profileCompletionPercent}% coverage</div>
+                </li>
+              </ul>
+              <div class="note-card">
+                <p class="host-note">${hostGuidance}</p>
+              </div>
+              <div class="cta-row">
+                <a href="${conciergeEmailLink}" class="cta-button">Message concierge pod</a>
+                <a href="/" class="cta-link">Return to hushh.gold</a>
+              </div>
+            </div>
+
             <!-- Pass Details -->
             <div class="card tech-details">
               <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #d4b26f;">🎫 Pass Details</h2>
@@ -330,8 +550,15 @@ export async function GET(
               <div class="tech-item">
                 <div class="detail-label">Pass Status</div>
                 <div class="detail-value" style="color: ${member.pass_status === 'active' ? '#22c55e' : '#ef4444'};">
-                  ${member.pass_status.toUpperCase()}
+                  ${passStatusLabel}
                 </div>
+              </div>
+              <div class="tech-item">
+                <div class="detail-label">Verification copy</div>
+                <div class="detail-value">${verificationCopy}</div>
+              </div>
+              <div class="note-card">
+                <p class="host-note">Serials are minted once per member. Match the UID + serial on the pass before applying benefits.</p>
               </div>
             </div>
 
@@ -345,7 +572,7 @@ export async function GET(
                 </div>
                 <div class="detail-item">
                   <div class="detail-label">Last Seen</div>
-                  <div class="detail-value">${member.last_seen_at ? new Date(member.last_seen_at).toLocaleString() : 'Just now'}</div>
+                  <div class="detail-value">${lastSeenDisplay}</div>
                 </div>
               </div>
             </div>
