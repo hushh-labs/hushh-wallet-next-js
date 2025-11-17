@@ -90,17 +90,19 @@ export async function GET(request: NextRequest) {
         }
       ],
       
-      // Back fields - profile completion link
+      // Back fields - profile completion link (clickable URLs)
       backFields: [
         {
           key: "profile",
           label: "Complete your profile",
-          value: member.profile_url
+          value: member.profile_url,
+          dataDetectorTypes: ["PKDataDetectorTypeLink"] // Makes URL clickable
         },
         {
           key: "verify",
           label: "Verification",
-          value: member.public_url
+          value: member.public_url,
+          dataDetectorTypes: ["PKDataDetectorTypeLink"] // Makes URL clickable
         }
       ],
       
