@@ -20,6 +20,7 @@ export default function CreateHushhCard() {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [recoveryPhrase, setRecoveryPhrase] = useState<string[]>([]);
   const [cardData, setCardData] = useState<Partial<HushhCardPayload>>({});
+  const [uid, setUid] = useState<string>('');
 
   // Device detection
   useEffect(() => {
@@ -66,6 +67,7 @@ export default function CreateHushhCard() {
 
       const result = await response.json();
       setRecoveryPhrase(result.data.recoveryPhrase.words);
+      setUid(result.data.uid);
       setAppState(AppState.SUCCESS);
 
       // Analytics
@@ -209,6 +211,7 @@ export default function CreateHushhCard() {
     return (
       <SuccessSection
         recoveryPhrase={recoveryPhrase}
+        uid={uid}
         onBackToDashboard={handleBackToDashboard}
         isIOS={isIOS}
       />
@@ -763,11 +766,13 @@ function PreviewSection({
 
 // Success Section
 function SuccessSection({ 
-  recoveryPhrase, 
+  recoveryPhrase,
+  uid,
   onBackToDashboard, 
   isIOS 
 }: {
   recoveryPhrase: string[];
+  uid: string;
   onBackToDashboard: () => void;
   isIOS: boolean | null;
 }) {
@@ -780,6 +785,37 @@ function SuccessSection({
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       console.error('Failed to copy:', error);
+    }
+  };
+
+  const handleDownloadPass = async () => {
+    if (!uid) {
+      alert('Card ID not available. Please try again.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/cards/download/${uid}`, {
+        method: 'GET',
+        credentials: 'include', // Include cookies for auth
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to download pass');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `hushh-id-card.pkpass`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Pass download failed:', error);
+      alert('Failed to download pass. Please try again.');
     }
   };
 
@@ -837,10 +873,7 @@ function SuccessSection({
                     Your card is ready to be added to Apple Wallet. Tap the button below to add it.
                   </p>
                   <button
-                    onClick={() => {
-                      // This would trigger pass download in real implementation
-                      alert('Pass download would start here');
-                    }}
+                    onClick={handleDownloadPass}
                     className="w-full py-4 bg-black text-white rounded-lg font-medium flex items-center justify-center hover:bg-gray-800 transition-colors"
                   >
                     <svg className="w-6 h-6 mr-3" viewBox="0 0 24 24" fill="currentColor">
