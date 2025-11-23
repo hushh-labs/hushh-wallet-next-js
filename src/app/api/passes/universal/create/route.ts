@@ -255,6 +255,25 @@ export async function POST(request: NextRequest) {
         fs.copyFileSync(logoPath, path.join(tempPassDir, 'logo.png'));
       }
     }
+
+    // Optional: copy luxury assets for premium look (matte gold texture, strip, hi-res icons)
+    const luxuryDir = path.join(projectRoot, 'passModels', 'luxury.pass');
+    const luxuryFiles = [
+      'background.png',
+      'background@2x.png',
+      'strip.png',
+      'strip@2x.png',
+      'logo.png',
+      'logo@2x.png',
+      'icon.png',
+      'icon@2x.png'
+    ];
+    for (const f of luxuryFiles) {
+      const src = path.join(luxuryDir, f);
+      if (fs.existsSync(src)) {
+        fs.copyFileSync(src, path.join(tempPassDir, f));
+      }
+    }
     
     // Create PKPass
     const pass = await PKPass.from({
