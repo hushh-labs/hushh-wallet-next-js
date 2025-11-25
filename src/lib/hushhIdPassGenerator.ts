@@ -9,11 +9,24 @@ export async function generateHushhIdPass(userRecord: UserRecord): Promise<Buffe
     const projectRoot = process.cwd();
     
     // Read the properly extracted PEM certificates 
-    const signerCert = readFileSync(join(projectRoot, 'signerCert.pem'), 'utf8');
-    const signerKey = readFileSync(join(projectRoot, 'signerKey.pem'), 'utf8');
-    const wwdr = readFileSync(join(projectRoot, 'wwdr.pem'), 'utf8');
+    let signerCert: string;
+    let signerKey: string;
+    let wwdr: string;
+
+    try {
+      signerCert = readFileSync(join(projectRoot, 'signerCert.pem'), 'utf8');
+      signerKey = readFileSync(join(projectRoot, 'signerKey.pem'), 'utf8');
+      wwdr = readFileSync(join(projectRoot, 'wwdr.pem'), 'utf8');
+    } catch (certError) {
+      throw new Error(`Certificate files not found or invalid: ${certError instanceof Error ? certError.message : 'Unknown error'}`);
+    }
 
     console.log('Certificates loaded for Hushh ID pass');
+
+    // Validate required UserRecord.card fields
+    if (!userRecord.card?.activeShareId || !userRecord.card?.passSerial) {
+      throw new Error('UserRecord missing required card fields: activeShareId and passSerial');
+    }
 
     // Prepare pass data
     const age = calculateAge(userRecord.profile.dob);

@@ -40,7 +40,7 @@ function WalletIntegration({ className = '' }: WalletIntegrationProps) {
     // Simulate wallet addition (replace with actual wallet integration)
     setTimeout(() => {
       setWalletStates(prev => ({ ...prev, [wallet]: 'success' }));
-      
+
       // Show success toast
       const toastMessage = wallet === 'apple' ? 'Added to Apple Wallet' : 'Added to Google Wallet';
       // TODO: Implement toast notification
@@ -51,7 +51,7 @@ function WalletIntegration({ className = '' }: WalletIntegrationProps) {
   const getWalletStateConfig = (wallet: 'apple' | 'google') => {
     const state = walletStates[wallet];
     const isApple = wallet === 'apple';
-    
+
     switch (state) {
       case 'loading':
         return {
@@ -93,12 +93,12 @@ function WalletIntegration({ className = '' }: WalletIntegrationProps) {
         {/* Left: Circular icon container */}
         <div className="wallet-icon-container">
           <svg className="wallet-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M19 7V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1"/>
-            <path d="M3 10h18"/>
-            <circle cx="17" cy="10" r="1"/>
+            <path d="M19 7V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1" />
+            <path d="M3 10h18" />
+            <circle cx="17" cy="10" r="1" />
           </svg>
         </div>
-        
+
         {/* Right: Luxury copy */}
         <div className="wallet-content">
           <h6 className="wallet-title">
@@ -125,12 +125,12 @@ function WalletIntegration({ className = '' }: WalletIntegrationProps) {
             )}
             {getWalletStateConfig('apple').showCheckmark && (
               <svg className="wallet-checkmark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                <path d="M20 6L9 17l-5-5"/>
+                <path d="M20 6L9 17l-5-5" />
               </svg>
             )}
             {getWalletStateConfig('apple').showDefault && (
               <svg className="wallet-brand-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
               </svg>
             )}
             <span className="wallet-chip-label">{getWalletStateConfig('apple').label}</span>
@@ -153,12 +153,12 @@ function WalletIntegration({ className = '' }: WalletIntegrationProps) {
             )}
             {getWalletStateConfig('google').showCheckmark && (
               <svg className="wallet-checkmark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                <path d="M20 6L9 17l-5-5"/>
+                <path d="M20 6L9 17l-5-5" />
               </svg>
             )}
             {getWalletStateConfig('google').showDefault && (
               <svg className="wallet-brand-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
               </svg>
             )}
             <span className="wallet-chip-label">{getWalletStateConfig('google').label}</span>
@@ -250,7 +250,7 @@ function ExecutiveRow({ type, title, description, status, lastIssued, onClick }:
   const config = getStatusConfig();
 
   return (
-    <div 
+    <div
       className="executive-row"
       onClick={onClick}
       role="button"
@@ -283,7 +283,7 @@ function ExecutiveRow({ type, title, description, status, lastIssued, onClick }:
         <div className="executive-footer">
           <span className="executive-helper">{config.actionText}</span>
           <svg className="executive-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
       </div>
@@ -293,6 +293,39 @@ function ExecutiveRow({ type, title, description, status, lastIssued, onClick }:
 
 export default function DashboardPage() {
   const [cards, setCards] = useState<Partial<Record<CardType, CardData>>>(MOCK_CARD_DATA);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const response = await fetch('/api/cards/create'); // GET endpoint checks status
+        const data = await response.json();
+
+        if (data.hasCard && data.uid) {
+          // Update cards based on real status
+          setCards(prev => ({
+            ...prev,
+            PERSONAL: {
+              ...prev.PERSONAL!,
+              status: data.sections?.personal ? 'ACTIVE' : 'NOT_CREATED',
+              lastIssued: data.sections?.personal ? new Date() : undefined
+            },
+            FOOD: {
+              ...prev.FOOD!,
+              status: data.sections?.food ? 'ACTIVE' : 'NOT_CREATED',
+              lastIssued: data.sections?.food ? new Date() : undefined
+            }
+          }));
+        }
+      } catch (error) {
+        console.error('Failed to fetch card status:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchStatus();
+  }, []);
 
   const handleCardClick = (cardType: CardType) => {
     // Navigate to specific card flow
@@ -346,7 +379,7 @@ export default function DashboardPage() {
               <div className="action-buttons">
                 <button className="btn-primary-action btn-rail">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M12 5v14M5 12h14"/>
+                    <path d="M12 5v14M5 12h14" />
                   </svg>
                   Commission Profile Collection
                 </button>
@@ -367,7 +400,7 @@ export default function DashboardPage() {
             {cardDefinitions.map((cardDef) => {
               const cardData = cards[cardDef.type];
               if (!cardData) return null;
-              
+
               return (
                 <ExecutiveRow
                   key={cardDef.type}
@@ -389,7 +422,7 @@ export default function DashboardPage() {
         <div className="container-narrow">
           <div className="footer-content">
             <p className="footer-text">
-              Each collection is meticulously crafted to reflect your refined preferences, 
+              Each collection is meticulously crafted to reflect your refined preferences,
               creating an elegant digital presence within Apple Wallet. Modify at your discretion.
             </p>
           </div>

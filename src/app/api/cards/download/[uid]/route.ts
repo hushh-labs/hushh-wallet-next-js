@@ -15,11 +15,20 @@ export async function GET(
     // Check for Owner Token to verify access
     const cookieStore = await cookies();
     const ownerToken = cookieStore.get('hushh_owner_token')?.value;
+    const uidCookie = cookieStore.get('hushh_uid')?.value;
 
-    if (!ownerToken) {
+    if (!ownerToken || !uidCookie) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
+      );
+    }
+
+    // Verify uid from cookie matches requested uid
+    if (uidCookie !== uid) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 403 }
       );
     }
 
@@ -29,6 +38,15 @@ export async function GET(
       return NextResponse.json(
         { error: 'User not found' },
         { status: 404 }
+      );
+    }
+
+    // Verify token matches stored hash
+    const tokenValid = await ownerTokenManager.verifyToken(ownerToken, user.owner.ownerTokenHash);
+    if (!tokenValid) {
+      return NextResponse.json(
+        { error: 'Invalid token' },
+        { status: 401 }
       );
     }
 

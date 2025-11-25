@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { ownerTokenManager, shareIdManager, recoveryKeyManager, generateUUID } from '@/lib/tokenization';
-import { getUser, createUser, updateUser, createPublicProfile } from '@/lib/firestore';
+import { getUser, createUser, updateUser, createPublicProfile, getUserByToken } from '@/lib/firestore';
 import { HushhCardPayload } from '@/types';
 import { generateHushhIdPass } from '@/lib/hushhIdPassGenerator';
 
@@ -32,15 +32,24 @@ export async function POST(request: NextRequest) {
       const deviceId = request.headers.get('x-device-id') || 'default';
       newOwnerToken = ownerTokenManager.generateOwnerToken(uid, deviceId);
     } else {
-      // Existing user - verify token stored in user record
-      uid = 'temp'; // We'll get the real uid after looking up the user
-      // For now, we'll use a simpler approach - get user by checking all users
-      // In production, we'd store uid in the token claim
+      // Existing user - verify token
+      const tokenHash = await ownerTokenManager.hashToken(ownerToken);
+      const existingUserResult = await getUserByToken(tokenHash);
+
+      if (existingUserResult) {
+        uid = existingUserResult.uid;
+      } else {
+        // Token invalid or user not found - treat as new user
+        isFirstTime = true;
+        uid = generateUUID();
+        const deviceId = request.headers.get('x-device-id') || 'default';
+        newOwnerToken = ownerTokenManager.generateOwnerToken(uid, deviceId);
+      }
     }
 
     // Get existing user data or create new
     let existingUser = isFirstTime ? null : await getUser(uid);
-    
+
     if (!existingUser && isFirstTime) {
       // Create initial user record
       const recoveryPhrase = recoveryKeyManager.generateRecoveryPhrase();
@@ -49,7 +58,7 @@ export async function POST(request: NextRequest) {
 
       existingUser = {
         profile: { preferredName: '', legalName: '', dob: '', phone: '' },
-        food: { 
+        food: {
           foodType: 'omnivore' as const,
           spiceLevel: 'medium' as const,
           topCuisines: [],
@@ -130,7 +139,7 @@ export async function POST(request: NextRequest) {
         shareUrl: shareIdManager.createShareUrl(existingUser.card.activeShareId),
         passSerial: existingUser.card.passSerial,
         hasPass: !!passBuffer,
-        ...(isFirstTime && { 
+        ...(isFirstTime && {
           recoveryPhrase: recoveryKeyManager.generateRecoveryPhrase() // Only show on first creation
         })
       }
@@ -236,14 +245,14 @@ export async function GET(request: NextRequest) {
 
 function isDataComplete(user: any): boolean {
   const personalComplete = !!(
-    user.profile.preferredName && 
-    user.profile.legalName && 
-    user.profile.dob && 
+    user.profile.preferredName &&
+    user.profile.legalName &&
+    user.profile.dob &&
     user.profile.phone
   );
 
   const foodComplete = !!(
-    user.food.foodType && 
+    user.food.foodType &&
     user.food.spiceLevel
   );
 
