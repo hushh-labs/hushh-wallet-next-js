@@ -1,0 +1,40 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if request is from Admin SDK (not possible in rules, but we deny writes)
+    // In this architecture, all writes happen via Next.js API routes using Admin SDK
+    // So we effectively block all client-side writes
+    
+    // Users Collection: Private
+    // Only accessible via server-side Admin SDK
+    match /users/{userId} {
+      allow read, write: if false;
+    }
+    
+    // Public Profiles: Public Read, No Write
+    // These are sanitized snapshots created by the server
+    match /publicProfiles/{publicId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    // Share Links: Public Read, No Write
+    // Used for resolving QR codes
+    match /shareLinks/{shareId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    // Scan Events: No Client Access
+    // Analytics are logged via server
+    match /scanEvents/{date}/events/{eventId} {
+      allow read, write: if false;
+    }
+    
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -6,8 +6,6 @@ export const metadata: Metadata = {
   description: 'Pick five preferences and add a clean, luxury taste card to Apple Wallet. Simplified taste preferences for modern living.',
   keywords: 'apple wallet, taste card, preferences, food, lifestyle, hushh',
   authors: [{ name: 'HushOne, Inc.' }],
-  viewport: 'width=device-width, initial-scale=1',
-  themeColor: '#000000',
   openGraph: {
     title: 'Hushh Taste Card',
     description: 'Build your personalized taste card for Apple Wallet',
@@ -22,6 +20,12 @@ export const metadata: Metadata = {
   formatDetection: {
     telephone: false,
   },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#000000',
 };
 
 export default function RootLayout({

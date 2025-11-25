@@ -1,31 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { 
-  ownerTokenManager, 
-  recoveryKeyManager, 
+import {
+  ownerTokenManager,
+  recoveryKeyManager,
   shareIdManager,
   generateDeviceId,
   generateUUID,
-  rateLimiter 
+  rateLimiter
 } from '@/lib/tokenization';
-import { 
+import {
   buildUserRecord,
   createUser,
   createPublicProfile,
   createShareLink,
   validateHushhCardPayload,
   validatePhoneNumber,
-  validateDateOfBirth
+  validateDateOfBirth,
+  getUserByToken
 } from '@/lib/firestore';
 import { HushhCardPayload } from '@/types';
 
 export async function POST(request: NextRequest) {
   try {
     // Get client IP for rate limiting
-    const clientIP = request.headers.get('x-forwarded-for') || 
-                     request.headers.get('x-real-ip') || 
-                     'unknown';
-    
+    const clientIP = request.headers.get('x-forwarded-for') ||
+      request.headers.get('x-real-ip') ||
+      'unknown';
+
     // Rate limiting: 1 card creation per hour per IP
     if (rateLimiter.isRateLimited(`create:${clientIP}`, 1, 60 * 60 * 1000)) {
       return NextResponse.json(
@@ -146,6 +147,7 @@ export async function POST(request: NextRequest) {
 }
 
 // GET endpoint to check creation status
+// GET endpoint to check creation status
 export async function GET(request: NextRequest) {
   try {
     const cookieStore = await cookies();
@@ -153,25 +155,61 @@ export async function GET(request: NextRequest) {
     const uid = cookieStore.get('hushh_uid')?.value;
 
     if (!ownerToken || !uid) {
-      return NextResponse.json(
-        { hasCard: false },
-        { status: 200 }
-      );
+      return NextResponse.json({
+        hasCard: false,
+        sections: { personal: false, food: false }
+      });
     }
 
-    return NextResponse.json(
-      { 
-        hasCard: true,
-        uid 
-      },
-      { status: 200 }
+    // Hash the token to look up the user
+    const tokenHash = await ownerTokenManager.hashToken(ownerToken);
+    const userResult = await getUserByToken(tokenHash);
+
+    if (!userResult) {
+      return NextResponse.json({
+        hasCard: false,
+        sections: { personal: false, food: false }
+      });
+    }
+
+    const { data: user } = userResult;
+
+    // Verify token matches stored hash (double check)
+    const tokenValid = await ownerTokenManager.verifyToken(ownerToken, user.owner.ownerTokenHash);
+    if (!tokenValid) {
+      return NextResponse.json({
+        hasCard: false,
+        sections: { personal: false, food: false }
+      });
+    }
+
+    const personalComplete = !!(
+      user.profile.preferredName &&
+      user.profile.legalName &&
+      user.profile.dob &&
+      user.profile.phone
     );
+
+    const foodComplete = !!(
+      user.food.foodType &&
+      user.food.spiceLevel
+    );
+
+    return NextResponse.json({
+      hasCard: true,
+      uid: userResult.uid,
+      sections: { personal: personalComplete, food: foodComplete },
+      isComplete: personalComplete && foodComplete,
+      publicId: user.card.publicId,
+      shareId: user.card.activeShareId,
+      shareUrl: shareIdManager.createShareUrl(user.card.activeShareId)
+    });
 
   } catch (error) {
     console.error('Status check error:', error);
     return NextResponse.json(
-      { hasCard: false },
-      { status: 200 }
+      { error: 'Internal server error' },
+      { status: 500 }
     );
   }
 }

@@ -1,10 +1,10 @@
 import { db } from './firebase';
-import { 
-  doc, 
-  setDoc, 
-  getDoc, 
-  updateDoc, 
-  deleteDoc, 
+import {
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
   collection,
   addDoc,
   query,
@@ -15,8 +15,8 @@ import {
   serverTimestamp
 } from 'firebase/firestore';
 import { UserRecord, PublicProfile, ShareLink, ScanEvent, HushhCardPayload } from '@/types';
-import { 
-  calculateAge, 
+import {
+  calculateAge,
   maskPhoneNumber,
   shareIdManager,
   generateUUID
@@ -37,18 +37,42 @@ export async function createUser(uid: string, data: UserRecord): Promise<void> {
 export async function getUser(uid: string): Promise<UserRecord | null> {
   const userRef = doc(db, 'users', uid);
   const userSnap = await getDoc(userRef);
-  
+
   if (!userSnap.exists()) {
     return null;
   }
-  
+
   const data = userSnap.data();
   // Convert Firestore timestamps back to Date objects
   if (data.owner?.createdAt?.toDate) {
     data.owner.createdAt = data.owner.createdAt.toDate();
   }
-  
+
   return data as UserRecord;
+}
+
+export async function getUserByToken(tokenHash: string): Promise<{ uid: string; data: UserRecord } | null> {
+  const usersRef = collection(db, 'users');
+  const q = query(usersRef, where('owner.ownerTokenHash', '==', tokenHash), limit(1));
+
+  const querySnapshot = await getDocs(q);
+
+  if (querySnapshot.empty) {
+    return null;
+  }
+
+  const doc = querySnapshot.docs[0];
+  const data = doc.data();
+
+  // Convert Firestore timestamps back to Date objects
+  if (data.owner?.createdAt?.toDate) {
+    data.owner.createdAt = data.owner.createdAt.toDate();
+  }
+
+  return {
+    uid: doc.id,
+    data: data as UserRecord
+  };
 }
 
 export async function updateUser(uid: string, updates: Partial<UserRecord>): Promise<void> {
@@ -95,17 +119,17 @@ export async function createPublicProfile(publicId: string, userRecord: UserReco
 export async function getPublicProfile(publicId: string): Promise<PublicProfile | null> {
   const profileRef = doc(db, 'publicProfiles', publicId);
   const profileSnap = await getDoc(profileRef);
-  
+
   if (!profileSnap.exists()) {
     return null;
   }
-  
+
   const data = profileSnap.data();
   // Convert Firestore timestamp back to Date
   if (data.lastUpdated?.toDate) {
     data.lastUpdated = data.lastUpdated.toDate();
   }
-  
+
   return data as PublicProfile;
 }
 
@@ -155,11 +179,11 @@ export async function createShareLink(shareId: string, publicId: string): Promis
 export async function getShareLink(shareId: string): Promise<ShareLink | null> {
   const shareLinkRef = doc(db, 'shareLinks', shareId);
   const shareLinkSnap = await getDoc(shareLinkRef);
-  
+
   if (!shareLinkSnap.exists()) {
     return null;
   }
-  
+
   const data = shareLinkSnap.data();
   // Convert Firestore timestamps back to Date
   if (data.createdAt?.toDate) {
@@ -168,7 +192,7 @@ export async function getShareLink(shareId: string): Promise<ShareLink | null> {
   if (data.ttl?.toDate) {
     data.ttl = data.ttl.toDate();
   }
-  
+
   return data as ShareLink;
 }
 
@@ -208,7 +232,7 @@ export async function rotateShareLink(uid: string, oldShareId: string): Promise<
 export async function logScanEvent(shareId: string, publicId: string, userAgent?: string): Promise<void> {
   const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
   const eventId = generateUUID();
-  
+
   const scanEvent: ScanEvent = {
     shareId,
     publicId,
@@ -241,7 +265,8 @@ export function buildUserRecord(
       legalName: payload.legalName,
       dob: payload.dob,
       phone: payload.phone,
-      gender: payload.gender
+      // Firebase does not allow undefined. Only include gender if provided.
+      ...(payload.gender && { gender: payload.gender })
     },
     food: {
       foodType: payload.foodType,
@@ -293,10 +318,10 @@ export function validatePhoneNumber(phone: string): boolean {
 export function validateDateOfBirth(dob: string): boolean {
   const date = new Date(dob);
   const now = new Date();
-  
+
   // Must be valid date, not in future, and person must be at least 13 years old
   return (
-    date instanceof Date && 
+    date instanceof Date &&
     !isNaN(date.getTime()) &&
     date < now &&
     (now.getFullYear() - date.getFullYear()) >= 13
